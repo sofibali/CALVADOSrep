@@ -1,5 +1,5 @@
 ---
 batch_sys : 'SLURM' # PBS
-envname : 'calvados' # conda environment
+envname : 'CALVADOS' # conda environment
 template : 'robust.jinja'
 fbash : '/home/sobuelow/.bashrc' # path to .bashrc

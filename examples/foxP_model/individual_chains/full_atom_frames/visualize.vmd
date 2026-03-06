@@ -1,0 +1,12 @@
+# VMD visualization script
+# Load with: vmd -e visualize.vmd
+
+mol new frame_000000.pdb type pdb
+mol addfile frame_000246.pdb type pdb
+mol addfile frame_000491.pdb type pdb
+
+# Display settings
+mol modstyle 0 0 NewCartoon
+mol modcolor 0 0 Chain
+display projection Orthographic
+display depthcue off

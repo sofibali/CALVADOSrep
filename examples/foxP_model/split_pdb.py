@@ -77,12 +77,17 @@ def main():
     parser.add_argument('--output-dir', default='.', help='Output directory')
     parser.add_argument('--chain-a-name', default='FOXP4', help='Name for chain A')
     parser.add_argument('--chain-b-name', default='FOX', help='Name for chain B')
-    
+    parser.add_argument('--chain-c-name', default='chain_C', help='Name for chain C')
+    parser.add_argument('--chain-d-name', default='chain_D', help='Name for chain D')  
+    parser.add_argument('--chain-e-name', default='chain_E', help='Name for chain E') 
     args = parser.parse_args()
     
     chain_names = {
         'A': args.chain_a_name,
-        'B': args.chain_b_name
+        'B': args.chain_b_name,
+        'C': args.chain_c_name,
+        'D': args.chain_d_name,
+        'E': args.chain_e_name
     }
     
     print(f"\n{'='*60}")
@@ -90,8 +95,6 @@ def main():
     print(f"{'='*60}")
     print(f"Input: {args.input}")
     print(f"Output directory: {args.output_dir}")
-    print(f"Chain A -> {args.chain_a_name}.pdb")
-    print(f"Chain B -> {args.chain_b_name}.pdb")
     print(f"{'='*60}\n")
     
     output_files = split_pdb_by_chain(args.input, args.output_dir, chain_names)

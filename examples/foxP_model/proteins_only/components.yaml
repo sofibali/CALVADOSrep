@@ -1,0 +1,41 @@
+# Components config for proteins only (FOXP4, FOX, chain_C)
+# High restraints on domains to keep them rigid, disordered regions free to move
+
+defaults:
+  molecule_type: protein
+  nmol: 1
+  charge_termini: both
+  ffasta: /home/sbali/CALVADOS/examples/foxP_model/input/proteins.fasta
+  fresidues: /home/sbali/CALVADOS/examples/foxP_model/input/residues_CALVADOS3.csv
+  pdb_folder: /home/sbali/CALVADOS/examples/foxP_model/input
+  fdomains: /home/sbali/CALVADOS/examples/foxP_model/input/domains.yaml
+
+  # Restraint settings - HIGH k_harmonic for rigid domains
+  restraint: true
+  restraint_type: harmonic
+  k_harmonic: 2000.0          # High value = very rigid domains
+  cutoff_restr: 0.9           # Distance cutoff for restraints
+  ext_restraint: true
+  use_com: true
+
+  # Bond stiffness
+  kb: 8033.0
+
+  # AlphaFold confidence scaling (for restraint strength)
+  colabfold: 1
+  bfac_shift: 0.8
+  bfac_width: 50.0
+  pae_shift: 0.3
+  pae_width: 15.0
+
+  # Other defaults
+  alpha: 0
+  periodic: false
+
+system:
+  FOXP4:
+    nmol: 1
+  FOX:
+    nmol: 1
+  chain_C:
+    nmol: 1

@@ -67,7 +67,7 @@ components = Components(
 
   # INPUT
   fresidues = residues_file, # residue definitions
-  ffasta = f'{cwd}/input/idr.fasta', # residue definitions
+  ffasta = f'{cwd}/input/proteins.fasta', # residue definitions
   fdomains = f'{cwd}/input/domains.yaml', # domain definitions (harmonic restraints)
   pdb_folder = f'{cwd}/input', # directory for pdb and PAE files
 

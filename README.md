@@ -1,67 +1,75 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6914053.svg)](https://doi.org/10.5281/zenodo.6914053)
-[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb)
-[![CALVADOS Video](http://img.shields.io/badge/►-Video-FF0000.svg)](https://youtu.be/r-eFzoBiQZ4)
-[![IDRome Video](http://img.shields.io/badge/►-Video-FF0000.svg)](https://youtu.be/kL3-cusHgzM)
-[![Python application](https://github.com/KULL-Centre/CALVADOS/actions/workflows/python-app.yml/badge.svg)](https://github.com/KULL-Centre/CALVADOS/actions/workflows/python-app.yml)
+# CALVADOS Computational Projects
 
-# CALVADOS
+Personal fork of [KULL-Centre/CALVADOS](https://github.com/KULL-Centre/CALVADOS) used as a computational project record for coarse-grained biomolecular simulations.
 
-Coarse-grained implicit-solvent simulations of biomolecules in the OpenMM framework.
-Earlier implementations of the code are available on [Zenodo](https://zenodo.org/search?q=metadata.subjects.subject%3A%22CALVADOS%22&l=list&p=1&s=10&sort=bestmatch) ([DOI: 10.5281/zenodo.13754000](https://doi.org/10.5281/zenodo.13754000)).
+## Projects
 
-Please cite the following references when using the software:
+### 1. FOXP1/FOXP4 Transcription Factor Complex
 
-- G. Tesei, T. K. Schulze, R. Crehuet, K. Lindorff-Larsen. Accurate model of liquid-liquid phase behavior of intrinsically disordered proteins from optimization of single-chain properties. PNAS (2021), 118(44):e2111696118. [DOI: 10.1073/pnas.2111696118](https://doi.org/10.1073/pnas.2111696118)
-- G. Tesei, K. Lindorff-Larsen. Improved predictions of phase behaviour of intrinsically disordered proteins by tuning the interaction range. _Open Research Europe_ (2022), 2(94). [DOI: 10.12688/openreseurope.14967.2](https://doi.org/10.12688/openreseurope.14967.2)
-- F. Cao, S. von Bülow, G. Tesei, K. Lindorff-Larsen. A coarse-grained model for disordered and multi-domain proteins. _Protein Science_ (2024), 33(11):e5172. [DOI: 10.1002/pro.5172](https://doi.org/10.1002/pro.5172)
+Coarse-grained simulations of FOXP transcription factor complexes: multi-domain proteins with folded domains restrained from AlphaFold/experimental structures and disordered linkers free to explore conformational space.
+
+- **Location:** [`examples/foxP_model/`](examples/foxP_model/)
+- **Components:** FOXP4 (551 res), FOX/FOXP1 (539 res), chain_C (90 res), DNA chains
+- **Simulation types:** proteins-only, proteins+DNA, individual chain variants
+- **Visualization:** PyMOL movie rendering pipeline, trajectory analysis
+
+### 2. PARP14 Domain Deletion Library
+
+Two-phase pipeline studying how domain composition affects the structural dynamics of PARP14 (1801 residues, 17 domains).
+
+| Phase | Description | Location |
+|-------|-------------|----------|
+| Phase 1 | AlphaFold3 structure predictions for 1,285 domain combinations | [`parp14/`](parp14/) |
+| Phase 2 | CALVADOS coarse-grained MD (25 replicates x 50 ns per structure) | [`examples/PARP14_MDP/`](examples/PARP14_MDP/) |
+
+## Installation
+
+```bash
+conda create -n calvados python=3.10
+conda activate calvados
+
+# Optional: GPU support
+conda install -c conda-forge openmm=8.2.0 cudatoolkit=11.8
+
+# Install CALVADOS
+pip install -e .
+
+# Verify
+python -m pytest
+```
+
+## Running a Simulation
+
+```bash
+cd examples/foxP_model/proteins_only
+python run.py
+```
+
+Or from scratch:
+```bash
+python prepare.py          # generates config.yaml, components.yaml, run.py
+cd <output_dir>
+python run.py
+```
+
+See [`docs/CALVADOS_QUICKSTART.md`](docs/CALVADOS_QUICKSTART.md) for detailed usage.
 
 ## Documentation
 
-The software architecture of CALVADOS and illustrative examples are described in:
+| Document | Description |
+|----------|-------------|
+| [`docs/CALVADOS_QUICKSTART.md`](docs/CALVADOS_QUICKSTART.md) | How to set up, run, and analyze simulations |
+| [`docs/CALVADOS_ARCHITECTURE.md`](docs/CALVADOS_ARCHITECTURE.md) | Code architecture, classes, force fields |
+| [`docs/PARP14_PROJECT.md`](docs/PARP14_PROJECT.md) | PARP14 simulation protocol and analysis |
+| [`examples/foxP_model/README.md`](examples/foxP_model/README.md) | FOXP project overview and setups |
+| [`examples/PARP14_MDP/README.md`](examples/PARP14_MDP/README.md) | PARP14 Phase 2 simulations |
+| [`parp14/README.md`](parp14/README.md) | PARP14 Phase 1 AlphaFold3 pipeline |
 
-S. von Bülow*, Y. Yasuda#, F. Cao#, T. K. Schulze#, A. I. Trolle#, A. S. Rauh#, R. Crehuet#, K. Lindorff-Larsen*, G. Tesei* (# equal contribution)
-Software package for simulations using the coarse-grained CALVADOS model, arXiv 2025. https://doi.org/10.48550/arXiv.2504.10408
+## Upstream CALVADOS
 
-The examples described in the paper can be found in the `examples` folder.
+This fork is based on [KULL-Centre/CALVADOS](https://github.com/KULL-Centre/CALVADOS). Please cite the following when using the CALVADOS software:
 
-## Installation Instructions
-
-1. Make new conda environment for calvados
-``` 
-conda create -n calvados python=3.10
-conda activate calvados
-```
-(2. Only needed when planning to use GPUs: Install openmm via conda-force with cudatoolkit. This step can be skipped if running on CPU only.)
-```
-conda install -c conda-forge openmm=8.2.0 cudatoolkit=11.8
-```
-3. Clone package and install CALVADOS and its dependencies using pip
-``` 
-git clone https://github.com/KULL-Centre/CALVADOS.git
-cd CALVADOS
-pip install .
-(or pip install -e .)
-```
-
-## Testing
-
-```bash
-
-  python -m pytest
-```
-The test `test_potentials` simulates two free amino acids, calculates the potential energies based on the saved trajectory and compares these values with those in the OpenMM log file. Other tests check for correct bond order in the RNA model and correct custom restraints.
-
-## Authors
-
-[Sören von Bülow (@sobuelow)](https://github.com/sobuelow)
-
-[Giulio Tesei (@gitesei)](https://github.com/gitesei)
-
-[Fan Cao (@fancaoErik)](https://github.com/fancaoErik)
-
-[Ikki Yasuda (@iyasuda)](https://github.com/iyasuda)
-
-[Arriën Symon Rauh (@ASRauh)](https://github.com/ASRauh)
-
-[Kresten Lindorff-Larsen (@lindorff-larsen)](https://github.com/lindorff-larsen)
-
+- Tesei et al. PNAS (2021), 118(44):e2111696118. [DOI: 10.1073/pnas.2111696118](https://doi.org/10.1073/pnas.2111696118)
+- Tesei & Lindorff-Larsen. Open Research Europe (2022), 2(94). [DOI: 10.12688/openreseurope.14967.2](https://doi.org/10.12688/openreseurope.14967.2)
+- Cao et al. Protein Science (2024), 33(11):e5172. [DOI: 10.1002/pro.5172](https://doi.org/10.1002/pro.5172)
+- von Bulow et al. arXiv (2025). [DOI: 10.48550/arXiv.2504.10408](https://doi.org/10.48550/arXiv.2504.10408)

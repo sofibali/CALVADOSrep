@@ -40,7 +40,7 @@ class Component:
             self.n_termini = [0]
             self.c_termini = [len(self.seq)-1]
 
-    def calc_properties(self, pH: float = 7.0, verbose: bool = False):
+    def calc_properties(self, pH: float = 7.0, verbose: bool = False, comp_setup: str = 'linear'):
         """ Calculate component properties (sigmas, lambdas, qs etc.) """
 
         self.calc_comp_seq()
@@ -105,6 +105,10 @@ class Component:
             f.write('i\tj\tb_idx\td[nm]\tk[kJ/mol/nm^2]\n')
             for b in self.bond_pairlist:
                 f.write(f'{int(b[0])}\t{int(b[1])}\t{int(b[2])}\t{b[3]:.4f}\t{b[4]:.4f}\n')
+
+    def init_restraint_force(self, eps_lj=None, cutoff_lj=None, eps_yu=None, k_yu=None):
+        """ Initialize restraint force (stub for base Component). """
+        pass
 
 class Protein(Component):
     """ Component protein. """

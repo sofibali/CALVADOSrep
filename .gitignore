@@ -214,3 +214,29 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Claude Code
+.claude/
+.claude-context
+
+# ============================================================
+# Project-specific: Large files excluded from GitHub (>100 MB)
+# ============================================================
+
+# PyMOL session files (hundreds of MB each)
+*.pse
+
+# PARP14 large data files
+parp14/disorder_analysis.csv
+parp14/sasa_per_residue.csv
+parp14/pLDDT_per_residue.csv
+parp14/PARP14_AlphaFold3_Pipeline.ipynb
+
+# PARP14 large derived data
+parp14/logs/
+parp14/results/per_residue/
+parp14/figures/improved/*.svg
+
+# Large trajectory/movie files
+examples/foxP_model/**/allatom.dcd
+examples/foxP_model/rendered_movies/*.mp4

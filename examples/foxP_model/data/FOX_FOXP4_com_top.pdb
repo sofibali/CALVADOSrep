@@ -1,0 +1,9 @@
+REMARK   1 CREATED WITH MDTraj 1.10.0, 2026-02-01
+CRYST1  300.000  300.000  300.000  90.00  90.00  90.00 P 1           1 
+MODEL        0
+ATOM      1  FOX COM A   0     -29.987-119.361 -80.423  1.00  0.00           C  
+TER       2      COM A   0
+ATOM      3 FOXP COM B   1       0.765  42.860 -31.402  1.00  0.00           C  
+TER       4      COM B   1
+ENDMDL
+END

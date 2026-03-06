@@ -1,0 +1,3 @@
+name,path,status
+input/FOX.pdb,simulations/input/FOX.pdb,success
+input/FOXP4.pdb,simulations/input/FOXP4.pdb,success

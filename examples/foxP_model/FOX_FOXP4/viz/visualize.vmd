@@ -1,0 +1,27 @@
+# VMD visualization script for CALVADOS trajectory
+# Usage: vmd -e viz/visualize.vmd
+
+# Load structure and trajectory
+mol new top.pdb type pdb
+mol addfile FOX_FOXP4.dcd type dcd waitfor all
+
+# Visualization style for coarse-grained
+mol modstyle 0 0 VDW 0.8 12
+mol modcolor 0 0 ResType
+mol modmaterial 0 0 AOChalky
+
+# Alternative: connected beads
+# mol modstyle 0 0 Licorice 0.3 12 12
+
+# Color by residue index (rainbow)
+# mol modcolor 0 0 Index
+
+# Center view
+display resetview
+
+# Smooth trajectory playback
+animate speed 0.9
+animate forward
+
+puts "Trajectory loaded. Use animation controls to play."
+puts "Frames: [molinfo 0 get numframes]"
