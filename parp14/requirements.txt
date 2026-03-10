@@ -1,0 +1,20 @@
+# Python dependencies for PARP14 AlphaFold3 Analysis Pipeline
+
+# Core scientific computing
+numpy>=1.21.0
+pandas>=1.3.0
+scipy>=1.7.0
+
+# Structural biology
+biopython>=1.79
+
+# Visualization
+matplotlib>=3.4.0
+seaborn>=0.11.0
+
+# Data processing
+tqdm>=4.62.0
+
+# Optional: Advanced structure analysis
+# pymol-open-source>=2.5.0
+# mdtraj>=1.9.7

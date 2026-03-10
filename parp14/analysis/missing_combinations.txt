@@ -1,0 +1,756 @@
+Missing domain combinations (376 total)
+These FASTA files were generated but no AF3 prediction exists.
+============================================================
+
+ART.fasta
+  Expected AF3 dir(s): art
+RRM1_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_md1_md3_wwe, rrm1_md1l1_md3_wwe
+RRM1_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm1_md1_wwe, rrm1_md1l1_wwe
+RRM1_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_md1_wwe_art, rrm1_md1l1_wwe_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_khb-kh8, rrm1_rrm2_kh1-kh6_kh7a_md1l1_khb-kh8
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_khb-kh8_art, rrm1_rrm2_kh1-kh6_kh7a_md1l1_khb-kh8_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_khb-kh8_wwe, rrm1_rrm2_kh1-kh6_kh7a_md1l1_khb-kh8_wwe
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_khb-kh8_wwe_art, rrm1_rrm2_kh1-kh6_kh7a_md1l1_khb-kh8_wwe_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md2_khb-kh8, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md2_khb-kh8
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md2_khb-kh8_art, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md2_khb-kh8_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe_art, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md2_md3_khb-kh8, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_art, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md3_khb-kh8, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md3_khb-kh8
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md3_khb-kh8_art, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md3_khb-kh8_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe_art, rrm1_rrm2_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_art, rrm1_rrm2_kh1-kh6_md1l1_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md2, rrm1_rrm2_kh1-kh6_md1l1_md2
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md2_art, rrm1_rrm2_kh1-kh6_md1l1_md2_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md2_md3, rrm1_rrm2_kh1-kh6_md1l1_md2_md3
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md2_md3_art, rrm1_rrm2_kh1-kh6_md1l1_md2_md3_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md2_md3_wwe, rrm1_rrm2_kh1-kh6_md1l1_md2_md3_wwe
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md2_md3_wwe_art, rrm1_rrm2_kh1-kh6_md1l1_md2_md3_wwe_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md2_wwe, rrm1_rrm2_kh1-kh6_md1l1_md2_wwe
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md2_wwe_art, rrm1_rrm2_kh1-kh6_md1l1_md2_wwe_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md3, rrm1_rrm2_kh1-kh6_md1l1_md3
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md3_art, rrm1_rrm2_kh1-kh6_md1l1_md3_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md3_wwe, rrm1_rrm2_kh1-kh6_md1l1_md3_wwe
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_md3_wwe_art, rrm1_rrm2_kh1-kh6_md1l1_md3_wwe_art
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_wwe, rrm1_rrm2_kh1-kh6_md1l1_wwe
+RRM1_RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh1-kh6_md1_wwe_art, rrm1_rrm2_kh1-kh6_md1l1_wwe_art
+RRM1_RRM2_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_khb-kh8, rrm1_rrm2_kh7a_md1l1_khb-kh8
+RRM1_RRM2_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_khb-kh8_art, rrm1_rrm2_kh7a_md1l1_khb-kh8_art
+RRM1_RRM2_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_khb-kh8_wwe, rrm1_rrm2_kh7a_md1l1_khb-kh8_wwe
+RRM1_RRM2_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_khb-kh8_wwe_art, rrm1_rrm2_kh7a_md1l1_khb-kh8_wwe_art
+RRM1_RRM2_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md2_khb-kh8, rrm1_rrm2_kh7a_md1l1_md2_khb-kh8
+RRM1_RRM2_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md2_khb-kh8_art, rrm1_rrm2_kh7a_md1l1_md2_khb-kh8_art
+RRM1_RRM2_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md2_khb-kh8_wwe, rrm1_rrm2_kh7a_md1l1_md2_khb-kh8_wwe
+RRM1_RRM2_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md2_khb-kh8_wwe_art, rrm1_rrm2_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM1_RRM2_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md2_md3_khb-kh8, rrm1_rrm2_kh7a_md1l1_md2_md3_khb-kh8
+RRM1_RRM2_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md2_md3_khb-kh8_art, rrm1_rrm2_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM1_RRM2_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md2_md3_khb-kh8_wwe, rrm1_rrm2_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM1_RRM2_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm1_rrm2_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM1_RRM2_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md3_khb-kh8, rrm1_rrm2_kh7a_md1l1_md3_khb-kh8
+RRM1_RRM2_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md3_khb-kh8_art, rrm1_rrm2_kh7a_md1l1_md3_khb-kh8_art
+RRM1_RRM2_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md3_khb-kh8_wwe, rrm1_rrm2_kh7a_md1l1_md3_khb-kh8_wwe
+RRM1_RRM2_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_kh7a_md1_md3_khb-kh8_wwe_art, rrm1_rrm2_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM1_RRM2_MD1_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_art, rrm1_rrm2_md1l1_art
+RRM1_RRM2_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md2, rrm1_rrm2_md1l1_md2
+RRM1_RRM2_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md2_art, rrm1_rrm2_md1l1_md2_art
+RRM1_RRM2_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md2_md3, rrm1_rrm2_md1l1_md2_md3
+RRM1_RRM2_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md2_md3_art, rrm1_rrm2_md1l1_md2_md3_art
+RRM1_RRM2_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md2_md3_wwe, rrm1_rrm2_md1l1_md2_md3_wwe
+RRM1_RRM2_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md2_md3_wwe_art, rrm1_rrm2_md1l1_md2_md3_wwe_art
+RRM1_RRM2_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md2_wwe, rrm1_rrm2_md1l1_md2_wwe
+RRM1_RRM2_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md2_wwe_art, rrm1_rrm2_md1l1_md2_wwe_art
+RRM1_RRM2_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md3, rrm1_rrm2_md1l1_md3
+RRM1_RRM2_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md3_art, rrm1_rrm2_md1l1_md3_art
+RRM1_RRM2_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md3_wwe, rrm1_rrm2_md1l1_md3_wwe
+RRM1_RRM2_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_md3_wwe_art, rrm1_rrm2_md1l1_md3_wwe_art
+RRM1_RRM2_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_wwe, rrm1_rrm2_md1l1_wwe
+RRM1_RRM2_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_md1_wwe_art, rrm1_rrm2_md1l1_wwe_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_khb-kh8, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_khb-kh8_art, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_khb-kh8_wwe, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_wwe
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_khb-kh8_wwe_art, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_wwe_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_art, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe_art, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_art, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_art, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe_art, rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_art, rrm1_rrm2_rrm3_kh1-kh6_md1l1_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md2, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md2
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md2_art, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md2_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md2_md3, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md2_md3
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md2_md3_art, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md2_md3_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md2_md3_wwe, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md2_md3_wwe
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md2_md3_wwe_art, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md2_md3_wwe_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md2_wwe, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md2_wwe
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md2_wwe_art, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md2_wwe_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md3, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md3
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md3_art, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md3_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md3_wwe, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md3_wwe
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_md3_wwe_art, rrm1_rrm2_rrm3_kh1-kh6_md1l1_md3_wwe_art
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_wwe, rrm1_rrm2_rrm3_kh1-kh6_md1l1_wwe
+RRM1_RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh1-kh6_md1_wwe_art, rrm1_rrm2_rrm3_kh1-kh6_md1l1_wwe_art
+RRM1_RRM2_RRM3_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_khb-kh8, rrm1_rrm2_rrm3_kh7a_md1l1_khb-kh8
+RRM1_RRM2_RRM3_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_khb-kh8_art, rrm1_rrm2_rrm3_kh7a_md1l1_khb-kh8_art
+RRM1_RRM2_RRM3_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_khb-kh8_wwe, rrm1_rrm2_rrm3_kh7a_md1l1_khb-kh8_wwe
+RRM1_RRM2_RRM3_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_khb-kh8_wwe_art, rrm1_rrm2_rrm3_kh7a_md1l1_khb-kh8_wwe_art
+RRM1_RRM2_RRM3_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md2_khb-kh8, rrm1_rrm2_rrm3_kh7a_md1l1_md2_khb-kh8
+RRM1_RRM2_RRM3_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md2_khb-kh8_art, rrm1_rrm2_rrm3_kh7a_md1l1_md2_khb-kh8_art
+RRM1_RRM2_RRM3_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md2_khb-kh8_wwe, rrm1_rrm2_rrm3_kh7a_md1l1_md2_khb-kh8_wwe
+RRM1_RRM2_RRM3_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md2_khb-kh8_wwe_art, rrm1_rrm2_rrm3_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM1_RRM2_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md2_md3_khb-kh8, rrm1_rrm2_rrm3_kh7a_md1l1_md2_md3_khb-kh8
+RRM1_RRM2_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md2_md3_khb-kh8_art, rrm1_rrm2_rrm3_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM1_RRM2_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md2_md3_khb-kh8_wwe, rrm1_rrm2_rrm3_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM1_RRM2_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm1_rrm2_rrm3_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM1_RRM2_RRM3_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md3_khb-kh8, rrm1_rrm2_rrm3_kh7a_md1l1_md3_khb-kh8
+RRM1_RRM2_RRM3_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md3_khb-kh8_art, rrm1_rrm2_rrm3_kh7a_md1l1_md3_khb-kh8_art
+RRM1_RRM2_RRM3_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md3_khb-kh8_wwe, rrm1_rrm2_rrm3_kh7a_md1l1_md3_khb-kh8_wwe
+RRM1_RRM2_RRM3_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_kh7a_md1_md3_khb-kh8_wwe_art, rrm1_rrm2_rrm3_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM1_RRM2_RRM3_MD1_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_art, rrm1_rrm2_rrm3_md1l1_art
+RRM1_RRM2_RRM3_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md2, rrm1_rrm2_rrm3_md1l1_md2
+RRM1_RRM2_RRM3_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md2_art, rrm1_rrm2_rrm3_md1l1_md2_art
+RRM1_RRM2_RRM3_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md2_md3, rrm1_rrm2_rrm3_md1l1_md2_md3
+RRM1_RRM2_RRM3_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md2_md3_art, rrm1_rrm2_rrm3_md1l1_md2_md3_art
+RRM1_RRM2_RRM3_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md2_md3_wwe, rrm1_rrm2_rrm3_md1l1_md2_md3_wwe
+RRM1_RRM2_RRM3_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md2_md3_wwe_art, rrm1_rrm2_rrm3_md1l1_md2_md3_wwe_art
+RRM1_RRM2_RRM3_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md2_wwe, rrm1_rrm2_rrm3_md1l1_md2_wwe
+RRM1_RRM2_RRM3_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md2_wwe_art, rrm1_rrm2_rrm3_md1l1_md2_wwe_art
+RRM1_RRM2_RRM3_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md3, rrm1_rrm2_rrm3_md1l1_md3
+RRM1_RRM2_RRM3_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md3_art, rrm1_rrm2_rrm3_md1l1_md3_art
+RRM1_RRM2_RRM3_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md3_wwe, rrm1_rrm2_rrm3_md1l1_md3_wwe
+RRM1_RRM2_RRM3_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_md3_wwe_art, rrm1_rrm2_rrm3_md1l1_md3_wwe_art
+RRM1_RRM2_RRM3_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_wwe, rrm1_rrm2_rrm3_md1l1_wwe
+RRM1_RRM2_RRM3_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm2_rrm3_md1_wwe_art, rrm1_rrm2_rrm3_md1l1_wwe_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_khb-kh8, rrm1_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_khb-kh8_art, rrm1_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_khb-kh8_wwe, rrm1_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_wwe
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_khb-kh8_wwe_art, rrm1_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_wwe_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_art, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe_art, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_art, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_art, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe_art, rrm1_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_art, rrm1_rrm3_kh1-kh6_md1l1_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md2, rrm1_rrm3_kh1-kh6_md1l1_md2
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md2_art, rrm1_rrm3_kh1-kh6_md1l1_md2_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md2_md3, rrm1_rrm3_kh1-kh6_md1l1_md2_md3
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md2_md3_art, rrm1_rrm3_kh1-kh6_md1l1_md2_md3_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md2_md3_wwe, rrm1_rrm3_kh1-kh6_md1l1_md2_md3_wwe
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md2_md3_wwe_art, rrm1_rrm3_kh1-kh6_md1l1_md2_md3_wwe_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md2_wwe, rrm1_rrm3_kh1-kh6_md1l1_md2_wwe
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md2_wwe_art, rrm1_rrm3_kh1-kh6_md1l1_md2_wwe_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md3, rrm1_rrm3_kh1-kh6_md1l1_md3
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md3_art, rrm1_rrm3_kh1-kh6_md1l1_md3_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md3_wwe, rrm1_rrm3_kh1-kh6_md1l1_md3_wwe
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_md3_wwe_art, rrm1_rrm3_kh1-kh6_md1l1_md3_wwe_art
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_wwe, rrm1_rrm3_kh1-kh6_md1l1_wwe
+RRM1_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh1-kh6_md1_wwe_art, rrm1_rrm3_kh1-kh6_md1l1_wwe_art
+RRM1_RRM3_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_khb-kh8, rrm1_rrm3_kh7a_md1l1_khb-kh8
+RRM1_RRM3_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_khb-kh8_art, rrm1_rrm3_kh7a_md1l1_khb-kh8_art
+RRM1_RRM3_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_khb-kh8_wwe, rrm1_rrm3_kh7a_md1l1_khb-kh8_wwe
+RRM1_RRM3_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_khb-kh8_wwe_art, rrm1_rrm3_kh7a_md1l1_khb-kh8_wwe_art
+RRM1_RRM3_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md2_khb-kh8, rrm1_rrm3_kh7a_md1l1_md2_khb-kh8
+RRM1_RRM3_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md2_khb-kh8_art, rrm1_rrm3_kh7a_md1l1_md2_khb-kh8_art
+RRM1_RRM3_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md2_khb-kh8_wwe, rrm1_rrm3_kh7a_md1l1_md2_khb-kh8_wwe
+RRM1_RRM3_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md2_khb-kh8_wwe_art, rrm1_rrm3_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM1_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md2_md3_khb-kh8, rrm1_rrm3_kh7a_md1l1_md2_md3_khb-kh8
+RRM1_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md2_md3_khb-kh8_art, rrm1_rrm3_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM1_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md2_md3_khb-kh8_wwe, rrm1_rrm3_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM1_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm1_rrm3_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM1_RRM3_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md3_khb-kh8, rrm1_rrm3_kh7a_md1l1_md3_khb-kh8
+RRM1_RRM3_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md3_khb-kh8_art, rrm1_rrm3_kh7a_md1l1_md3_khb-kh8_art
+RRM1_RRM3_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md3_khb-kh8_wwe, rrm1_rrm3_kh7a_md1l1_md3_khb-kh8_wwe
+RRM1_RRM3_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_kh7a_md1_md3_khb-kh8_wwe_art, rrm1_rrm3_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM1_RRM3_MD1_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_art, rrm1_rrm3_md1l1_art
+RRM1_RRM3_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md2, rrm1_rrm3_md1l1_md2
+RRM1_RRM3_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md2_art, rrm1_rrm3_md1l1_md2_art
+RRM1_RRM3_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md2_md3, rrm1_rrm3_md1l1_md2_md3
+RRM1_RRM3_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md2_md3_art, rrm1_rrm3_md1l1_md2_md3_art
+RRM1_RRM3_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md2_md3_wwe, rrm1_rrm3_md1l1_md2_md3_wwe
+RRM1_RRM3_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md2_md3_wwe_art, rrm1_rrm3_md1l1_md2_md3_wwe_art
+RRM1_RRM3_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md2_wwe, rrm1_rrm3_md1l1_md2_wwe
+RRM1_RRM3_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md2_wwe_art, rrm1_rrm3_md1l1_md2_wwe_art
+RRM1_RRM3_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md3, rrm1_rrm3_md1l1_md3
+RRM1_RRM3_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md3_art, rrm1_rrm3_md1l1_md3_art
+RRM1_RRM3_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md3_wwe, rrm1_rrm3_md1l1_md3_wwe
+RRM1_RRM3_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_md3_wwe_art, rrm1_rrm3_md1l1_md3_wwe_art
+RRM1_RRM3_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_wwe, rrm1_rrm3_md1l1_wwe
+RRM1_RRM3_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm1_rrm3_md1_wwe_art, rrm1_rrm3_md1l1_wwe_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_khb-kh8, rrm2_kh1-kh6_kh7a_md1l1_khb-kh8
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_khb-kh8_art, rrm2_kh1-kh6_kh7a_md1l1_khb-kh8_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_khb-kh8_wwe, rrm2_kh1-kh6_kh7a_md1l1_khb-kh8_wwe
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_khb-kh8_wwe_art, rrm2_kh1-kh6_kh7a_md1l1_khb-kh8_wwe_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md2_khb-kh8, rrm2_kh1-kh6_kh7a_md1l1_md2_khb-kh8
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md2_khb-kh8_art, rrm2_kh1-kh6_kh7a_md1l1_md2_khb-kh8_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe, rrm2_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe_art, rrm2_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md2_md3_khb-kh8, rrm2_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_art, rrm2_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe, rrm2_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm2_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md3_khb-kh8, rrm2_kh1-kh6_kh7a_md1l1_md3_khb-kh8
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md3_khb-kh8_art, rrm2_kh1-kh6_kh7a_md1l1_md3_khb-kh8_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe, rrm2_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe_art, rrm2_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_art, rrm2_kh1-kh6_md1l1_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md2, rrm2_kh1-kh6_md1l1_md2
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md2_art, rrm2_kh1-kh6_md1l1_md2_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md2_md3, rrm2_kh1-kh6_md1l1_md2_md3
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md2_md3_art, rrm2_kh1-kh6_md1l1_md2_md3_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md2_md3_wwe, rrm2_kh1-kh6_md1l1_md2_md3_wwe
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md2_md3_wwe_art, rrm2_kh1-kh6_md1l1_md2_md3_wwe_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md2_wwe, rrm2_kh1-kh6_md1l1_md2_wwe
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md2_wwe_art, rrm2_kh1-kh6_md1l1_md2_wwe_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md3, rrm2_kh1-kh6_md1l1_md3
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md3_art, rrm2_kh1-kh6_md1l1_md3_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md3_wwe, rrm2_kh1-kh6_md1l1_md3_wwe
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_md3_wwe_art, rrm2_kh1-kh6_md1l1_md3_wwe_art
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_wwe, rrm2_kh1-kh6_md1l1_wwe
+RRM2_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh1-kh6_md1_wwe_art, rrm2_kh1-kh6_md1l1_wwe_art
+RRM2_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_khb-kh8, rrm2_kh7a_md1l1_khb-kh8
+RRM2_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_khb-kh8_art, rrm2_kh7a_md1l1_khb-kh8_art
+RRM2_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_khb-kh8_wwe, rrm2_kh7a_md1l1_khb-kh8_wwe
+RRM2_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_khb-kh8_wwe_art, rrm2_kh7a_md1l1_khb-kh8_wwe_art
+RRM2_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md2_khb-kh8, rrm2_kh7a_md1l1_md2_khb-kh8
+RRM2_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md2_khb-kh8_art, rrm2_kh7a_md1l1_md2_khb-kh8_art
+RRM2_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md2_khb-kh8_wwe, rrm2_kh7a_md1l1_md2_khb-kh8_wwe
+RRM2_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md2_khb-kh8_wwe_art, rrm2_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM2_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md2_md3_khb-kh8, rrm2_kh7a_md1l1_md2_md3_khb-kh8
+RRM2_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md2_md3_khb-kh8_art, rrm2_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM2_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md2_md3_khb-kh8_wwe, rrm2_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM2_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm2_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM2_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md3_khb-kh8, rrm2_kh7a_md1l1_md3_khb-kh8
+RRM2_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md3_khb-kh8_art, rrm2_kh7a_md1l1_md3_khb-kh8_art
+RRM2_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md3_khb-kh8_wwe, rrm2_kh7a_md1l1_md3_khb-kh8_wwe
+RRM2_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_kh7a_md1_md3_khb-kh8_wwe_art, rrm2_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM2_MD1_ART.fasta
+  Expected AF3 dir(s): rrm2_md1_art, rrm2_md1l1_art
+RRM2_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm2_md1_md2, rrm2_md1l1_md2
+RRM2_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm2_md1_md2_art, rrm2_md1l1_md2_art
+RRM2_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm2_md1_md2_md3, rrm2_md1l1_md2_md3
+RRM2_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm2_md1_md2_md3_art, rrm2_md1l1_md2_md3_art
+RRM2_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm2_md1_md2_md3_wwe, rrm2_md1l1_md2_md3_wwe
+RRM2_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_md1_md2_md3_wwe_art, rrm2_md1l1_md2_md3_wwe_art
+RRM2_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm2_md1_md2_wwe, rrm2_md1l1_md2_wwe
+RRM2_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_md1_md2_wwe_art, rrm2_md1l1_md2_wwe_art
+RRM2_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm2_md1_md3, rrm2_md1l1_md3
+RRM2_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm2_md1_md3_art, rrm2_md1l1_md3_art
+RRM2_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm2_md1_md3_wwe, rrm2_md1l1_md3_wwe
+RRM2_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_md1_md3_wwe_art, rrm2_md1l1_md3_wwe_art
+RRM2_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm2_md1_wwe, rrm2_md1l1_wwe
+RRM2_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_md1_wwe_art, rrm2_md1l1_wwe_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_khb-kh8, rrm2_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_khb-kh8_art, rrm2_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_khb-kh8_wwe, rrm2_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_wwe
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_khb-kh8_wwe_art, rrm2_rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_wwe_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_art, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe_art, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_art, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_art, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe_art, rrm2_rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_art, rrm2_rrm3_kh1-kh6_md1l1_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md2, rrm2_rrm3_kh1-kh6_md1l1_md2
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md2_art, rrm2_rrm3_kh1-kh6_md1l1_md2_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md2_md3, rrm2_rrm3_kh1-kh6_md1l1_md2_md3
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md2_md3_art, rrm2_rrm3_kh1-kh6_md1l1_md2_md3_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md2_md3_wwe, rrm2_rrm3_kh1-kh6_md1l1_md2_md3_wwe
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md2_md3_wwe_art, rrm2_rrm3_kh1-kh6_md1l1_md2_md3_wwe_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md2_wwe, rrm2_rrm3_kh1-kh6_md1l1_md2_wwe
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md2_wwe_art, rrm2_rrm3_kh1-kh6_md1l1_md2_wwe_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md3, rrm2_rrm3_kh1-kh6_md1l1_md3
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md3_art, rrm2_rrm3_kh1-kh6_md1l1_md3_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md3_wwe, rrm2_rrm3_kh1-kh6_md1l1_md3_wwe
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_md3_wwe_art, rrm2_rrm3_kh1-kh6_md1l1_md3_wwe_art
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_wwe, rrm2_rrm3_kh1-kh6_md1l1_wwe
+RRM2_RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh1-kh6_md1_wwe_art, rrm2_rrm3_kh1-kh6_md1l1_wwe_art
+RRM2_RRM3_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_khb-kh8, rrm2_rrm3_kh7a_md1l1_khb-kh8
+RRM2_RRM3_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_khb-kh8_art, rrm2_rrm3_kh7a_md1l1_khb-kh8_art
+RRM2_RRM3_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_khb-kh8_wwe, rrm2_rrm3_kh7a_md1l1_khb-kh8_wwe
+RRM2_RRM3_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_khb-kh8_wwe_art, rrm2_rrm3_kh7a_md1l1_khb-kh8_wwe_art
+RRM2_RRM3_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md2_khb-kh8, rrm2_rrm3_kh7a_md1l1_md2_khb-kh8
+RRM2_RRM3_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md2_khb-kh8_art, rrm2_rrm3_kh7a_md1l1_md2_khb-kh8_art
+RRM2_RRM3_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md2_khb-kh8_wwe, rrm2_rrm3_kh7a_md1l1_md2_khb-kh8_wwe
+RRM2_RRM3_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md2_khb-kh8_wwe_art, rrm2_rrm3_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM2_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md2_md3_khb-kh8, rrm2_rrm3_kh7a_md1l1_md2_md3_khb-kh8
+RRM2_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md2_md3_khb-kh8_art, rrm2_rrm3_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM2_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md2_md3_khb-kh8_wwe, rrm2_rrm3_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM2_RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm2_rrm3_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM2_RRM3_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md3_khb-kh8, rrm2_rrm3_kh7a_md1l1_md3_khb-kh8
+RRM2_RRM3_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md3_khb-kh8_art, rrm2_rrm3_kh7a_md1l1_md3_khb-kh8_art
+RRM2_RRM3_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md3_khb-kh8_wwe, rrm2_rrm3_kh7a_md1l1_md3_khb-kh8_wwe
+RRM2_RRM3_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_kh7a_md1_md3_khb-kh8_wwe_art, rrm2_rrm3_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM2_RRM3_MD1_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_art, rrm2_rrm3_md1l1_art
+RRM2_RRM3_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md2, rrm2_rrm3_md1l1_md2
+RRM2_RRM3_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md2_art, rrm2_rrm3_md1l1_md2_art
+RRM2_RRM3_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md2_md3, rrm2_rrm3_md1l1_md2_md3
+RRM2_RRM3_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md2_md3_art, rrm2_rrm3_md1l1_md2_md3_art
+RRM2_RRM3_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md2_md3_wwe, rrm2_rrm3_md1l1_md2_md3_wwe
+RRM2_RRM3_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md2_md3_wwe_art, rrm2_rrm3_md1l1_md2_md3_wwe_art
+RRM2_RRM3_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md2_wwe, rrm2_rrm3_md1l1_md2_wwe
+RRM2_RRM3_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md2_wwe_art, rrm2_rrm3_md1l1_md2_wwe_art
+RRM2_RRM3_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md3, rrm2_rrm3_md1l1_md3
+RRM2_RRM3_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md3_art, rrm2_rrm3_md1l1_md3_art
+RRM2_RRM3_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md3_wwe, rrm2_rrm3_md1l1_md3_wwe
+RRM2_RRM3_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_md3_wwe_art, rrm2_rrm3_md1l1_md3_wwe_art
+RRM2_RRM3_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_wwe, rrm2_rrm3_md1l1_wwe
+RRM2_RRM3_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm2_rrm3_md1_wwe_art, rrm2_rrm3_md1l1_wwe_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_khb-kh8, rrm3_kh1-kh6_kh7a_md1l1_khb-kh8
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_khb-kh8_art, rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_khb-kh8_wwe, rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_wwe
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_khb-kh8_wwe_art, rrm3_kh1-kh6_kh7a_md1l1_khb-kh8_wwe_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8, rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_art, rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe, rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md2_khb-kh8_wwe_art, rrm3_kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8, rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_art, rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe, rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8, rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_art, rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe, rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_kh7a_md1_md3_khb-kh8_wwe_art, rrm3_kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_art, rrm3_kh1-kh6_md1l1_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md2, rrm3_kh1-kh6_md1l1_md2
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md2_art, rrm3_kh1-kh6_md1l1_md2_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md2_md3, rrm3_kh1-kh6_md1l1_md2_md3
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md2_md3_art, rrm3_kh1-kh6_md1l1_md2_md3_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md2_md3_wwe, rrm3_kh1-kh6_md1l1_md2_md3_wwe
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md2_md3_wwe_art, rrm3_kh1-kh6_md1l1_md2_md3_wwe_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md2_wwe, rrm3_kh1-kh6_md1l1_md2_wwe
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md2_wwe_art, rrm3_kh1-kh6_md1l1_md2_wwe_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md3, rrm3_kh1-kh6_md1l1_md3
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md3_art, rrm3_kh1-kh6_md1l1_md3_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md3_wwe, rrm3_kh1-kh6_md1l1_md3_wwe
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_md3_wwe_art, rrm3_kh1-kh6_md1l1_md3_wwe_art
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_wwe, rrm3_kh1-kh6_md1l1_wwe
+RRM3_KH1_KH2_KH3_KH4_KH5_KH6_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh1-kh6_md1_wwe_art, rrm3_kh1-kh6_md1l1_wwe_art
+RRM3_KH7a_MD1_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_khb-kh8, rrm3_kh7a_md1l1_khb-kh8
+RRM3_KH7a_MD1_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_khb-kh8_art, rrm3_kh7a_md1l1_khb-kh8_art
+RRM3_KH7a_MD1_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_khb-kh8_wwe, rrm3_kh7a_md1l1_khb-kh8_wwe
+RRM3_KH7a_MD1_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_khb-kh8_wwe_art, rrm3_kh7a_md1l1_khb-kh8_wwe_art
+RRM3_KH7a_MD1_MD2_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md2_khb-kh8, rrm3_kh7a_md1l1_md2_khb-kh8
+RRM3_KH7a_MD1_MD2_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md2_khb-kh8_art, rrm3_kh7a_md1l1_md2_khb-kh8_art
+RRM3_KH7a_MD1_MD2_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md2_khb-kh8_wwe, rrm3_kh7a_md1l1_md2_khb-kh8_wwe
+RRM3_KH7a_MD1_MD2_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md2_khb-kh8_wwe_art, rrm3_kh7a_md1l1_md2_khb-kh8_wwe_art
+RRM3_KH7a_MD1_MD2_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md2_md3_khb-kh8, rrm3_kh7a_md1l1_md2_md3_khb-kh8
+RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md2_md3_khb-kh8_art, rrm3_kh7a_md1l1_md2_md3_khb-kh8_art
+RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md2_md3_khb-kh8_wwe, rrm3_kh7a_md1l1_md2_md3_khb-kh8_wwe
+RRM3_KH7a_MD1_MD2_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md2_md3_khb-kh8_wwe_art, rrm3_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+RRM3_KH7a_MD1_MD3_KHb_KH8.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md3_khb-kh8, rrm3_kh7a_md1l1_md3_khb-kh8
+RRM3_KH7a_MD1_MD3_KHb_KH8_ART.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md3_khb-kh8_art, rrm3_kh7a_md1l1_md3_khb-kh8_art
+RRM3_KH7a_MD1_MD3_KHb_KH8_WWE.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md3_khb-kh8_wwe, rrm3_kh7a_md1l1_md3_khb-kh8_wwe
+RRM3_KH7a_MD1_MD3_KHb_KH8_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_kh7a_md1_md3_khb-kh8_wwe_art, rrm3_kh7a_md1l1_md3_khb-kh8_wwe_art
+RRM3_MD1_ART.fasta
+  Expected AF3 dir(s): rrm3_md1_art, rrm3_md1l1_art
+RRM3_MD1_MD2.fasta
+  Expected AF3 dir(s): rrm3_md1_md2, rrm3_md1l1_md2
+RRM3_MD1_MD2_ART.fasta
+  Expected AF3 dir(s): rrm3_md1_md2_art, rrm3_md1l1_md2_art
+RRM3_MD1_MD2_MD3.fasta
+  Expected AF3 dir(s): rrm3_md1_md2_md3, rrm3_md1l1_md2_md3
+RRM3_MD1_MD2_MD3_ART.fasta
+  Expected AF3 dir(s): rrm3_md1_md2_md3_art, rrm3_md1l1_md2_md3_art
+RRM3_MD1_MD2_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm3_md1_md2_md3_wwe, rrm3_md1l1_md2_md3_wwe
+RRM3_MD1_MD2_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_md1_md2_md3_wwe_art, rrm3_md1l1_md2_md3_wwe_art
+RRM3_MD1_MD2_WWE.fasta
+  Expected AF3 dir(s): rrm3_md1_md2_wwe, rrm3_md1l1_md2_wwe
+RRM3_MD1_MD2_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_md1_md2_wwe_art, rrm3_md1l1_md2_wwe_art
+RRM3_MD1_MD3.fasta
+  Expected AF3 dir(s): rrm3_md1_md3, rrm3_md1l1_md3
+RRM3_MD1_MD3_ART.fasta
+  Expected AF3 dir(s): rrm3_md1_md3_art, rrm3_md1l1_md3_art
+RRM3_MD1_MD3_WWE.fasta
+  Expected AF3 dir(s): rrm3_md1_md3_wwe, rrm3_md1l1_md3_wwe
+RRM3_MD1_MD3_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_md1_md3_wwe_art, rrm3_md1l1_md3_wwe_art
+RRM3_MD1_WWE.fasta
+  Expected AF3 dir(s): rrm3_md1_wwe, rrm3_md1l1_wwe
+RRM3_MD1_WWE_ART.fasta
+  Expected AF3 dir(s): rrm3_md1_wwe_art, rrm3_md1l1_wwe_art

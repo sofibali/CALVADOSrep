@@ -1,0 +1,7 @@
+1c6313d04df adding all new pocket analysis
+7d93b31c8b8 improved docummentation and parsed directory structures
+589f32e5d39 building pipeline, and production of all fasta files all inital structure states with AF3 and inital analysis of the resulting structures
+01b5d193875 Remove large parp14_data.json file and add to .gitignore
+a32a4028bb9 Remove large parp14_data.json file and add to .gitignore
+77da57f31a7 Initial commit: PARP14 AlphaFold3 analysis pipeline
+17cf40e6ef8 Initial commit: PARP14 AlphaFold3 analysis pipeline

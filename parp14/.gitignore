@@ -1,0 +1,87 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environment
+venv/
+ENV/
+env/
+.venv
+
+# AlphaFold3 outputs (large files)
+alphafold_outputs/
+jax_cache/
+alphafold_worker_logs/
+*.log
+
+# Generated domain combinations (can be regenerated)
+domain_combinations/
+alphafold_inputs/
+alphafold_inputs_missing/
+
+# AF3 batch run artifacts
+.jax_cache/
+.af3_batch_gpu*/
+.inference_output_gpu*/
+
+# Analysis outputs (can be regenerated)
+analysis_results/
+analysis_output/
+contact_maps/
+figures/
+results/
+
+# Data directories
+calvados_simulations/
+domains_ignoreSplit/
+mac1_rishav_test/
+2pv7/
+
+# Large test directories
+pipeline_outputs/
+pipeline_outputs_test*/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Temporary files
+*.tmp
+*.bak
+test.json
+
+# Large data files (>100MB)
+parp14_data.json
+
+# PyMOL session files (binary, regenerable)
+*.pse
