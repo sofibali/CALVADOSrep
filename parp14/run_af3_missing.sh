@@ -29,6 +29,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GPU0=0
 GPU1=1
 MSA_PARALLEL=8
+MSA_CPUS_PER_JOB=2         # CPU cores per MSA job (MSA_PARALLEL * MSA_CPUS_PER_JOB = total cores used)
 DRY_RUN=0
 SKIP_MSA=0
 SKIP_INFERENCE=0
@@ -49,6 +50,7 @@ while [[ $# -gt 0 ]]; do
         --gpu0)           GPU0="$2"; shift 2 ;;
         --gpu1)           GPU1="$2"; shift 2 ;;
         --msa-parallel)   MSA_PARALLEL="$2"; shift 2 ;;
+        --msa-cpus)       MSA_CPUS_PER_JOB="$2"; shift 2 ;;
         --skip-msa)       SKIP_MSA=1; shift ;;
         --skip-inference) SKIP_INFERENCE=1; shift ;;
         --msa-only)       SKIP_INFERENCE=1; shift ;;
@@ -113,7 +115,7 @@ echo "Already completed:     $ALREADY_DONE"
 echo "Still needed:          $N_TODO"
 echo "JAX cache:             $JAX_CACHE_DIR"
 echo ""
-echo "--- Phase 1: Data Pipeline (CPU, $MSA_PARALLEL parallel) ---"
+echo "--- Phase 1: Data Pipeline ($MSA_PARALLEL jobs × $MSA_CPUS_PER_JOB cores = $(( MSA_PARALLEL * MSA_CPUS_PER_JOB )) total cores) ---"
 if [ $SKIP_MSA -eq 1 ]; then
     echo "  SKIPPED (--skip-msa)"
 else
@@ -152,12 +154,23 @@ run_msa_for_json() {
         return 0
     fi
 
+    # Limit CPU cores: cap threads for hmmer/hhblits/jackhmmer inside AF3
+    export OMP_NUM_THREADS=$MSA_CPUS_PER_JOB
+    export OPENMM_CPU_THREADS=$MSA_CPUS_PER_JOB
+    export MKL_NUM_THREADS=$MSA_CPUS_PER_JOB
+    export NUMEXPR_MAX_THREADS=$MSA_CPUS_PER_JOB
+    export TF_NUM_INTEROP_THREADS=$MSA_CPUS_PER_JOB
+    export TF_NUM_INTRAOP_THREADS=$MSA_CPUS_PER_JOB
+    export XLA_FLAGS="--xla_cpu_multi_thread_eigen=false"
+
     /programs/x86_64-linux/system/sbgrid_bin/run_alphafold.py \
         --db_dir "$DB_DIR" \
         --model_dir "$MODEL_DIR" \
         --output_dir "$OUTPUT_DIR" \
         --json_path "$json_file" \
         --norun_inference \
+        --nhmmer_n_cpu "$MSA_CPUS_PER_JOB" \
+        --jackhmmer_n_cpu "$MSA_CPUS_PER_JOB" \
         &> "$OUTPUT_DIR/logs/msa_${name,,}.log"
 }
 
@@ -169,7 +182,7 @@ if [ $SKIP_MSA -eq 0 ]; then
 
     mkdir -p "$OUTPUT_DIR/logs"
     export -f run_msa_for_json
-    export OUTPUT_DIR DB_DIR MODEL_DIR
+    export OUTPUT_DIR DB_DIR MODEL_DIR MSA_CPUS_PER_JOB
 
     ACTIVE=0
     SUBMITTED=0

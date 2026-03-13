@@ -111,9 +111,19 @@ Two-phase pipeline for studying PARP14 (1801 residues) domain deletion variants:
 - AF3 run: 2-phase (MSA on CPU parallel, then inference with `--input_dir` for single model load per GPU)
 
 **Phase 2 — MD Simulations** (`examples/PARP14_MDP/`):
-- CALVADOS CG-MD on high-confidence structures (25 replicates × 50 ns each = 1 μs compiled)
-- Protocol: 50 ns production, discard first 10 ns equilibration, compile 25 × 40 ns = 10,000 frames
-- See `docs/PARP14_PROJECT.md` for full protocol and scripts
+- CALVADOS CG-MD on AF3 structures, 4 construct sets x 25 replicates x 5 ns = 125 ns per set
+- Protocol: 5 ns per replicate, discard first 0.5 ns equilibration, 25 x 4.5 ns = 112.5 ns effective per set
+- **Simulation sets** (prepared by `prepare_and_run_all.py`):
+  - `fl` — Full-length (1801 res, 300 nm box, EBI AF2, `colabfold=1`)
+  - `md` — Macrodomains only: MD1L1+MD2+MD3 (586 res, 80 nm box)
+  - `core` — KH7a+MD1L1+MD2+MD3+KHb-KH8+WWE+ART (1051 res, 120 nm box)
+  - `mka` — MD1L1+MD2+MD3+KHb-KH8+WWE+ART (999 res, 100 nm box)
+- Domain restraints use FL structured-core boundaries (from `input/domains.yaml`), mapped to construct numbering; inter-domain linkers left flexible (unrestrained)
+- Directory naming: `{set}_seed-{1-5}_sample-{0-4}/` (e.g. `md_seed-1_sample-0/`)
+- Shared inputs per construct: `input_{set}/domains.yaml` + `residues_CALVADOS3.csv`
+- Launch: `bash run_all.sh parallel` (or `run_all.sh fl`, `run_all.sh md`, etc.)
+- **Active site analysis** (`analyze_active_sites.py`): contact number (exposure proxy), inter-site distances, radial position, RMSF, domain contact profiles for MD1/MD2/MD3/ART
+- See `docs/PARP14_PROJECT.md` for full protocol
 
 **PARP14 Domain Architecture (11 grouped units for combinatorial library):**
 
