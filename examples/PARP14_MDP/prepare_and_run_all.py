@@ -2,25 +2,27 @@
 """
 Prepare and launch all PARP14 CALVADOS simulations.
 
-Four simulation sets, 25 replicates each, 125 ns total per set:
-  1. fl  — Full-length (1801 res), EBI AF2 structure, same for all 25
-  2. md  — Macrodomains only: MD1L1+MD2+MD3 (586 res)
-  3. core — Core: KH7a+MD1L1+MD2+MD3+KHb-KH8+WWE+ART (1051 res)
-  4. mka — MD1L1+MD2+MD3+KHb-KH8+ART (930 res)
+Six simulation sets, 25 replicates each:
+  1. fl     — Full-length (1801 res), EBI AF2 structure, 20 ns
+  2. md     — Macrodomains only: MD1L1+MD2+MD3 (586 res), 20 ns
+  3. core   — Core: KH7a+MD1L1+MD2+MD3+KHb-KH8+WWE+ART (1051 res), 20 ns
+  4. mka    — MD1L1+MD2+MD3+KHb-KH8+WWE+ART (999 res), 20 ns
+  5. norrm  — No-RRM: KH1-6 through ART (1474 res), 20 ns
+  6. noart  — No-ART: KH1-6 through WWE (1275 res), 20 ns
+
+Directory layout (nested):
+  {set}/input/                  # shared inputs (domains.yaml, residues)
+  {set}/seed-{N}_sample-{M}/   # per-replicate simulation directory
 
 Domain restraint boundaries use the FL PARP14 simulation domains.yaml
 (structured cores only), mapped to construct numbering. Linker regions
 between domains are left flexible (unrestrained).
 
-Per replicate: 5 ns = 500,000 steps
-Equilibration: discard first 0.5 ns (50 frames)
-Effective sampling: 25 x 4.5 ns = 112.5 ns per set
-
 Usage:
-    python prepare_and_run_all.py --prepare            # prepare all inputs
-    python prepare_and_run_all.py --prepare --set md   # prepare one set only
-    python prepare_and_run_all.py --write-launcher     # write bash launcher
-    python prepare_and_run_all.py --run                # run all sequentially
+    python prepare_and_run_all.py --prepare              # prepare all inputs
+    python prepare_and_run_all.py --prepare --set norrm  # prepare one set only
+    python prepare_and_run_all.py --write-launcher       # write bash launcher
+    python prepare_and_run_all.py --run                  # run all sequentially
 """
 
 import os
@@ -121,6 +123,27 @@ CONSTRUCTS = {
         'af3_dir': 'md1l1_md2_md3_khb-kh8_wwe_art',
         'sysname': 'parp14_mka',
         'box': 100,
+    },
+    'norrm': {
+        'label': 'No-RRM (KH1-6+KH7a+MD1L1+MD2+MD3+KHb-KH8+WWE+ART)',
+        'units': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+        'af3_dir': 'kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art',
+        'sysname': 'parp14_norrm',
+        'box': 250,
+    },
+    'noart': {
+        'label': 'No-ART (KH1-6+KH7a+MD1L1+MD2+MD3+KHb-KH8+WWE)',
+        'units': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+        'af3_dir': 'kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe',
+        'sysname': 'parp14_noart',
+        'box': 200,
+    },
+    'md3art': {
+        'label': 'MD3-ART (MD3+KHb-KH8+WWE+ART)',
+        'units': ['md3', 'khb-kh8', 'wwe', 'art'],
+        'af3_dir': 'md3_khb-kh8_wwe_art_20260320_175029',
+        'sysname': 'parp14_md3art',
+        'box': 80,
     },
 }
 
@@ -259,24 +282,39 @@ if __name__ == "__main__":
 # Prepare full-length replicates
 # ============================================================
 
-def prepare_fl():
+def prepare_fl(n_steps=N_STEPS):
     """Prepare 25 full-length replicates (same structure, different random seeds)."""
     print("\n" + "=" * 70)
-    print("Preparing: Full-Length PARP14 (1801 res, 25 x 5 ns)")
+    print(f"Preparing: Full-Length PARP14 (1801 res, 25 x {n_steps * 0.01 / 1000:.0f} ns)")
     print("=" * 70)
 
-    fl_input = os.path.join(CWD, 'input')
+    set_dir = os.path.join(CWD, 'fl')
+    os.makedirs(set_dir, exist_ok=True)
+
+    # Shared input — use fl/input/
+    fl_input = os.path.join(set_dir, 'input')
+    os.makedirs(fl_input, exist_ok=True)
+
+    # Ensure shared files are in fl/input/
+    src_input = os.path.join(CWD, 'input')
+    for fname in ['parp14.pdb', 'domains.yaml', 'residues_CALVADOS3.csv']:
+        dest = os.path.join(fl_input, fname)
+        src = os.path.join(src_input, fname)
+        if not os.path.isfile(dest) and os.path.isfile(src):
+            shutil.copy2(src, dest)
+
     fl_pdb = os.path.join(fl_input, 'parp14.pdb')
     fl_domains = os.path.join(fl_input, 'domains.yaml')
+    fl_residues = os.path.join(fl_input, 'residues_CALVADOS3.csv')
 
     n_prepared = 0
     for seed in SEEDS:
         for sample in SAMPLES:
-            sim_name = f'fl_seed-{seed}_sample-{sample}'
-            sim_dir = os.path.join(CWD, sim_name)
+            rep_name = f'seed-{seed}_sample-{sample}'
+            sim_dir = os.path.join(set_dir, rep_name)
             input_dir = os.path.join(sim_dir, 'input')
 
-            print(f"  Preparing: {sim_name}")
+            print(f"  Preparing: fl/{rep_name}")
             os.makedirs(input_dir, exist_ok=True)
 
             # Copy FL PDB
@@ -291,7 +329,7 @@ def prepare_fl():
                 box=[300, 300, 300],
                 temp=TEMP, ionic=IONIC, pH=PH,
                 topol='center',
-                wfreq=WFREQ, steps=N_STEPS, runtime=0,
+                wfreq=WFREQ, steps=n_steps, runtime=0,
                 platform=PLATFORM, threads=THREADS,
                 restart='checkpoint', frestart='restart.chk',
                 verbose=True,
@@ -302,7 +340,7 @@ def prepare_fl():
             components = Components(
                 molecule_type='protein', nmol=1,
                 restraint=True, charge_termini='both',
-                fresidues=FL_RESIDUES,
+                fresidues=fl_residues,
                 fdomains=fl_domains,
                 pdb_folder=input_dir,
                 restraint_type='harmonic', use_com=True,
@@ -322,7 +360,7 @@ def prepare_fl():
 # Prepare AF3 construct replicates (generic)
 # ============================================================
 
-def prepare_construct(key):
+def prepare_construct(key, n_steps=N_STEPS):
     """Prepare 25 replicates for a given construct."""
     info = CONSTRUCTS[key]
     sysname = info['sysname']
@@ -334,12 +372,14 @@ def prepare_construct(key):
     n_residues = sum(e - s + 1 for s, e in fl_blocks)
     domains, domain_labels = compute_construct_domains(info['units'])
 
+    ns = n_steps * 0.01 / 1000
     print(f"\n{'='*70}")
-    print(f"Preparing: {info['label']} ({n_residues} res, 25 x 5 ns)")
+    print(f"Preparing: {info['label']} ({n_residues} res, 25 x {ns:.0f} ns)")
     print(f"{'='*70}")
 
-    # Create shared input dir
-    shared_input = os.path.join(CWD, f'input_{key}')
+    # Create nested set dir and shared input dir
+    set_dir = os.path.join(CWD, key)
+    shared_input = os.path.join(set_dir, 'input')
     os.makedirs(shared_input, exist_ok=True)
 
     # Write domains.yaml
@@ -357,7 +397,6 @@ def prepare_construct(key):
         restrained.update(range(s, e + 1))
     flexible = set(range(1, n_residues + 1)) - restrained
     if flexible:
-        # Show as ranges
         flex_sorted = sorted(flexible)
         ranges = []
         start = flex_sorted[0]
@@ -383,8 +422,8 @@ def prepare_construct(key):
     for seed in SEEDS:
         for sample in SAMPLES:
             seed_sample = f'seed-{seed}_sample-{sample}'
-            sim_name = f'{key}_seed-{seed}_sample-{sample}'
-            sim_dir = os.path.join(CWD, sim_name)
+            rep_name = seed_sample
+            sim_dir = os.path.join(set_dir, rep_name)
             input_dir = os.path.join(sim_dir, 'input')
 
             cif_path = os.path.join(af3_dir, seed_sample, 'model.cif')
@@ -395,7 +434,7 @@ def prepare_construct(key):
                 n_skipped += 1
                 continue
 
-            print(f"  Preparing: {sim_name}")
+            print(f"  Preparing: {key}/{rep_name}")
             os.makedirs(input_dir, exist_ok=True)
 
             # Convert CIF -> PDB
@@ -412,7 +451,7 @@ def prepare_construct(key):
                 box=[box, box, box],
                 temp=TEMP, ionic=IONIC, pH=PH,
                 topol='center',
-                wfreq=WFREQ, steps=N_STEPS, runtime=0,
+                wfreq=WFREQ, steps=n_steps, runtime=0,
                 platform=PLATFORM, threads=THREADS,
                 restart='checkpoint', frestart='restart.chk',
                 verbose=True,
@@ -445,7 +484,7 @@ def prepare_construct(key):
 
 def write_launcher():
     """Write a bash script that runs all simulations."""
-    all_sets = ['fl', 'md', 'core', 'mka']
+    all_sets = ['fl', 'md', 'core', 'mka', 'norrm', 'noart', 'md3art']
     launcher_path = os.path.join(CWD, 'run_all.sh')
     with open(launcher_path, 'w') as f:
         f.write(f"""#!/bin/bash
@@ -494,22 +533,28 @@ run_set() {{
     echo "=================================================="
     for seed in 1 2 3 4 5; do
         for sample in 0 1 2 3 4; do
-            run_sim "${{prefix}}_seed-${{seed}}_sample-${{sample}}"
+            run_sim "${{prefix}}/seed-${{seed}}_sample-${{sample}}"
         done
     done
 }}
 
 # Determine which sets to run
 case "$MODE" in
-    fl)   run_set "fl" "Full-Length PARP14 (1801 res)" ;;
-    md)   run_set "md" "Macrodomains only (586 res)" ;;
-    core) run_set "core" "Core construct (1051 res)" ;;
-    mka)  run_set "mka" "MD+KHb+ART construct (930 res)" ;;
+    fl)    run_set "fl" "Full-Length PARP14 (1801 res)" ;;
+    md)    run_set "md" "Macrodomains only (586 res)" ;;
+    core)  run_set "core" "Core construct (1051 res)" ;;
+    mka)   run_set "mka" "MD+KHb+ART construct (930 res)" ;;
+    norrm) run_set "norrm" "No-RRM (1474 res)" ;;
+    noart)  run_set "noart" "No-ART (1275 res)" ;;
+    md3art) run_set "md3art" "MD3-ART (595 res)" ;;
     *)
         run_set "fl" "Full-Length PARP14 (1801 res)"
         run_set "md" "Macrodomains only (586 res)"
         run_set "core" "Core construct (1051 res)"
         run_set "mka" "MD+KHb+ART construct (930 res)"
+        run_set "norrm" "No-RRM (1474 res)"
+        run_set "noart" "No-ART (1275 res)"
+        run_set "md3art" "MD3-ART (595 res)"
         ;;
 esac
 
@@ -552,7 +597,7 @@ def main():
     parser.add_argument('--run', action='store_true', help='Run all simulations sequentially')
     parser.add_argument('--write-launcher', action='store_true', help='Write bash launcher script')
     parser.add_argument('--set', type=str, default=None,
-                        choices=['fl', 'md', 'core', 'mka'],
+                        choices=['fl', 'md', 'core', 'mka', 'norrm', 'noart', 'md3art'],
                         help='Only prepare/run a specific set')
     args = parser.parse_args()
 
@@ -561,7 +606,7 @@ def main():
         print("\n  Specify at least one of: --prepare, --run, --write-launcher")
         sys.exit(1)
 
-    all_sets = ['fl', 'md', 'core', 'mka']
+    all_sets = ['fl', 'md', 'core', 'mka', 'norrm', 'noart', 'md3art']
     active_sets = [args.set] if args.set else all_sets
 
     print("=" * 70)
@@ -588,13 +633,12 @@ def main():
     if args.run:
         print("\n--- Running simulations sequentially ---")
         for key in active_sets:
-            prefix = key
             for seed in SEEDS:
                 for sample in SAMPLES:
-                    sim_name = f'{prefix}_seed-{seed}_sample-{sample}'
-                    sim_dir = os.path.join(CWD, sim_name)
+                    rep_name = f'seed-{seed}_sample-{sample}'
+                    sim_dir = os.path.join(CWD, key, rep_name)
                     if os.path.isfile(os.path.join(sim_dir, 'config.yaml')):
-                        print(f"\n  Running: {sim_name}")
+                        print(f"\n  Running: {key}/{rep_name}")
                         subprocess.run([sys.executable, 'run.py'],
                                        cwd=sim_dir, check=True)
 

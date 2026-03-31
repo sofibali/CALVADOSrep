@@ -372,7 +372,7 @@ def plot_contact_scatter(results, contact_type, ylabel, title, outpath,
 
     plt.tight_layout()
     fig.savefig(outpath + '.png', dpi=200, bbox_inches='tight')
-    fig.savefig(outpath + '.pdf', bbox_inches='tight')
+    fig.savefig(outpath + '.svg', bbox_inches='tight')
     plt.close()
     print(f"  Saved: {outpath}.png ({len(results)} constructs, {len(xs)} points)")
 
@@ -415,10 +415,19 @@ def plot_2d_contact_map(results, pair_key, title, outpath, af2_pairs=None):
     ys = np.array(ys)
     cs = np.array(cs, dtype=float)
 
-    fig, ax = plt.subplots(figsize=(12, 12))
+    fig, ax = plt.subplots(figsize=(14, 14))
 
-    sc = ax.scatter(xs, ys, c=cs, s=1.5, alpha=0.6, cmap='hot_r',
-                    rasterized=True, edgecolors='none',
+    # Scale dot size: on a 14-inch figure with 1801 residues, each
+    # residue is ~0.56 pts. We want dots spanning ~8 residues so they
+    # are clearly visible. Using data-coordinate sizing via transforms.
+    fig_inches = 14
+    dpi_render = 200
+    px_per_res = fig_inches * dpi_render / N_FL  # ~1.55 px per residue
+    dot_px = px_per_res * 8  # ~12 px diameter = ~8 residues
+    dot_size = (dot_px * 72 / dpi_render) ** 2  # convert to points^2
+
+    sc = ax.scatter(xs, ys, c=cs, s=dot_size, alpha=0.7, cmap='hot_r',
+                    marker='s', rasterized=True, edgecolors='none',
                     norm=LogNorm(vmin=max(1, cs.min()), vmax=cs.max()))
 
     cbar = plt.colorbar(sc, ax=ax, shrink=0.8)
@@ -426,22 +435,22 @@ def plot_2d_contact_map(results, pair_key, title, outpath, af2_pairs=None):
 
     # Domain grid lines and labels
     for name, start, end, color in DOMAIN_GROUPS:
-        ax.axvline(start, color=color, linewidth=0.3, alpha=0.5)
-        ax.axhline(start, color=color, linewidth=0.3, alpha=0.5)
-        # Label along diagonal
+        ax.axvline(start, color=color, linewidth=0.5, alpha=0.6)
+        ax.axhline(start, color=color, linewidth=0.5, alpha=0.6)
         mid = (start + end) / 2
-        ax.text(mid, mid, name, ha='center', va='center', fontsize=6,
-                color=color, fontweight='bold', alpha=0.7,
-                bbox=dict(boxstyle='round,pad=0.2', fc='white', alpha=0.7, ec='none'))
+        ax.text(mid, mid, name, ha='center', va='center', fontsize=7,
+                color=color, fontweight='bold', alpha=0.8,
+                bbox=dict(boxstyle='round,pad=0.2', fc='white', alpha=0.8, ec='none'))
 
-    # AF2 reference pairs as hollow circles
+    # AF2 reference pairs as hollow circles (slightly larger)
     if af2_pairs:
         af2_x, af2_y = [], []
         for (i, j) in af2_pairs:
             af2_x.extend([i + 1, j + 1])
             af2_y.extend([j + 1, i + 1])
-        ax.scatter(af2_x, af2_y, s=8, facecolors='none', edgecolors='blue',
-                   linewidths=0.5, alpha=0.3, label='AF2 FL contact', zorder=0)
+        af2_dot_size = dot_size * 1.3
+        ax.scatter(af2_x, af2_y, s=af2_dot_size, facecolors='none', edgecolors='blue',
+                   linewidths=0.6, alpha=0.3, label='AF2 FL contact', zorder=0)
 
     ax.set_xlabel('Full-Length Residue Index', fontsize=12)
     ax.set_ylabel('Full-Length Residue Index', fontsize=12)
@@ -456,11 +465,65 @@ def plot_2d_contact_map(results, pair_key, title, outpath, af2_pairs=None):
 
     plt.tight_layout()
     fig.savefig(outpath + '.png', dpi=200, bbox_inches='tight')
-    fig.savefig(outpath + '.pdf', bbox_inches='tight')
+    fig.savefig(outpath + '.svg', bbox_inches='tight')
     plt.close()
 
     n_unique = len(pair_stats)
     print(f"  Saved: {outpath}.png ({n_unique} unique pairs, {len(results)} constructs)")
+
+
+def plot_fl_contact_scatter(ll_pairs, la_pairs, outdir):
+    """Simple scatter plot of FL Lys-Lys and Lys-acidic contacts with large dots."""
+
+    for pairs, pair_label, color, fname in [
+        (ll_pairs, f'Lys-Lys (NZ-NZ \u2264 {LYS_LYS_CUTOFF:.0f}\u00c5)', '#8B008B', 'fl_lys_lys_contacts'),
+        (la_pairs, f'Lys-Acidic (NZ to D/E \u2264 {LYS_ACIDIC_CUTOFF:.0f}\u00c5)', '#008080', 'fl_lys_acidic_contacts'),
+    ]:
+        if not pairs:
+            continue
+
+        xs, ys = [], []
+        for (i, j) in pairs:
+            xs.extend([i + 1, j + 1])
+            ys.extend([j + 1, i + 1])
+        xs = np.array(xs)
+        ys = np.array(ys)
+
+        fig, ax = plt.subplots(figsize=(14, 14))
+
+        # Large dots — 30 pt^2 gives clearly visible markers
+        ax.scatter(xs, ys, s=30, c=color, alpha=0.7, marker='o',
+                   edgecolors='black', linewidths=0.3, zorder=3)
+
+        # Domain grid
+        for name, start, end, dcolor in DOMAIN_GROUPS:
+            ax.axvline(start, color=dcolor, linewidth=0.6, alpha=0.5)
+            ax.axvline(end, color=dcolor, linewidth=0.6, alpha=0.5)
+            ax.axhline(start, color=dcolor, linewidth=0.6, alpha=0.5)
+            ax.axhline(end, color=dcolor, linewidth=0.6, alpha=0.5)
+            # Shaded diagonal blocks
+            ax.fill_between([start, end], start, end, alpha=0.04, color=dcolor, zorder=0)
+            mid = (start + end) / 2
+            ax.text(mid, mid, name, ha='center', va='center', fontsize=8,
+                    color=dcolor, fontweight='bold', alpha=0.8,
+                    bbox=dict(boxstyle='round,pad=0.2', fc='white', alpha=0.85, ec='none'),
+                    zorder=4)
+
+        ax.set_xlabel('Full-Length Residue Index', fontsize=13)
+        ax.set_ylabel('Full-Length Residue Index', fontsize=13)
+        ax.set_title(f'PARP14 Full-Length (AF2) — {pair_label}\n'
+                     f'{len(pairs)} unique contacts', fontsize=14, fontweight='bold')
+        ax.set_xlim(1, N_FL)
+        ax.set_ylim(1, N_FL)
+        ax.set_aspect('equal')
+        ax.invert_yaxis()
+
+        plt.tight_layout()
+        outpath = os.path.join(outdir, fname)
+        fig.savefig(outpath + '.png', dpi=200, bbox_inches='tight')
+        fig.savefig(outpath + '.svg', bbox_inches='tight')
+        plt.close()
+        print(f"  Saved: {outpath}.png ({len(pairs)} contacts)")
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -546,6 +609,10 @@ def main():
     n_af2_lys = np.sum(af2_ll > 0)
     n_af2_la = np.sum(af2_la > 0)
     print(f"  AF2: {n_af2_lys} Lys with Lys-Lys contacts, {n_af2_la} Lys with acidic contacts")
+
+    # FL-only contact scatter (large dots, clean)
+    print("\nPlotting FL contact scatter...")
+    plot_fl_contact_scatter(af2_ll_pairs, af2_la_pairs, OUTPUT_DIR)
 
     # Plot: raw contacts
     print("\nPlotting Lys-Lys contacts (NZ-NZ ≤ 16Å)...")
