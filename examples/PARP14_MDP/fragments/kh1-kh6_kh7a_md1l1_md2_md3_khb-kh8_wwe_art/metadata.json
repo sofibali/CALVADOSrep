@@ -1,0 +1,94 @@
+{
+  "fragment": "kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art",
+  "units": [
+    "kh1-kh6",
+    "kh7a",
+    "md1l1",
+    "md2",
+    "md3",
+    "khb-kh8",
+    "wwe",
+    "art"
+  ],
+  "n_residues": 1474,
+  "n_restraint_domains": 14,
+  "n_restrained_residues": 1258,
+  "restraint_labels": [
+    "KH1",
+    "KH2",
+    "KH3",
+    "KH4",
+    "KH5",
+    "KH6",
+    "KH7a",
+    "MD1L1",
+    "MD2",
+    "MD3",
+    "KHb",
+    "KH8",
+    "WWE",
+    "ART"
+  ],
+  "domain_ranges_construct": [
+    [
+      6,
+      65
+    ],
+    [
+      76,
+      135
+    ],
+    [
+      146,
+      201
+    ],
+    [
+      217,
+      269
+    ],
+    [
+      285,
+      346
+    ],
+    [
+      362,
+      413
+    ],
+    [
+      424,
+      475
+    ],
+    [
+      486,
+      654
+    ],
+    [
+      701,
+      869
+    ],
+    [
+      890,
+      1051
+    ],
+    [
+      1062,
+      1134
+    ],
+    [
+      1135,
+      1206
+    ],
+    [
+      1222,
+      1260
+    ],
+    [
+      1286,
+      1464
+    ]
+  ],
+  "n_custom_pairs": 140,
+  "use_custom_kh7a_khb": true,
+  "box_nm": 271,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art/seed-1_sample-0/model.cif"
+}

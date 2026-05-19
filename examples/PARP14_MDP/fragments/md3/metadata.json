@@ -1,0 +1,22 @@
+{
+  "fragment": "md3",
+  "units": [
+    "md3"
+  ],
+  "n_residues": 182,
+  "n_restraint_domains": 1,
+  "n_restrained_residues": 162,
+  "restraint_labels": [
+    "MD3"
+  ],
+  "domain_ranges_construct": [
+    [
+      11,
+      172
+    ]
+  ],
+  "n_custom_pairs": 0,
+  "use_custom_kh7a_khb": false,
+  "box_nm": 77,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/md3/seed-1_sample-0/model.cif"
+}

@@ -1,0 +1,390 @@
+PARP14 CALVADOS Analysis — Glossary of Metrics
+================================================
+
+This file describes each analysis module in analyze_all.py,
+what it computes, what it means physically, and what figures it produces.
+
+
+1. CONFORMATIONAL PROPERTIES (Rg, Ree)
+---------------------------------------
+
+Radius of Gyration (Rg):
+  Mass-weighted root-mean-square distance of all residues from the
+  chain's center of mass. Measures how compact or extended the protein
+  is overall. A smaller Rg means a more compact, globular conformation;
+  a larger Rg means a more extended or unfolded chain.
+
+  Computed per frame using CALVADOS calc_rg, which weights each residue
+  (one bead = one CA) by its amino acid molecular weight from the
+  residues CSV file.
+
+  Units: nm
+
+End-to-End Distance (Ree):
+  Euclidean distance between the first and last residue (N-terminus to
+  C-terminus) of the chain. For a fully compact globular protein Ree is
+  much smaller than the contour length; for an extended or disordered
+  chain Ree approaches the contour length. Together with Rg, Ree
+  characterizes the overall shape: the ratio Ree/Rg distinguishes
+  rod-like (~sqrt(12)) from spherical (~sqrt(5)) conformations.
+
+  Units: nm
+
+Figures:
+  - rg_timeseries.{png,svg}   : Rg vs time for each construct (all 25
+    replicates overlaid, mean +/- SD shaded)
+  - rg_convergence.{png,svg}  : Cumulative running-mean Rg to check
+    equilibration
+  - conf_prop_distributions.{png,svg} : Violin + jitter of per-replicate
+    mean Rg and Ree across constructs
+
+
+2. DISTANCE MAPS (DMAP)
+------------------------
+
+Interdomain COM Distances:
+  For each pair of structural domains in a construct, computes the
+  Euclidean distance between domain centers of mass (COM) at every
+  frame after equilibration. The mean distance map shows which domains
+  are close together (strongly interacting) and which are far apart.
+  The standard deviation map shows which domain pairs have the most
+  variable separation, indicating flexible or dynamic interfaces.
+
+  Only domains identified by the FL restraint boundaries are tracked
+  (RRM1-3, KH1-6, KH7a, MD1, MD2, MD3, KHb-KH8, WWE, ART — whichever
+  are present in the construct).
+
+  Units: nm
+
+Figures:
+  - {set}_dmap_mean.{png,svg} : Mean interdomain COM distance matrix
+  - {set}_dmap_std.{png,svg}  : Standard deviation of interdomain distances
+
+
+3. CONTACT MAPS (CMAP)
+-----------------------
+
+Interdomain Contact Frequency:
+  A contact between two residues is defined as their CA-CA distance
+  being below a cutoff (typically 0.8 nm, from CALVADOS calc_cmap).
+  The contact map is accumulated over all equilibrated frames using
+  cmap_traj, giving the fraction of frames in which each residue pair
+  is in contact.
+
+  The interdomain contact frequency matrix collapses the per-residue
+  contact map into a per-domain summary: for each domain pair, the
+  total number of inter-domain contacts normalized by the product of
+  domain sizes. High values indicate a persistent structural interface
+  between two domains; low values indicate domains that rarely touch.
+
+  Units: fractional frequency (0 to 1)
+
+Figures:
+  - {set}_cmap.{png,svg}    : Per-residue contact frequency heatmap
+  - {set}_fnc.{png,svg}     : Interdomain contact frequency matrix
+
+
+4. FRACTION OF NATIVE CONTACTS (FNC)
+--------------------------------------
+
+  For each structured domain, computes what fraction of the contacts
+  present in the input (AF2/AF3) reference structure are maintained
+  during the simulation. Uses CALVADOS calc_fnc, which compares the
+  contact map at each frame to the initial reference.
+
+  FNC = 1.0 means the domain perfectly retains its native fold. FNC
+  close to 0 means the domain has lost most of its internal contacts
+  (unfolded). Since CALVADOS uses harmonic restraints within structured
+  domains, FNC should remain high (~0.8-1.0) for restrained regions
+  and may be lower for flexible linkers.
+
+  Units: fraction (0 to 1)
+
+Figures:
+  - {set}_fnc_timeseries.{png,svg} : FNC vs time per domain
+
+
+5. ENERGY DECOMPOSITION
+-------------------------
+
+  Computes the pairwise non-bonded interaction energy between every
+  pair of structural domains, decomposed into two components:
+
+  Ashbaugh-Hatch (AH) Energy:
+    Hydrophobic interaction potential. A modified Lennard-Jones potential
+    where the attractive well depth is scaled by a residue-pair-specific
+    hydrophobicity parameter lambda (0 = fully repulsive/hydrophilic,
+    1 = full LJ attraction/hydrophobic). The sigma and lambda for each
+    residue are taken from the CALVADOS force field parametrization
+    (residues_CALVADOS3.csv). The potential has three distance regimes:
+      - r < 2^(1/6)*sigma : repulsive core (always present)
+      - 2^(1/6)*sigma < r < cutoff_lj : attractive well scaled by lambda
+      - r > cutoff_lj : zero (cutoff at 2.0 nm)
+    Negative AH energy means net hydrophobic attraction between domains.
+
+    Reference: Ashbaugh & Hatch, J. Am. Chem. Soc. 130, 9536 (2008);
+    CALVADOS parametrization: Tesei et al., PNAS 118, e2111696118 (2021).
+
+  Yukawa (Debye-Huckel) Energy:
+    Screened electrostatic interaction. Each residue carries a formal
+    charge at the simulation pH (from the residues CSV), and the
+    pairwise Coulomb interaction is screened by the solvent via a
+    Yukawa (exponentially decaying) potential:
+      U(r) = q_i * q_j * prefactor * exp(-kappa*r) / r
+    where kappa is the inverse Debye screening length computed from
+    the ionic strength (0.19 M) and temperature (293 K), and the
+    prefactor includes the Bjerrum length (temperature-dependent
+    dielectric constant of water). Cutoff at 4.0 nm.
+    Negative Yukawa energy = attractive (opposite charges);
+    positive = repulsive (like charges).
+
+    Reference: Debye-Huckel theory; CALVADOS implementation follows
+    Dignon et al., PLoS Comput. Biol. 14, e1005941 (2018).
+
+  The total energy is the sum of AH + Yukawa per domain pair.
+  Computed from a single representative replicate (seed-1, sample-0),
+  sampled at 10 evenly spaced frames across the equilibrated trajectory.
+
+  Domain boundaries for energy analysis are trimmed by 3 residues at
+  each side where adjacent domains have zero or 1-residue gaps. This
+  prevents steric-clash artifacts from near-boundary residue pairs
+  that sit inside the AH repulsive core (~0.5 nm) due to chain
+  connectivity rather than meaningful interdomain interaction. The
+  trimmed boundaries are:
+
+    Domain      Original       Trimmed        Change
+    ------      --------       -------        ------
+    RRM1          6 -   88       6 -   88     (no change)
+    RRM2        150 -  223     150 -  223     (no change)
+    RRM3        227 -  301     227 -  301     (no change)
+    KH1-6       315 -  737     315 -  734     end -3 (gap 0 to KH7a)
+    KH7a        738 -  789     741 -  786     both -3
+    MD1         791 -  978     794 -  978     start +3 (gap 1 from KH7a)
+    MD2        1003 - 1190    1003 - 1190     (no change)
+    MD3        1216 - 1387    1216 - 1384     end -3 (gap 1 to KHb-KH8)
+    KHb-KH8    1389 - 1533    1392 - 1530     both -3
+    WWE        1534 - 1601    1537 - 1601     start +3 (gap 0 from KHb)
+    ART        1605 - 1801    1605 - 1801     (no change)
+
+  This trimming removes at most 6 residues per domain (<2% of each),
+  all at linker-like boundaries, with negligible effect on distant
+  domain-pair energies.
+
+  Units: kJ/mol
+
+  Typical value ranges:
+    -5 to -11 kJ/mol : Strong attraction (tight persistent interface,
+                        e.g. MD1-MD2 at -8 to -11 kJ/mol in smaller
+                        constructs where macrodomains pack together)
+    -1 to  -5 kJ/mol : Moderate attraction (frequent contacts, e.g.
+                        MD1-ART at -3 to -5 kJ/mol)
+    -0.1 to -1 kJ/mol: Weak/transient attraction (e.g. distant domains
+                        like RRM1-KH1-6 at -0.3 kJ/mol)
+    ~0 kJ/mol        : No significant interaction (domains too far apart
+                        to contact, e.g. RRM1-ART)
+    Positive          : Rare after boundary trimming. May occur for
+                        domain pairs that are still very tightly packed
+                        in a specific structure (e.g. FL KHb-KH8-WWE)
+
+  Colorbar: Fixed at +/- 12 kJ/mol across all constructs for direct
+  comparison. This range encompasses the full data (strongest
+  attraction MD1-MD2 ~ -11 kJ/mol, residual boundary steric
+  repulsion FL KHb-KH8-WWE ~ +12 kJ/mol) so no values are clipped.
+
+  All plots use the canonical 11-domain grid (RRM1 through ART)
+  regardless of construct. Domains absent from a construct are shown
+  as gray cells, enabling direct visual comparison across constructs.
+
+Figures:
+  - {set}_energy.{png,svg}        : Three-panel heatmap (AH, Yukawa,
+    Total) on the canonical 11-domain grid. Gray = domain not in
+    construct. Blue = attractive, red = repulsive. Scale: +/- 1 kJ/mol.
+  - energy_diff_vs_fl.{png,svg}   : Each construct minus FL. Shows how
+    removing domains changes the remaining interdomain energies.
+    Blue = more attractive in construct, red = more repulsive.
+  - energy_all_vs_all.{png,svg}   : NxN grid. Diagonal = absolute
+    energy for each construct. Lower triangle = row minus column
+    (pairwise differences between all constructs).
+
+
+6. WEIGHTED COORDINATION NUMBER (WCN)
+---------------------------------------
+
+  Measures how buried or exposed each active site is within the
+  protein chain, using a smooth distance-dependent count of
+  neighboring residues. For a given active site (defined by its
+  catalytic residue positions), WCN sums over all other residues
+  using a switching function:
+
+    WCN = sum_j [ (1 - (r_ij/r0)^6) / (1 - (r_ij/r0)^12) ]
+
+  where r_ij is the distance from the active site COM to residue j,
+  and r0 = 0.7 nm is the switching distance. The switching function
+  equals 1 when r << r0 (residue is close, fully counted), drops to
+  0.5 at r = r0, and decays to 0 when r >> r0. This avoids hard
+  cutoff artifacts.
+
+  High WCN = many neighbors = buried active site (harder to access).
+  Low WCN = few neighbors = exposed active site (easier to access).
+
+  This is conceptually similar to coordination number in crystallography
+  but applied to coarse-grained beads. It complements the SAA metric
+  (module 8) by providing a distance-weighted rather than geometric
+  measure of burial.
+
+  Units: dimensionless (effective neighbor count)
+
+  Reference: switching function form from Fiorucci & Bhatt,
+  Biophys. J. 103, 1840 (2012); also standard in PLUMED.
+
+Figures:
+  - wcn_active_sites.{png,svg} : Violin + jitter of WCN per active
+    site per construct
+
+
+7. ACTIVE SITE ANALYSIS
+-------------------------
+
+  Focused analysis on the four catalytic active sites: MD1 (ADP-ribose
+  hydrolase), MD2 (ADP-ribose reader), MD3 (ADP-ribose binding), and
+  ART (H-Y-E catalytic triad). Three metrics per site:
+
+  Radial Position:
+    Distance from the active site COM to the whole-chain COM, divided
+    by the chain's Rg. Values > 1 mean the site is at or beyond the
+    chain's "surface" (peripheral); values < 1 mean the site is buried
+    toward the interior. This tells you whether the active site faces
+    outward (accessible to binding partners) or inward (occluded by
+    the chain).
+    Units: dimensionless ratio
+
+  RMSF (Root Mean Square Fluctuation):
+    Average positional fluctuation of the catalytic residues over the
+    trajectory, after subtracting the mean position. Measures how much
+    the active site moves around — high RMSF means the site is in a
+    flexible region (which can mean either unfolded or on a mobile loop),
+    low RMSF means the site is rigidly held in place.
+    Units: nm
+
+  Inter-Site Distances:
+    Pairwise distances between active site COMs (MD1-MD2, MD1-MD3,
+    MD2-MD3, MD1-ART, etc.). Shows whether catalytic sites cluster
+    together or are spread across the structure. Relevant for
+    understanding allosteric communication and multi-site coordination.
+    Units: nm
+
+Figures:
+  - active_site_rmsf.{png,svg}      : Violin + jitter of catalytic RMSF
+  - active_site_radial.{png,svg}    : Violin + jitter of radial position
+  - intersite_distances.{png,svg}   : Violin + jitter of pairwise inter-
+    site distances per construct
+  - active_site_summary.{png,svg}   : Heatmap of radial position across
+    all constructs and sites
+
+
+8. STERIC ACCESSIBILITY (SAA, CONE, SHELL)
+--------------------------------------------
+
+  Three geometric metrics that assess whether a small molecule or
+  binding partner could physically approach each active site, given the
+  steric obstruction by the protein's own chain. Computed by ray-casting
+  from the active site center of mass.
+
+  Solid Angle Accessibility (SAA):
+    Fraction of directions from which the active site can be approached
+    without colliding with the protein chain. 200 uniformly distributed
+    rays (Fibonacci sphere sampling) are cast outward from the active
+    site COM. Each ray is tested against all non-local residues
+    (sequence separation > 10) within 5 nm. A ray is "blocked" if any
+    residue's CA bead is within 0.5 nm (probe radius) of the ray path.
+      SAA = (number of unblocked rays) / (total rays)
+    SAA = 1.0 means fully exposed (no obstruction from any direction).
+    SAA = 0.0 means completely buried (blocked from every direction).
+    SAA > 0.5 is considered readily accessible; SAA < 0.3 is occluded.
+    Units: fraction (0 to 1)
+
+  Maximum Approach Cone Angle:
+    The half-angle of the widest unobstructed cone centered on the
+    active site. Computed from the same ray-casting: the unblocked
+    rays are averaged to find the principal open direction, then the
+    cone angle is the angle from that direction to the most peripheral
+    unblocked ray. A wider cone means there is a large solid angle
+    through which a binding partner can approach; a narrow cone means
+    access is restricted to a single tight channel.
+    Cone > 90 degrees = more than a hemisphere is open.
+    Cone < 45 degrees = access is very restricted.
+    Units: degrees
+
+  Shell Density:
+    Volume fraction of the spherical shell between 2 nm and 5 nm from
+    the active site that is occupied by the protein's own chain beads.
+    Each CA bead is modeled as a sphere of radius 0.25 nm. Higher shell
+    density means more of the surrounding space is filled by chain
+    residues, making it harder for external molecules to diffuse in.
+      Shell density = (N_beads_in_shell * V_bead) / V_shell
+    Typical values are 0.005-0.04 (the shell is mostly empty solvent
+    in CG implicit-solvent simulations).
+    Units: dimensionless volume fraction
+
+Figures:
+  - accessibility_saa.{png,svg}     : Violin + jitter of SAA per site
+  - accessibility_cone.{png,svg}    : Violin + jitter of cone angle
+  - accessibility_summary.{png,svg} : Three-panel heatmap (SAA, cone,
+    shell) across all constructs and sites
+
+
+ADDITIONAL FIGURES (figure_accessibility.py)
+=============================================
+
+Seven publication-quality composite figures generated from the
+accessibility data:
+
+  fig1_accessibility_overview : 3-panel heatmap (SAA, cone, shell density)
+    with numeric annotations. Quick overview of all metrics x sites x
+    constructs.
+
+  fig2_saa_per_site : Four panels (one per active site), each showing
+    SAA distributions across constructs as violin + jitter + mean/SD.
+
+  fig3_metrics_by_construct : Three panels (SAA, cone, shell) with all
+    four sites grouped within each construct. Violin + jitter + SD bars.
+    Answers: "for a given construct, how do the sites compare?"
+
+  fig4_domain_context : Line plots of each metric vs construct size
+    (ordered by chain length: MD only -> MKA -> Core -> FL). Shows how
+    adding more domains changes accessibility — the "domain context
+    effect". Includes individual replicate points and SD bands.
+
+  fig5_docking_feasibility : 2D scatter of cone angle (y) vs SAA (x),
+    with each point = one construct x site combination. Quadrants
+    labeled "readily accessible" (high SAA, wide cone) vs "sterically
+    occluded" (low SAA, narrow cone). Individual replicates shown as
+    faded points behind mean +/- SD crosshairs.
+
+  fig6_schematic : Cartoon diagrams explaining what each metric measures
+    (ray-casting for SAA, cone geometry, shell density counting).
+
+  fig7_site_ranking : Horizontal bar chart ranking active sites by SAA
+    within each construct, with SD error bars.
+
+
+SIMULATION CONSTRUCTS
+======================
+
+  fl     : Full-length PARP14 (1801 residues). All 11 domain units.
+  md     : Macrodomains only (586 res). MD1L1 + MD2 + MD3.
+  core   : Core domains (1051 res). KH7a + MD1L1 + MD2 + MD3 +
+           KHb-KH8 + WWE + ART.
+  mka    : MD + KH + ART (999 res). MD1L1 + MD2 + MD3 + KHb-KH8 +
+           WWE + ART.
+  norrm  : No-RRM (1474 res). KH1-6 + KH7a + MD1L1 + MD2 + MD3 +
+           KHb-KH8 + WWE + ART. (FL minus RRM1/2/3)
+  noart  : No-ART (1275 res). KH1-6 + KH7a + MD1L1 + MD2 + MD3 +
+           KHb-KH8 + WWE. (FL minus RRM1/2/3 and ART)
+
+  Each construct: 25 replicates (5 AF3 seeds x 5 samples), 20 ns each.
+  Equilibration: first 0.5 ns discarded. Effective: 25 x 19.5 ns per set.
+
+  Active sites present per construct:
+    fl, core, mka, norrm : MD1, MD2, MD3, ART
+    md, noart            : MD1, MD2, MD3 (no ART domain)

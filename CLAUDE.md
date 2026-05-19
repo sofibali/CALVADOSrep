@@ -130,6 +130,23 @@ Two-phase pipeline for studying PARP14 (1801 residues) domain deletion variants:
 - **Analysis glossary** (`analysis_glossary.txt`): detailed description of every metric, what it measures physically, units, typical value ranges, and which figures it produces.
 - See `docs/PARP14_PROJECT.md` for full protocol
 
+**Phase 2.5 — Restraint Optimization** (`examples/PARP14_MDP/test_restraints.py`):
+- Systematic boundary trim sweep (0 / 5 / 10 / 15 / 20 / 25 / 30 residues from each side of full domain extents), each tested with/without KH7a-KHb custom inter-domain restraints
+- 16 test configurations (2 baselines + 7 trims × 2 with/without custom)
+- Scoring uses experimental Rg references from PDBs 3VFQ (MD1, MD2), 3Q6Z (MD1), 3GOY (WWE, ART), 1X4R (WWE NMR) plus KH homolog scaling from FUBP1 6Y2D / Nova1 2ANR (Saleh 2024 JMB). Crystal PDBs in `input/xtal_refs/`.
+- Custom KH7a-KHb restraints in `input/custom_restraints.txt` (141 pairs at k=350 kJ/mol/nm²) via CALVADOS `custom_restraints: true` feature
+- Boundary schematic with serine positions (`PARP14_domains_atS.fasta` boundary serines marked) + simulation summary CSV/MD in `restraint_tests/summary_plots/`
+- Comparison + PyMOL session: `compare_restraints.py` produces RMSD-vs-crystal-or-AF2 boxplots, Rg/CMap heatmap, KH-domain RMSD distributions, best-config-per-domain, and PyMOL scenes (`load_kh_comparison.pml`)
+
+**Phase 2.6 — Optimized FL + Fragment Library**:
+- `prepare_fl_optimized.py` — 25-replicate FL with per-domain custom trim values (RRM1 trim 10 from structured core 6-88; RRM/RRM trim 10; KH1/2/3/5 trim 5; KH4/6 trim 10; KH7a, KHb, KH8 trim 0; MDs trim 10; WWE trim 15; ART trim 10) + KH7a-KHb custom restraints
+- `prepare_all_fragments.py` — All 66 contiguous PARP14 fragments (48 prepared, 17 missing AF3 structures); per-fragment in `fragments/{name}/seed-{1-5}_sample-{0-4}/`. Box size scales with construct length. Launch via `fragments/run_all_fragments.sh N_PARALLEL` (240-core machine → ~60 parallel sims).
+
+**Phase 3 — Per-residue analysis**:
+- `figure_sasa_faces.py` — RSA (relative SASA, Chothia Gly-X-Gly normalized per Wu 2017) heatmap + per-domain active-site-face vs back-face annotation. Outputs: `figures/rsa_heatmap_FL.png`, `figures/rsa_per_domain_matrix_FL.png`, PyMOL session, per-residue CSV.
+- `figure_md_distances.py` — Inter-domain COM-COM (or min CA-CA) distance violin plots across all 25 replicates pooled. Default pairs: MD1L1-MD2/MD3/ART, MD2-MD3, MD3-ART. 1.0 nm contact cutoff line.
+- `cluster_states.py` — K-means clustering of frames using inter-domain distances (optional Rg), with silhouette/elbow sweep, PCA scatter, per-state distance profile heatmap, replicate-by-state distribution heatmap, and extraction of centroid-representative PDB structures per state. Requires `scikit-learn`.
+
 **PARP14 Domain Architecture (11 grouped units for combinatorial library):**
 
 | Domain | Residues | Function |

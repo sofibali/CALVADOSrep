@@ -1,0 +1,113 @@
+{
+  "set": "fl_optimized",
+  "n_replicates": 25,
+  "n_steps_per_replicate": 2000000,
+  "k_harmonic": 700.0,
+  "k_custom": 350.0,
+  "domain_trims": {
+    "RRM1": 10,
+    "RRM2": 10,
+    "RRM3": 10,
+    "KH1": 5,
+    "KH2": 5,
+    "KH3": 5,
+    "KH4": 10,
+    "KH5": 5,
+    "KH6": 10,
+    "KH7a": 0,
+    "MD1L1": 10,
+    "MD2": 10,
+    "MD3": 10,
+    "KHb": 0,
+    "KH8": 0,
+    "WWE": 15,
+    "ART": 10
+  },
+  "domain_boundaries": {
+    "RRM1": [
+      16,
+      78
+    ],
+    "RRM2": [
+      156,
+      214
+    ],
+    "RRM3": [
+      235,
+      304
+    ],
+    "KH1": [
+      320,
+      379
+    ],
+    "KH2": [
+      390,
+      449
+    ],
+    "KH3": [
+      460,
+      515
+    ],
+    "KH4": [
+      531,
+      583
+    ],
+    "KH5": [
+      599,
+      660
+    ],
+    "KH6": [
+      676,
+      727
+    ],
+    "KH7a": [
+      738,
+      789
+    ],
+    "MD1L1": [
+      800,
+      968
+    ],
+    "MD2": [
+      1015,
+      1183
+    ],
+    "MD3": [
+      1217,
+      1378
+    ],
+    "KHb": [
+      1389,
+      1461
+    ],
+    "KH8": [
+      1462,
+      1533
+    ],
+    "WWE": [
+      1549,
+      1587
+    ],
+    "ART": [
+      1613,
+      1791
+    ]
+  },
+  "n_restraint_domains": 17,
+  "n_restrained_residues": 1450,
+  "n_kh7a_khb_custom_pairs": 141,
+  "kh7a_extent_for_pairs": [
+    738,
+    789
+  ],
+  "khb_extent_for_pairs": [
+    1389,
+    1461
+  ],
+  "structured_extents": {
+    "RRM1": [
+      6,
+      88
+    ]
+  }
+}

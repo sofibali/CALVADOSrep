@@ -1,0 +1,152 @@
+# Launch commands for PARP14 fragment simulations
+# Each line launches all 25 replicates of one fragment in
+# parallel (8 jobs). Uncomment lines you want to run.
+# Python env: /home/sbali/miniconda3/envs/CALVADOS/bin/python
+#
+# Total: 48 fragments prepared
+# Each: 25 replicates x 20 ns = 500 ns total
+
+# rrm1 (145 res, 1 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm1 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm1_rrm2 (224 res, 2 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm1_rrm2 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm1_rrm2_rrm3 (314 res, 3 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm1_rrm2_rrm3 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm1_rrm2_rrm3_kh1-kh6 (737 res, 9 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm1_rrm2_rrm3_kh1-kh6 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm1_rrm2_rrm3_kh1-kh6_kh7a (789 res, 10 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm1_rrm2_rrm3_kh1-kh6_kh7a && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm2 (79 res, 1 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm2 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm2_rrm3 (169 res, 2 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm2_rrm3 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm2_rrm3_kh1-kh6 (592 res, 8 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm2_rrm3_kh1-kh6 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm2_rrm3_kh1-kh6_kh7a (644 res, 9 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm2_rrm3_kh1-kh6_kh7a && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm3 (90 res, 1 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm3 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm3_kh1-kh6 (513 res, 7 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm3_kh1-kh6 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# rrm3_kh1-kh6_kh7a (565 res, 8 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/rrm3_kh1-kh6_kh7a && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh1-kh6 (423 res, 6 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh1-kh6 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh1-kh6_kh7a (475 res, 7 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh1-kh6_kh7a && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh1-kh6_kh7a_md1l1 (690 res, 8 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh1-kh6_kh7a_md1l1 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh1-kh6_kh7a_md1l1_md2 (879 res, 9 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh1-kh6_kh7a_md1l1_md2 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh1-kh6_kh7a_md1l1_md2_md3 (1061 res, 10 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh1-kh6_kh7a_md1l1_md2_md3 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8 (1206 res, 12 domains, 143 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe (1275 res, 13 domains, 142 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art (1474 res, 14 domains, 140 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh7a (52 res, 1 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh7a && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh7a_md1l1 (267 res, 2 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh7a_md1l1 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh7a_md1l1_md2 (456 res, 3 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh7a_md1l1_md2 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh7a_md1l1_md2_md3 (638 res, 4 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh7a_md1l1_md2_md3 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh7a_md1l1_md2_md3_khb-kh8 (783 res, 6 domains, 146 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh7a_md1l1_md2_md3_khb-kh8 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh7a_md1l1_md2_md3_khb-kh8_wwe (852 res, 7 domains, 148 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh7a_md1l1_md2_md3_khb-kh8_wwe && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# kh7a_md1l1_md2_md3_khb-kh8_wwe_art (1051 res, 8 domains, 147 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/kh7a_md1l1_md2_md3_khb-kh8_wwe_art && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md1l1 (215 res, 1 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md1l1 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md1l1_md2 (404 res, 2 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md1l1_md2 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md1l1_md2_md3 (586 res, 3 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md1l1_md2_md3 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md1l1_md2_md3_khb-kh8 (731 res, 5 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md1l1_md2_md3_khb-kh8 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md1l1_md2_md3_khb-kh8_wwe (800 res, 6 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md1l1_md2_md3_khb-kh8_wwe && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md1l1_md2_md3_khb-kh8_wwe_art (999 res, 7 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md1l1_md2_md3_khb-kh8_wwe_art && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md2 (190 res, 1 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md2 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md2_md3 (372 res, 2 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md2_md3 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md2_md3_khb-kh8 (517 res, 4 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md2_md3_khb-kh8 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md2_md3_khb-kh8_wwe (586 res, 5 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md2_md3_khb-kh8_wwe && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md2_md3_khb-kh8_wwe_art (785 res, 6 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md2_md3_khb-kh8_wwe_art && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md3 (182 res, 1 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md3 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md3_khb-kh8 (327 res, 3 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md3_khb-kh8 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md3_khb-kh8_wwe (396 res, 4 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md3_khb-kh8_wwe && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# md3_khb-kh8_wwe_art (595 res, 5 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/md3_khb-kh8_wwe_art && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# khb-kh8 (145 res, 2 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/khb-kh8 && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# khb-kh8_wwe (214 res, 3 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/khb-kh8_wwe && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# khb-kh8_wwe_art (413 res, 4 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/khb-kh8_wwe_art && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# wwe (69 res, 1 domains, 0 custom pairs)
+#cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/wwe && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# wwe_art (268 res, 2 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/wwe_art && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+
+# art (199 res, 1 domains, 0 custom pairs)
+cd /home/sbali/CALVADOS/examples/PARP14_MDP/fragments/art && ls -d seed-*_sample-* | xargs -I{} -P 8 bash -c 'cd {} && /home/sbali/miniconda3/envs/CALVADOS/bin/python run.py > run.log 2>&1'
+

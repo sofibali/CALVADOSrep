@@ -84,34 +84,26 @@ DOMAIN_EXTENTS = {
     'WWE': (1534, 1602), 'ART': (1603, 1801),
 }
 
-# Medium baseline boundaries (pLDDT >= 70 structured cores)
-MEDIUM_BOUNDARIES = {
-    'RRM1': (7, 90),
-    'RRM2': (149, 224),
-    'RRM3': (227, 310),
-    'KH1': (320, 374),
-    'KH2': (385, 454),
-    'KH3': (467, 520),
-    'KH4': (521, 593),
-    'KH5': (594, 626),
-    'KH6': (714, 737),
-    'KH7a': (738, 775),
-    'MD1L1': (791, 978),
-    'MD2': (1005, 1190),
-    'MD3': (1216, 1387),
-    'KHb': (1427, 1461),
-    'KH8': (1462, 1522),
-    'WWE': (1535, 1601),
-    'ART': (1604, 1801),
+# Per-domain "structured extents" override DOMAIN_EXTENTS for the trim=0
+# starting point. Use these for domains where the full extent includes a
+# large unstructured segment (e.g., RRM1's disordered N-terminus).
+# All other domains start trimming from their full DOMAIN_EXTENTS.
+STRUCTURED_EXTENTS = {
+    'RRM1': (6, 88),   # exclude disordered N-term (1-5) and tail (89-145)
 }
+
+# Domains EXCLUDED from restraints entirely
+EXCLUDED_DOMAINS = set()
 
 # Analysis domains (full extent for metric computation)
 ANALYSIS_DOMAINS = dict(DOMAIN_EXTENTS)
 
-DOMAIN_ORDER = list(MEDIUM_BOUNDARIES.keys())
+DOMAIN_ORDER = list(DOMAIN_EXTENTS.keys())
 
-# Boundary shifts to test
-SHIFTS = [-15, -10, -5, 0, 5, 10, 15]
+# Boundary shifts to test (number of residues to TRIM from EACH side of every
+# restrained domain). 0 = fully restrained at extent. Higher = more residues
+# removed from both edges (i.e., narrower core).
+SHIFTS = [0, 5, 10, 15, 20, 25, 30]
 MIN_DOMAIN_SIZE = 10  # minimum residues for a domain to be included
 
 
@@ -145,19 +137,24 @@ def get_af2_ca_coords():
 # Boundary shifting
 # ============================================================
 
-def shift_boundaries(shift):
-    """Apply a symmetric boundary shift to all domains.
+def shift_boundaries(trim):
+    """Apply a symmetric trim to each domain's starting extent.
 
-    shift < 0: widen (start earlier, end later)
-    shift > 0: narrow (start later, end earlier)
+    Starting extent = STRUCTURED_EXTENTS[name] if defined (for domains with
+    disordered tails/heads), else DOMAIN_EXTENTS[name] (full domain).
+    Each "shift" value = number of residues removed from EACH side
+    of the starting extent (so total residues lost = 2 * trim).
 
-    Clipped to domain extents and minimum size.
+    Domains shrunk below MIN_DOMAIN_SIZE are dropped.
+    Domains in EXCLUDED_DOMAINS are skipped.
     """
     result = {}
-    for dname, (ms, me) in MEDIUM_BOUNDARIES.items():
-        ext_s, ext_e = DOMAIN_EXTENTS[dname]
-        new_s = max(ext_s, ms + shift)
-        new_e = min(ext_e, me - shift)
+    for dname, full_extent in DOMAIN_EXTENTS.items():
+        if dname in EXCLUDED_DOMAINS:
+            continue
+        ext_s, ext_e = STRUCTURED_EXTENTS.get(dname, full_extent)
+        new_s = ext_s + trim
+        new_e = ext_e - trim
         if new_e - new_s + 1 >= MIN_DOMAIN_SIZE:
             result[dname] = (new_s, new_e)
     return result
@@ -216,28 +213,25 @@ def generate_test_configs():
         },
     })
 
-    # Boundary shift tests: without and with KH7a-KHb custom restraints
-    for shift in SHIFTS:
-        label = f"m{abs(shift):02d}" if shift < 0 else (
-            f"p{shift:02d}" if shift > 0 else "000")
+    # Trim tests: trim N residues from each side of every domain extent
+    # (RRM1 always excluded). Tested with and without KH7a-KHb custom restraints.
+    for trim in SHIFTS:
+        label = f"{trim:02d}"
+        domains = shift_boundaries(trim)
 
-        domains = shift_boundaries(shift)
-
-        # Without custom restraints
         configs.append({
-            'name': f'shift_{label}',
-            'shift': shift,
+            'name': f'trim_{label}',
+            'shift': trim,
             'custom_kh7a_khb': False,
-            'description': f'Boundary shift {shift:+d} residues, no custom restr',
+            'description': f'Trim {trim} residues each side, no custom restr',
             'domains': dict(domains),
         })
 
-        # With KH7a-KHb custom restraints
         configs.append({
-            'name': f'shift_{label}_kh7ab',
-            'shift': shift,
+            'name': f'trim_{label}_kh7ab',
+            'shift': trim,
             'custom_kh7a_khb': True,
-            'description': f'Boundary shift {shift:+d} residues + KH7a-KHb custom',
+            'description': f'Trim {trim} residues each side + KH7a-KHb custom',
             'domains': dict(domains),
         })
 
@@ -262,7 +256,11 @@ def prepare_test(config, plddt, ca_coords):
             dest.symlink_to(src)
 
     domains = config['domains']
-    use_restraints = len(domains) > 0
+    # Always set restraint=True so CALVADOS reads sequence from PDB
+    # (rather than from a placeholder FASTA file). With an empty domains.yaml,
+    # no harmonic bonds get added — equivalent to "no restraints".
+    use_restraints = True
+    n_domains = len(domains)
 
     # Write domains.yaml
     domain_list = []
@@ -279,8 +277,8 @@ def prepare_test(config, plddt, ca_coords):
     with open(input_dir / 'domains.yaml', 'w') as f:
         yaml.dump({'parp14': domain_list}, f, default_flow_style=True)
 
-    # Custom restraints (KH7a-KHb)
-    use_custom = config['custom_kh7a_khb'] and use_restraints
+    # Custom restraints (KH7a-KHb) — only if config requests AND has any domains
+    use_custom = config['custom_kh7a_khb'] and n_domains > 0
     n_custom_pairs = 0
     if use_custom:
         # Get KH7a and KHb ranges from this config's domains
@@ -665,7 +663,7 @@ def generate_summary_plots(all_results):
     for r in tests_to_show:
         sh = r.get('shift')
         cust = '+KH7ab' if r.get('custom_kh7a_khb') else ''
-        labels.append(f"shift {sh:+d}{cust}" if isinstance(sh, int)
+        labels.append(f"trim {sh}{cust}" if isinstance(sh, int)
                       else r['test_name'])
     ax.set_yticks(range(len(tests_to_show)))
     ax.set_yticklabels(labels, fontsize=8)
@@ -781,11 +779,156 @@ def generate_summary_plots(all_results):
     print("Generating boundary schematic...")
     render_boundary_schematic(plot_dir)
 
+    # ── Summary table ──
+    print("Writing simulation summary table...")
+    write_simulation_summary_table(plot_dir)
+
     # ── Plot 6: Cartoon snapshot of every simulation ──
     print("Rendering cartoon snapshots of all simulations...")
     render_all_cartoons(all_results, plot_dir)
 
     print(f"\nPlots saved to {plot_dir}/")
+
+
+def write_simulation_summary_table(plot_dir):
+    """Write a summary table of every test configuration: boundaries,
+    restraint strength, custom restraint pairs, and run/analysis status.
+
+    Outputs:
+      simulation_summary.csv  — flat row-per-config table
+      simulation_summary.md   — markdown table for easy viewing
+    """
+    import csv
+
+    configs = generate_test_configs()
+
+    rows = []
+    for c in configs:
+        test_dir = TEST_DIR / c['name']
+        meta_file = test_dir / 'test_config.json'
+        results_file = test_dir / 'analysis_results.json'
+
+        # Load metadata if prepared
+        meta = {}
+        if meta_file.exists():
+            with open(meta_file) as f:
+                meta = json.load(f)
+
+        # Run status
+        dcds = list(test_dir.glob('*.dcd')) if test_dir.exists() else []
+        status = 'not_prepared'
+        if test_dir.exists():
+            if dcds:
+                status = 'completed'
+            elif (test_dir / 'error.log').exists():
+                status = 'failed'
+            elif meta_file.exists():
+                status = 'prepared'
+
+        # Analysis score
+        score = None
+        rg_dev = None
+        cmap = None
+        if results_file.exists():
+            with open(results_file) as f:
+                res = json.load(f)
+            gs = res.get('global_scores', {})
+            score = gs.get('combined_score')
+            rg_dev = gs.get('rg_deviation')
+            cmap = gs.get('weighted_cmap_corr')
+
+        # Domain boundaries summary
+        domains = meta.get('domains', c.get('domains', {}))
+        domain_str_parts = []
+        for dn in DOMAIN_ORDER:
+            if dn in domains:
+                ds, de = domains[dn]
+                domain_str_parts.append(f"{dn}:{ds}-{de}")
+        domain_summary = '; '.join(domain_str_parts)
+
+        rows.append({
+            'name': c['name'],
+            'shift': c.get('shift') if c.get('shift') is not None else '',
+            'custom_kh7a_khb': 'Y' if c.get('custom_kh7a_khb') else 'N',
+            'k_harmonic': K_HARMONIC if domains else 0,
+            'k_custom': K_CUSTOM if c.get('custom_kh7a_khb') else 0,
+            'n_domains': len(domains),
+            'n_restrained_residues': sum(de-ds+1 for ds, de in domains.values()),
+            'n_custom_pairs': meta.get('n_custom_pairs', 0),
+            'status': status,
+            'combined_score': f"{score:.4f}" if score is not None else '',
+            'rg_deviation': f"{rg_dev:.4f}" if rg_dev is not None else '',
+            'cmap_corr': f"{cmap:.4f}" if cmap is not None else '',
+            'domain_boundaries': domain_summary,
+        })
+
+    # Write CSV
+    csv_path = plot_dir / 'simulation_summary.csv'
+    fieldnames = list(rows[0].keys()) if rows else []
+    with open(csv_path, 'w', newline='') as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        w.writeheader()
+        w.writerows(rows)
+
+    # Write markdown table (compact, for human reading)
+    md_path = plot_dir / 'simulation_summary.md'
+    with open(md_path, 'w') as f:
+        f.write("# PARP14 Restraint Test Simulation Summary\n\n")
+        f.write(f"Generated from {len(rows)} test configurations.\n\n")
+        f.write("## Configuration Matrix\n\n")
+        f.write("| Name | Shift | KH7ab | k_dom | k_cust | nDom | nRes | nPairs "
+                "| Status | Score | RgDev | CMap |\n")
+        f.write("|------|------:|:-----:|------:|-------:|-----:|-----:|-------:"
+                "|--------|------:|------:|-----:|\n")
+        for r in rows:
+            sh = f"{r['shift']:+d}" if isinstance(r['shift'], int) else "-"
+            f.write(f"| {r['name']} | {sh} | {r['custom_kh7a_khb']} | "
+                    f"{r['k_harmonic']:.0f} | {r['k_custom']:.0f} | "
+                    f"{r['n_domains']} | {r['n_restrained_residues']} | "
+                    f"{r['n_custom_pairs']} | {r['status']} | "
+                    f"{r['combined_score']} | {r['rg_deviation']} | "
+                    f"{r['cmap_corr']} |\n")
+
+        # Per-trim boundaries detail
+        f.write("\n## Domain Boundaries per Trim Tier\n\n")
+        f.write("Start point: every domain restrained at its **full extent**. "
+                "RRM1 uses a custom **structured core (6-88)** that excludes "
+                "the disordered N-terminus and tail. Trim N = remove N "
+                "residues from EACH side (so total residues removed = 2N).\n\n")
+        f.write("| Domain |")
+        for s in SHIFTS:
+            f.write(f" trim {s} |")
+        f.write("\n|--------|")
+        for _ in SHIFTS:
+            f.write("-----|")
+        f.write("\n")
+
+        for dn in DOMAIN_ORDER:
+            f.write(f"| **{dn}** |")
+            for s in SHIFTS:
+                bds = shift_boundaries(s)
+                if dn in bds:
+                    ds, de = bds[dn]
+                    f.write(f" {ds}-{de} ({de-ds+1}) |")
+                else:
+                    f.write(" — |")
+            f.write("\n")
+
+        # Counts summary
+        n_completed = sum(1 for r in rows if r['status'] == 'completed')
+        n_failed = sum(1 for r in rows if r['status'] == 'failed')
+        n_prepared = sum(1 for r in rows if r['status'] == 'prepared')
+        f.write(f"\n## Status Summary\n\n")
+        f.write(f"- **Total configs:** {len(rows)}\n")
+        f.write(f"- **Completed (have trajectory):** {n_completed}\n")
+        f.write(f"- **Failed:** {n_failed}\n")
+        f.write(f"- **Prepared but not run:** {n_prepared}\n")
+        f.write(f"- **Not prepared:** {len(rows) - n_completed - n_failed - n_prepared}\n")
+        f.write(f"\n**Restraint strength:** k_harmonic = {K_HARMONIC} kJ/mol/nm² "
+                f"(intra-domain), k_custom = {K_CUSTOM} kJ/mol/nm² (KH7a-KHb).\n")
+
+    print(f"  Saved: {csv_path}")
+    print(f"  Saved: {md_path}")
 
 
 def render_boundary_schematic(plot_dir):
@@ -836,7 +979,7 @@ def render_boundary_schematic(plot_dir):
     }
 
     # Row labels: top row = sequence + serines, then one row per shift
-    shift_labels = [f"shift {s:+d}" for s in SHIFTS]
+    shift_labels = [f"trim {s}" for s in SHIFTS]
     row_labels = ['Sequence'] + shift_labels
     n_rows = len(row_labels)
     row_height = 0.8
@@ -910,20 +1053,35 @@ def render_boundary_schematic(plot_dir):
                     boxstyle="round,pad=0.02",
                     facecolor=c, edgecolor='black', linewidth=0.3,
                     alpha=0.75))
-                # Residue count inside box if wide enough
-                if width > 30:
+                # Residue range inside box (use varying font / placement
+                # depending on width)
+                if width > 50:
                     ax.text((ds + de) / 2, y + row_height / 2,
-                            f'{ds}-{de}\n({width})',
-                            ha='center', va='center', fontsize=4,
+                            f'{ds}-{de} ({width})',
+                            ha='center', va='center', fontsize=4.5,
                             color='white', fontweight='bold')
+                elif width > 20:
+                    ax.text((ds + de) / 2, y + row_height / 2,
+                            f'{ds}-{de}',
+                            ha='center', va='center', fontsize=3.5,
+                            color='white', fontweight='bold')
+
+                # Always tag the start and end residue IDs above/below the box
+                ax.text(ds, y - 0.05, str(ds),
+                        ha='center', va='top', fontsize=3.5,
+                        color=c, fontweight='bold', rotation=90)
+                ax.text(de, y - 0.05, str(de),
+                        ha='center', va='top', fontsize=3.5,
+                        color=c, fontweight='bold', rotation=90)
 
     # Axis formatting
     ax.set_xlim(-80, N_FL + 30)
     ax.set_ylim(0, (n_rows + 1) * (row_height + gap) + 0.5)
     ax.set_xlabel('Full-Length Residue Position', fontsize=12)
-    ax.set_title('Domain Restraint Boundaries per Shift Tier\n'
-                 '(gray ticks = serines, red ticks = domain-boundary serines '
-                 'from PARP14_domains_atS.fasta)',
+    ax.set_title('Domain Restraint Boundaries per Trim Tier\n'
+                 '(start = full extents [RRM1 = structured core 6-88]; '
+                 'trim N = remove N residues from each side; '
+                 'gray ticks = serines, red ticks = boundary serines)',
                  fontsize=14)
 
     # Tick marks every 100 residues

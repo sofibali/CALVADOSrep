@@ -1,0 +1,51 @@
+{
+  "fragment": "md2_md3_khb-kh8_wwe_art",
+  "units": [
+    "md2",
+    "md3",
+    "khb-kh8",
+    "wwe",
+    "art"
+  ],
+  "n_residues": 785,
+  "n_restraint_domains": 6,
+  "n_restrained_residues": 694,
+  "restraint_labels": [
+    "MD2",
+    "MD3",
+    "KHb",
+    "KH8",
+    "WWE",
+    "ART"
+  ],
+  "domain_ranges_construct": [
+    [
+      12,
+      180
+    ],
+    [
+      201,
+      362
+    ],
+    [
+      373,
+      445
+    ],
+    [
+      446,
+      517
+    ],
+    [
+      533,
+      571
+    ],
+    [
+      597,
+      775
+    ]
+  ],
+  "n_custom_pairs": 0,
+  "use_custom_kh7a_khb": false,
+  "box_nm": 167,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/md2_md3_khb-kh8_wwe_art_20260320_172559/seed-1_sample-0/model.cif"
+}

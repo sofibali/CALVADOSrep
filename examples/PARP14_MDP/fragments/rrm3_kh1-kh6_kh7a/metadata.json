@@ -1,0 +1,59 @@
+{
+  "fragment": "rrm3_kh1-kh6_kh7a",
+  "units": [
+    "rrm3",
+    "kh1-kh6",
+    "kh7a"
+  ],
+  "n_residues": 565,
+  "n_restraint_domains": 8,
+  "n_restrained_residues": 465,
+  "restraint_labels": [
+    "RRM3",
+    "KH1",
+    "KH2",
+    "KH3",
+    "KH4",
+    "KH5",
+    "KH6",
+    "KH7a"
+  ],
+  "domain_ranges_construct": [
+    [
+      11,
+      80
+    ],
+    [
+      96,
+      155
+    ],
+    [
+      166,
+      225
+    ],
+    [
+      236,
+      291
+    ],
+    [
+      307,
+      359
+    ],
+    [
+      375,
+      436
+    ],
+    [
+      452,
+      503
+    ],
+    [
+      514,
+      565
+    ]
+  ],
+  "n_custom_pairs": 0,
+  "use_custom_kh7a_khb": false,
+  "box_nm": 134,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/rrm3_kh1-kh6_kh7a_20260429_185217/seed-1_sample-0/model.cif"
+}

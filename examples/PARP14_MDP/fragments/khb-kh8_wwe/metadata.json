@@ -1,0 +1,33 @@
+{
+  "fragment": "khb-kh8_wwe",
+  "units": [
+    "khb-kh8",
+    "wwe"
+  ],
+  "n_residues": 214,
+  "n_restraint_domains": 3,
+  "n_restrained_residues": 184,
+  "restraint_labels": [
+    "KHb",
+    "KH8",
+    "WWE"
+  ],
+  "domain_ranges_construct": [
+    [
+      1,
+      73
+    ],
+    [
+      74,
+      145
+    ],
+    [
+      161,
+      199
+    ]
+  ],
+  "n_custom_pairs": 0,
+  "use_custom_kh7a_khb": false,
+  "box_nm": 82,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/khb-kh8_wwe_20260320_165718/seed-1_sample-0/model.cif"
+}

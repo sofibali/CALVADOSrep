@@ -1,0 +1,39 @@
+{
+  "fragment": "khb-kh8_wwe_art",
+  "units": [
+    "khb-kh8",
+    "wwe",
+    "art"
+  ],
+  "n_residues": 413,
+  "n_restraint_domains": 4,
+  "n_restrained_residues": 363,
+  "restraint_labels": [
+    "KHb",
+    "KH8",
+    "WWE",
+    "ART"
+  ],
+  "domain_ranges_construct": [
+    [
+      1,
+      73
+    ],
+    [
+      74,
+      145
+    ],
+    [
+      161,
+      199
+    ],
+    [
+      225,
+      403
+    ]
+  ],
+  "n_custom_pairs": 0,
+  "use_custom_kh7a_khb": false,
+  "box_nm": 111,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/khb-kh8_wwe_art_20260320_165451/seed-1_sample-0/model.cif"
+}

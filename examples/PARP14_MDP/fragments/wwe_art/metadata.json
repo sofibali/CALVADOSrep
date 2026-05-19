@@ -1,0 +1,28 @@
+{
+  "fragment": "wwe_art",
+  "units": [
+    "wwe",
+    "art"
+  ],
+  "n_residues": 268,
+  "n_restraint_domains": 2,
+  "n_restrained_residues": 218,
+  "restraint_labels": [
+    "WWE",
+    "ART"
+  ],
+  "domain_ranges_construct": [
+    [
+      16,
+      54
+    ],
+    [
+      80,
+      258
+    ]
+  ],
+  "n_custom_pairs": 0,
+  "use_custom_kh7a_khb": false,
+  "box_nm": 90,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/wwe_art/seed-1_sample-0/model.cif"
+}

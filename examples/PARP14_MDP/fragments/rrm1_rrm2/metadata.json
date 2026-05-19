@@ -1,0 +1,28 @@
+{
+  "fragment": "rrm1_rrm2",
+  "units": [
+    "rrm1",
+    "rrm2"
+  ],
+  "n_residues": 224,
+  "n_restraint_domains": 2,
+  "n_restrained_residues": 122,
+  "restraint_labels": [
+    "RRM1",
+    "RRM2"
+  ],
+  "domain_ranges_construct": [
+    [
+      16,
+      78
+    ],
+    [
+      156,
+      214
+    ]
+  ],
+  "n_custom_pairs": 0,
+  "use_custom_kh7a_khb": false,
+  "box_nm": 83,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/rrm1_rrm2/seed-1_sample-0/model.cif"
+}

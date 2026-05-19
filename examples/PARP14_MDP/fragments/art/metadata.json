@@ -1,0 +1,22 @@
+{
+  "fragment": "art",
+  "units": [
+    "art"
+  ],
+  "n_residues": 199,
+  "n_restraint_domains": 1,
+  "n_restrained_residues": 179,
+  "restraint_labels": [
+    "ART"
+  ],
+  "domain_ranges_construct": [
+    [
+      11,
+      189
+    ]
+  ],
+  "n_custom_pairs": 0,
+  "use_custom_kh7a_khb": false,
+  "box_nm": 79,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/art_20260320_105130/seed-1_sample-0/model.cif"
+}

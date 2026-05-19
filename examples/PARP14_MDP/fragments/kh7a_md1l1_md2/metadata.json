@@ -1,0 +1,34 @@
+{
+  "fragment": "kh7a_md1l1_md2",
+  "units": [
+    "kh7a",
+    "md1l1",
+    "md2"
+  ],
+  "n_residues": 456,
+  "n_restraint_domains": 3,
+  "n_restrained_residues": 390,
+  "restraint_labels": [
+    "KH7a",
+    "MD1L1",
+    "MD2"
+  ],
+  "domain_ranges_construct": [
+    [
+      1,
+      52
+    ],
+    [
+      63,
+      231
+    ],
+    [
+      278,
+      446
+    ]
+  ],
+  "n_custom_pairs": 0,
+  "use_custom_kh7a_khb": false,
+  "box_nm": 118,
+  "af3_source": "/home/sbali/CALVADOS/parp14/alphafold_outputs/kh7a_md1l1_md2/seed-1_sample-0/model.cif"
+}
