@@ -1,0 +1,66 @@
+{
+  "set": "md_full",
+  "k": 2,
+  "feature_names": [
+    "iface_MD1L1_213__MD2_0",
+    "iface_MD1L1_213__MD2_1",
+    "iface_MD1L1_214__MD2_0",
+    "iface_MD1L1_214__MD2_1",
+    "iface_MD1L1_213__MD3_0",
+    "iface_MD1L1_213__MD3_1",
+    "iface_MD1L1_214__MD3_0",
+    "iface_MD1L1_214__MD3_1",
+    "iface_MD2_188__MD3_0",
+    "iface_MD2_188__MD3_1",
+    "iface_MD2_189__MD3_0",
+    "iface_MD2_189__MD3_1"
+  ],
+  "states": [
+    {
+      "state": 1,
+      "population": 125258,
+      "fraction": 0.5035497487437186,
+      "representative_seed": 3,
+      "representative_sample": 0,
+      "representative_frame": 8046,
+      "representative_pdb": "representative_frames/2026-06-24/md_full_iface10_tica/state_1.pdb",
+      "mean_features": {
+        "iface_MD1L1_213__MD2_0": 0.3293635368786858,
+        "iface_MD1L1_213__MD2_1": 0.5952046806222531,
+        "iface_MD1L1_214__MD2_0": 0.0,
+        "iface_MD1L1_214__MD2_1": 0.3335316702941207,
+        "iface_MD1L1_213__MD3_0": 2.8420342797319695,
+        "iface_MD1L1_213__MD3_1": 2.875613382075005,
+        "iface_MD1L1_214__MD3_0": 2.801797134586332,
+        "iface_MD1L1_214__MD3_1": 2.831944780560421,
+        "iface_MD2_188__MD3_0": 2.316030943617502,
+        "iface_MD2_188__MD3_1": 2.363514373424859,
+        "iface_MD2_189__MD3_0": 2.2483923348441404,
+        "iface_MD2_189__MD3_1": 2.304214752517105
+      }
+    },
+    {
+      "state": 2,
+      "population": 123492,
+      "fraction": 0.4964502512562814,
+      "representative_seed": 1,
+      "representative_sample": 1,
+      "representative_frame": 8874,
+      "representative_pdb": "representative_frames/2026-06-24/md_full_iface10_tica/state_2.pdb",
+      "mean_features": {
+        "iface_MD1L1_213__MD2_0": 0.3512234994197724,
+        "iface_MD1L1_213__MD2_1": 0.5225861913758688,
+        "iface_MD1L1_214__MD2_0": 0.0,
+        "iface_MD1L1_214__MD2_1": 0.356817353882794,
+        "iface_MD1L1_213__MD3_0": 2.94323824198806,
+        "iface_MD1L1_213__MD3_1": 2.976743543135588,
+        "iface_MD1L1_214__MD3_0": 2.880229422688596,
+        "iface_MD1L1_214__MD3_1": 2.9148931799682907,
+        "iface_MD2_188__MD3_0": 2.3360252966320294,
+        "iface_MD2_188__MD3_1": 2.385216282319058,
+        "iface_MD2_189__MD3_0": 2.2640446183617624,
+        "iface_MD2_189__MD3_1": 2.3210307675364708
+      }
+    }
+  ]
+}

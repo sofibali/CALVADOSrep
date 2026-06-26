@@ -1,0 +1,170 @@
+{
+  "name": "trim_30_kh7ab",
+  "shift": 30,
+  "custom_kh7a_khb": false,
+  "n_custom_pairs": 0,
+  "description": "Trim 30 residues each side + KH7a-KHb custom",
+  "domains": {
+    "RRM1": [
+      36,
+      58
+    ],
+    "RRM2": [
+      176,
+      194
+    ],
+    "RRM3": [
+      255,
+      284
+    ],
+    "KH1": [
+      345,
+      354
+    ],
+    "KH2": [
+      415,
+      424
+    ],
+    "KH4": [
+      551,
+      563
+    ],
+    "KH5": [
+      624,
+      635
+    ],
+    "KH6": [
+      696,
+      707
+    ],
+    "MD1L1": [
+      820,
+      948
+    ],
+    "MD2": [
+      1035,
+      1163
+    ],
+    "MD3": [
+      1237,
+      1358
+    ],
+    "KHb": [
+      1419,
+      1431
+    ],
+    "KH8": [
+      1492,
+      1503
+    ],
+    "ART": [
+      1633,
+      1771
+    ]
+  },
+  "k_values": {
+    "RRM1": 700.0,
+    "RRM2": 700.0,
+    "RRM3": 700.0,
+    "KH1": 700.0,
+    "KH2": 700.0,
+    "KH4": 700.0,
+    "KH5": 700.0,
+    "KH6": 700.0,
+    "MD1L1": 700.0,
+    "MD2": 700.0,
+    "MD3": 700.0,
+    "KHb": 700.0,
+    "KH8": 700.0,
+    "ART": 700.0
+  },
+  "k_harmonic_mean": 700.0,
+  "n_domains": 14,
+  "n_restrained_residues": 673,
+  "domain_info": {
+    "RRM1": {
+      "start": 36,
+      "end": 58,
+      "n_residues": 23,
+      "mean_plddt": 85.85434782608696
+    },
+    "RRM2": {
+      "start": 176,
+      "end": 194,
+      "n_residues": 19,
+      "mean_plddt": 83.02368421052633
+    },
+    "RRM3": {
+      "start": 255,
+      "end": 284,
+      "n_residues": 30,
+      "mean_plddt": 81.797
+    },
+    "KH1": {
+      "start": 345,
+      "end": 354,
+      "n_residues": 10,
+      "mean_plddt": 83.826
+    },
+    "KH2": {
+      "start": 415,
+      "end": 424,
+      "n_residues": 10,
+      "mean_plddt": 78.97299999999998
+    },
+    "KH4": {
+      "start": 551,
+      "end": 563,
+      "n_residues": 13,
+      "mean_plddt": 86.79999999999998
+    },
+    "KH5": {
+      "start": 624,
+      "end": 635,
+      "n_residues": 12,
+      "mean_plddt": 76.13583333333332
+    },
+    "KH6": {
+      "start": 696,
+      "end": 707,
+      "n_residues": 12,
+      "mean_plddt": 72.78333333333333
+    },
+    "MD1L1": {
+      "start": 820,
+      "end": 948,
+      "n_residues": 129,
+      "mean_plddt": 92.69666666666666
+    },
+    "MD2": {
+      "start": 1035,
+      "end": 1163,
+      "n_residues": 129,
+      "mean_plddt": 93.39658914728682
+    },
+    "MD3": {
+      "start": 1237,
+      "end": 1358,
+      "n_residues": 122,
+      "mean_plddt": 89.92180327868851
+    },
+    "KHb": {
+      "start": 1419,
+      "end": 1431,
+      "n_residues": 13,
+      "mean_plddt": 68.68538461538462
+    },
+    "KH8": {
+      "start": 1492,
+      "end": 1503,
+      "n_residues": 12,
+      "mean_plddt": 85.1475
+    },
+    "ART": {
+      "start": 1633,
+      "end": 1771,
+      "n_residues": 139,
+      "mean_plddt": 88.08741007194246
+    }
+  }
+}

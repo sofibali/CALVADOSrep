@@ -22,9 +22,13 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 CWD = os.path.dirname(os.path.abspath(__file__))
-FIG_PATH = os.path.join(CWD, 'figures')
+# Dated category subdir: figures/07_lysine_contacts/<YYYY-MM-DD>/
+import sys as _sys
+_sys.path.insert(0, CWD)
+import sim_registry as reg
+from _fig_layout import get_fig_dir as _get_fig_dir
+FIG_PATH = str(_get_fig_dir('07_lysine_contacts'))
 DATA_PATH = os.path.join(CWD, 'data')
-os.makedirs(FIG_PATH, exist_ok=True)
 
 LYS_LYS_CUTOFF = 3.0     # nm (CA-CA coarse-grained)
 LYS_ACIDIC_CUTOFF = 3.0   # nm (CA-CA coarse-grained)
@@ -33,6 +37,32 @@ N_FL = 1801
 
 SEEDS = range(1, 6)
 SAMPLES = range(0, 5)
+
+# Externally registered simulation folders (via --sim-folder). Populated in the
+# main process before any ProcessPoolExecutor is created so forked workers inherit
+# it (Linux fork start method).
+EXTERNAL_DIRS = {}
+EXTERNAL_SYSNAME = {}
+
+
+def register_sim_folder(path, units=None):
+    """Register an arbitrary simulation folder so it can be analyzed by set_key.
+
+    The folder is expected to contain seed-{1-5}_sample-{0-4}/ replicate dirs
+    with top.pdb (or checkpoint.pdb) + <sysname>.dcd. Domain units are resolved
+    from `units`, then metadata.json, then a matching named set. Returns the
+    set_key (the folder basename) under which it is registered.
+    """
+    folder = os.path.abspath(path)
+    if not os.path.isdir(folder):
+        raise FileNotFoundError(f"sim folder not found: {folder}")
+    reg._resolve_units(folder, units)  # validate units are resolvable
+    meta = reg.read_metadata(folder) or {}
+    sysname = meta.get('sysname') or reg.detect_sysname(folder)
+    set_key = os.path.basename(os.path.normpath(folder))
+    EXTERNAL_DIRS[set_key] = folder
+    EXTERNAL_SYSNAME[set_key] = sysname
+    return set_key
 
 DOMAIN_GROUPS = [
     ('RRM1', 1, 145, '#A0A0A0'), ('RRM2', 146, 224, '#B0B0B0'),
@@ -48,9 +78,16 @@ def worker_lys_contacts(seed, sample, set_key='fl'):
     """Compute Lys contacts for one replicate of a given set."""
     import MDAnalysis as mda
 
-    sim_dir = os.path.join(CWD, set_key, f'seed-{seed}_sample-{sample}')
+    if set_key in EXTERNAL_DIRS:
+        sim_dir = os.path.join(EXTERNAL_DIRS[set_key], f'seed-{seed}_sample-{sample}')
+        dcd = os.path.join(sim_dir, f'{EXTERNAL_SYSNAME[set_key]}.dcd')
+    else:
+        sim_dir = os.path.join(CWD, set_key, f'seed-{seed}_sample-{sample}')
+        dcd = os.path.join(sim_dir, 'parp14.dcd')
+
     pdb = os.path.join(sim_dir, 'checkpoint.pdb')
-    dcd = os.path.join(sim_dir, 'parp14.dcd')
+    if not os.path.isfile(pdb):
+        pdb = os.path.join(sim_dir, 'top.pdb')
 
     if not os.path.isfile(dcd):
         return None
@@ -237,8 +274,21 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--set', default='fl',
                         help="Set name (e.g. fl, fl_optimized)")
+    parser.add_argument('--sim-folder', nargs='+', default=None, metavar='PATH',
+                        help='One or more simulation-set folders to analyze (each '
+                             'containing seed-*_sample-*/ replicates). Domain units '
+                             "are read from the folder's metadata.json, or pass --units.")
+    parser.add_argument('--units', nargs='+', default=None, metavar='UNIT',
+                        help='FL domain units in the --sim-folder construct '
+                             '(e.g. md1l1 md2 md3). Required only if the folder has '
+                             'no metadata.json.')
     args = parser.parse_args()
-    set_key = args.set
+
+    if args.sim_folder:
+        # This script analyzes one set at a time; use the first folder.
+        set_key = register_sim_folder(args.sim_folder[0], units=args.units)
+    else:
+        set_key = args.set
 
     print("=" * 60)
     print(f"{set_key.upper()} Lysine Contact Analysis (CALVADOS CG-MD)")

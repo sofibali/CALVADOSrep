@@ -1,0 +1,12 @@
+{
+    "design_path": "/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/designs/clamp_md2md3_state3/",
+    "binder_name": "clamp_md2md3_state3",
+    "starting_pdb": "/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/clamp_md2md3_state3.pdb",
+    "chains": "A",
+    "target_hotspot_residues": "220,222,223,224,225,414,415,416,417,418,430,431",
+    "lengths": [
+        90,
+        150
+    ],
+    "number_of_final_designs": 8
+}

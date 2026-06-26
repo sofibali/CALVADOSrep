@@ -14,8 +14,11 @@ from matplotlib.lines import Line2D
 import os
 
 CWD = os.path.dirname(os.path.abspath(__file__))
-FIG_PATH = os.path.join(CWD, 'figures')
-os.makedirs(FIG_PATH, exist_ok=True)
+# Dated category subdir: figures/99_misc/<YYYY-MM-DD>/
+import sys as _sys
+_sys.path.insert(0, CWD)
+from _fig_layout import get_fig_dir as _get_fig_dir
+FIG_PATH = str(_get_fig_dir('99_misc'))
 
 # ============================================================
 # Domain architecture

@@ -1,0 +1,117 @@
+{
+  "set": "frag_rrm1_rrm2",
+  "k": 5,
+  "feature_names": [
+    "ca_RRM1_16__RRM2_156",
+    "ca_RRM1_16__RRM2_181",
+    "ca_RRM1_16__RRM2_206",
+    "ca_RRM1_41__RRM2_156",
+    "ca_RRM1_41__RRM2_181",
+    "ca_RRM1_41__RRM2_206",
+    "ca_RRM1_66__RRM2_156",
+    "ca_RRM1_66__RRM2_181",
+    "ca_RRM1_66__RRM2_206"
+  ],
+  "states": [
+    {
+      "state": 1,
+      "population": 19086,
+      "fraction": 0.3935420017320302,
+      "representative_seed": 3,
+      "representative_sample": 1,
+      "representative_frame": 1719,
+      "representative_pdb": "representative_frames/2026-05-20/rrm1_rrm2_ca25_tica/state_1.pdb",
+      "mean_features": {
+        "ca_RRM1_16__RRM2_156": 6.48647623669298,
+        "ca_RRM1_16__RRM2_181": 6.92864762981283,
+        "ca_RRM1_16__RRM2_206": 6.68852263262446,
+        "ca_RRM1_41__RRM2_156": 6.426639960804138,
+        "ca_RRM1_41__RRM2_181": 6.846240631466977,
+        "ca_RRM1_41__RRM2_206": 6.630063579496717,
+        "ca_RRM1_66__RRM2_156": 6.392746375421052,
+        "ca_RRM1_66__RRM2_181": 6.821935960578928,
+        "ca_RRM1_66__RRM2_206": 6.618275707830214
+      }
+    },
+    {
+      "state": 2,
+      "population": 11947,
+      "fraction": 0.2463400552600107,
+      "representative_seed": 2,
+      "representative_sample": 2,
+      "representative_frame": 1256,
+      "representative_pdb": "representative_frames/2026-05-20/rrm1_rrm2_ca25_tica/state_2.pdb",
+      "mean_features": {
+        "ca_RRM1_16__RRM2_156": 8.225508675781207,
+        "ca_RRM1_16__RRM2_181": 8.572782894642451,
+        "ca_RRM1_16__RRM2_206": 8.511725834256746,
+        "ca_RRM1_41__RRM2_156": 8.401309847846694,
+        "ca_RRM1_41__RRM2_181": 8.724831714449122,
+        "ca_RRM1_41__RRM2_206": 8.686217113933953,
+        "ca_RRM1_66__RRM2_156": 8.340961578920654,
+        "ca_RRM1_66__RRM2_181": 8.683713969819523,
+        "ca_RRM1_66__RRM2_206": 8.619840098118855
+      }
+    },
+    {
+      "state": 3,
+      "population": 4511,
+      "fraction": 0.0930141449131923,
+      "representative_seed": 4,
+      "representative_sample": 1,
+      "representative_frame": 851,
+      "representative_pdb": "representative_frames/2026-05-20/rrm1_rrm2_ca25_tica/state_3.pdb",
+      "mean_features": {
+        "ca_RRM1_16__RRM2_156": 3.4284710039507917,
+        "ca_RRM1_16__RRM2_181": 3.0611873175267554,
+        "ca_RRM1_16__RRM2_206": 3.4790606230490755,
+        "ca_RRM1_41__RRM2_156": 3.1052626746770047,
+        "ca_RRM1_41__RRM2_181": 2.7561297741863315,
+        "ca_RRM1_41__RRM2_206": 3.1497736089088466,
+        "ca_RRM1_66__RRM2_156": 3.186122208457119,
+        "ca_RRM1_66__RRM2_181": 2.7711323649252737,
+        "ca_RRM1_66__RRM2_206": 3.23124904074708
+      }
+    },
+    {
+      "state": 4,
+      "population": 5506,
+      "fraction": 0.11353045486411811,
+      "representative_seed": 2,
+      "representative_sample": 0,
+      "representative_frame": 1708,
+      "representative_pdb": "representative_frames/2026-05-20/rrm1_rrm2_ca25_tica/state_4.pdb",
+      "mean_features": {
+        "ca_RRM1_16__RRM2_156": 4.678424895253564,
+        "ca_RRM1_16__RRM2_181": 4.50704803322386,
+        "ca_RRM1_16__RRM2_206": 4.435242635247667,
+        "ca_RRM1_41__RRM2_156": 4.515505118507322,
+        "ca_RRM1_41__RRM2_181": 4.599477354663093,
+        "ca_RRM1_41__RRM2_206": 4.373622569633405,
+        "ca_RRM1_66__RRM2_156": 4.789958680158868,
+        "ca_RRM1_66__RRM2_181": 4.8094561960192275,
+        "ca_RRM1_66__RRM2_206": 4.529678366009296
+      }
+    },
+    {
+      "state": 5,
+      "population": 7448,
+      "fraction": 0.1535733432306487,
+      "representative_seed": 2,
+      "representative_sample": 0,
+      "representative_frame": 700,
+      "representative_pdb": "representative_frames/2026-05-20/rrm1_rrm2_ca25_tica/state_5.pdb",
+      "mean_features": {
+        "ca_RRM1_16__RRM2_156": 4.458309287839558,
+        "ca_RRM1_16__RRM2_181": 4.580243251161404,
+        "ca_RRM1_16__RRM2_206": 4.609821486765985,
+        "ca_RRM1_41__RRM2_156": 4.439227259176694,
+        "ca_RRM1_41__RRM2_181": 4.553829174156668,
+        "ca_RRM1_41__RRM2_206": 4.518512020233686,
+        "ca_RRM1_66__RRM2_156": 4.611599475705534,
+        "ca_RRM1_66__RRM2_181": 4.761293359957115,
+        "ca_RRM1_66__RRM2_206": 4.708856801285331
+      }
+    }
+  ]
+}

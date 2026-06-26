@@ -1,0 +1,89 @@
+{
+  "set": "md",
+  "k": 3,
+  "feature_names": [
+    "linker_r1_x",
+    "linker_r1_y",
+    "linker_r1_z",
+    "linker_r199_x",
+    "linker_r199_y",
+    "linker_r199_z",
+    "linker_r209_x",
+    "linker_r209_y",
+    "linker_r209_z",
+    "linker_r407_x",
+    "linker_r407_y",
+    "linker_r407_z"
+  ],
+  "states": [
+    {
+      "state": 1,
+      "population": 6304,
+      "fraction": 0.1293128205128205,
+      "representative_seed": 1,
+      "representative_sample": 2,
+      "representative_frame": 141,
+      "representative_pdb": "representative_frames/2026-05-19/md_linker10_tica/state_1.pdb",
+      "mean_features": {
+        "linker_r1_x": -0.4706617094538539,
+        "linker_r1_y": 0.3944395726102258,
+        "linker_r1_z": 0.4126549945567465,
+        "linker_r199_x": -0.05983888270891257,
+        "linker_r199_y": 0.24072478310710888,
+        "linker_r199_z": 0.865885513688102,
+        "linker_r209_x": 0.06889050351786734,
+        "linker_r209_y": 0.13802782654157145,
+        "linker_r209_z": 0.7053357864999529,
+        "linker_r407_x": -0.0841619945722183,
+        "linker_r407_y": -0.23777308757535093,
+        "linker_r407_z": 0.3357238651532207
+      }
+    },
+    {
+      "state": 2,
+      "population": 13520,
+      "fraction": 0.2773333333333333,
+      "representative_seed": 4,
+      "representative_sample": 1,
+      "representative_frame": 401,
+      "representative_pdb": "representative_frames/2026-05-19/md_linker10_tica/state_2.pdb",
+      "mean_features": {
+        "linker_r1_x": 0.21443230266401753,
+        "linker_r1_y": -1.6114827221667274,
+        "linker_r1_z": -0.23894285147006694,
+        "linker_r199_x": -0.5757786381526812,
+        "linker_r199_y": -0.59439806627804,
+        "linker_r199_z": -0.8026071613356912,
+        "linker_r209_x": -0.5967545149594369,
+        "linker_r209_y": -0.1026933755394975,
+        "linker_r209_z": -0.7150529934104378,
+        "linker_r407_x": -0.6577630886664757,
+        "linker_r407_y": 0.33187757123856854,
+        "linker_r407_z": 0.058498032911289376
+      }
+    },
+    {
+      "state": 3,
+      "population": 28926,
+      "fraction": 0.5933538461538461,
+      "representative_seed": 5,
+      "representative_sample": 1,
+      "representative_frame": 693,
+      "representative_pdb": "representative_frames/2026-05-19/md_linker10_tica/state_3.pdb",
+      "mean_features": {
+        "linker_r1_x": -0.13460952256598396,
+        "linker_r1_y": 0.4288246195271641,
+        "linker_r1_z": -0.044925829026162156,
+        "linker_r199_x": 0.23083248661323214,
+        "linker_r199_y": 0.06356855207959011,
+        "linker_r199_z": 0.1831596608660754,
+        "linker_r209_x": 0.22758913653392907,
+        "linker_r209_y": -0.05994980814776249,
+        "linker_r209_z": 0.16432180762711315,
+        "linker_r407_x": 0.2961653717027564,
+        "linker_r407_y": -0.1179498291556324,
+        "linker_r407_z": -0.07026996149657748
+      }
+    }
+  ]
+}

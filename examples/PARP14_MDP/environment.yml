@@ -1,0 +1,36 @@
+# Conda environment for the CALVADOS TICA -> state-selection -> full-atom pipeline
+# (examples/PARP14_MDP/tica_pipeline/ and the analysis scripts here).
+#
+#   conda env create -f environment.yml
+#   conda activate calvados-tica
+#   pip install -e /path/to/CALVADOS      # the CALVADOS package itself (for running sims)
+#
+# Pinned to match the working CALVADOS env. The two additions beyond CALVADOS's
+# setup.py are flagged NEW: scikit-learn (k-means microstates) and pdbfixer
+# (adds terminal/missing atoms so amber can minimise back-mapped structures).
+name: calvados-tica
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - openmm=8.2.0          # MD engine + energy minimisation
+  - pdbfixer              # NEW: terminal/missing-atom fixing for full-atom backmap
+  - mdtraj=1.10
+  - mdanalysis=2.6.1      # trajectory IO / feature extraction
+  - numpy=1.24
+  - scipy=1.13            # eigh (TICA), spatial
+  - scikit-learn          # NEW: KMeans microstates
+  - pandas=2.1.1
+  - biopython=1.81        # PDB parsing / NeighborSearch (clash counting, backmap)
+  - matplotlib=3.8
+  - pyyaml=6.0
+  - statsmodels=0.14
+  - numba=0.60
+  - jinja2=3.1.2
+  - tqdm=4.66
+  - pip
+  - pip:
+      - localcider==0.1.21
+# GPU note: for CUDA, instead install openmm with the matching cudatoolkit:
+#   conda install -c conda-forge openmm=8.2.0 cudatoolkit=11.8

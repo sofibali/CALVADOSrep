@@ -269,6 +269,16 @@ def main():
         json.dump(summary, f, indent=2)
     print(f"  Wrote {SET_DIR / 'simulation_summary.json'}")
 
+    # metadata.json so analysis scripts can use `--sim-folder fl_optimized`
+    # (full-length, all 11 domain units). See sim_registry.py / stamp_metadata.py.
+    with open(SET_DIR / 'metadata.json', 'w') as f:
+        json.dump({'units': ['rrm1', 'rrm2', 'rrm3', 'kh1-kh6', 'kh7a', 'md1l1',
+                             'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+                   'sysname': 'parp14',
+                   'sites': ['MD1', 'MD2', 'MD3', 'ART'],
+                   'label': 'FL (optimized restraints)'}, f, indent=2)
+    print(f"  Wrote {SET_DIR / 'metadata.json'}")
+
     # Load base config from CALVADOS defaults
     with open(DEFAULT_CONFIG) as f:
         base_config = yaml.safe_load(f)

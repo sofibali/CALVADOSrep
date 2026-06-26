@@ -1,0 +1,12 @@
+target,goal,source,keep,n_hotspots,hotspots,lengths,pdb
+md1_block_af3,BLOCK MD1 pocket,af3,1-404,15,33 37 39 41 42 43 44 46 47 134 135 136 138 172 173,70-130,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/md1_block_af3.pdb
+md1_block_sim,BLOCK MD1 pocket,sim,1-404,15,33 37 39 41 42 43 44 46 47 134 135 136 138 172 173,70-130,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/md1_block_sim.pdb
+md2_block_af3,BLOCK MD2 pocket,af3,1-586,23,232 235 245 246 247 248 249 251 253 254 255 256 257 342 345 346 347 348 349 351 352 382 386,70-130,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/md2_block_af3.pdb
+md2_block_sim,BLOCK MD2 pocket,sim,1-586,23,232 235 245 246 247 248 249 251 253 254 255 256 257 342 345 346 347 348 349 351 352 382 386,70-130,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/md2_block_sim.pdb
+md3_block_af3,BLOCK MD3 pocket,af3,216-586,23,433 435 446 447 448 449 451 452 453 454 455 456 457 458 459 502 528 531 532 533 534 535 569,70-130,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/md3_block_af3.pdb
+md3_block_sim,BLOCK MD3 pocket,sim,216-586,23,433 435 446 447 448 449 451 452 453 454 455 456 457 458 459 502 528 531 532 533 534 535 569,70-130,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/md3_block_sim.pdb
+clamp_md1md2_state3,CLAMP MD1-MD2 @ state3 (enforce new interface),sim-state,1-404,14,71 102 103 106 107 109 110 351 354 357 395 396 399 400,90-150,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/clamp_md1md2_state3.pdb
+clamp_md2md3_state3,CLAMP MD2-MD3 @ state3 (enforce new interface),sim-state,216-586,12,220 222 223 224 225 414 415 416 417 418 430 431,90-150,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/clamp_md2md3_state3.pdb
+clamp_md1md2_state5,CLAMP MD1-MD2 @ state5 (enforce new interface),sim-state,1-404,14,71 72 100 102 103 106 107 218 220 224 225 226 376 377,90-150,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/clamp_md1md2_state5.pdb
+clamp_md2md3_state5,CLAMP MD2-MD3 @ state5 (enforce new interface),sim-state,216-586,14,310 311 312 313 316 317 354 423 424 553 554 556 559 560,90-150,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/clamp_md2md3_state5.pdb
+clamp_md1md2_state1,CLAMP MD1-MD2 @ state1 (enforce new interface),sim-state,1-404,14,140 141 142 176 180 183 187 296 298 334 335 336 373 374,90-150,/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/clamp_md1md2_state1.pdb

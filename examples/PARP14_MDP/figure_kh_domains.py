@@ -21,9 +21,13 @@ import matplotlib.patches as mpatches
 from matplotlib.colors import LinearSegmentedColormap
 from pathlib import Path
 
-DATA_DIR = Path('/home/sbali/CALVADOS/examples/PARP14_MDP/data')
-FIG_DIR = Path('/home/sbali/CALVADOS/examples/PARP14_MDP/figures')
-FIG_DIR.mkdir(parents=True, exist_ok=True)
+_HERE = Path('/home/sbali/CALVADOS/examples/PARP14_MDP')
+DATA_DIR = _HERE / 'data'
+# Dated category subdir: figures/08_kh_domains/<YYYY-MM-DD>/
+import sys as _sys
+_sys.path.insert(0, str(_HERE))
+from _fig_layout import get_fig_dir as _get_fig_dir
+FIG_DIR = _get_fig_dir('08_kh_domains')
 
 # Domain definitions
 DOMAIN_DEFS = {

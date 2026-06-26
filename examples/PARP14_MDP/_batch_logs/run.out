@@ -1,0 +1,310 @@
+=== PARP14 batch started Wed May 20 05:28:31 PDT 2026 ===
+
+════ STEP 1 — trajectory analyses ════
+
+── [01_energy] 05:28:32 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python analyze_all.py --include-fragments --energy --workers 32
+   [01_energy] OK (05:43:09)
+
+── [02_dmap_cmap] 05:43:09 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python analyze_all.py --include-fragments --dmap --cmap --workers 32
+   [02_dmap_cmap] OK (05:49:15)
+
+── [03_fnc_conf] 05:49:15 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python analyze_all.py --include-fragments --fnc --conf-prop --workers 32
+   [03_fnc_conf] OK (05:57:27)
+
+── [04_access] 05:57:27 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python analyze_accessibility.py --include-fragments --nrays 200
+   [04_access] OK (06:52:57)
+
+════ STEP 2 — clustering 8 named sets ════
+
+── [cluster_fl] 06:52:57 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set fl --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_fl] FAILED rc=1 — see _batch_logs/2026-05-20_05-28-31_cluster_fl.log
+
+── [cluster_fl_optimized] 07:08:37 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set fl_optimized --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_fl_optimized] OK (07:14:34)
+
+── [cluster_md] 07:14:35 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_md] OK (07:18:06)
+
+── [cluster_core] 07:18:06 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set core --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_core] OK (07:43:49)
+
+── [cluster_mka] 07:43:49 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set mka --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_mka] OK (08:02:06)
+
+── [cluster_norrm] 08:02:06 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set norrm --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_norrm] OK (08:33:08)
+
+── [cluster_noart] 08:33:09 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set noart --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_noart] OK (08:54:34)
+
+── [cluster_md3art] 08:54:34 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md3art --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_md3art] OK (08:58:03)
+
+════ STEP 3 — clustering fragments ════
+
+── [cluster_frag_art] 08:58:03 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set art --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_art] OK (08:58:05)
+
+── [cluster_frag_kh1-kh6] 08:58:05 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh1-kh6 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh1-kh6] OK (08:58:07)
+
+── [cluster_frag_kh1-kh6_kh7a] 08:58:07 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh1-kh6_kh7a --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh1-kh6_kh7a] OK (08:58:10)
+
+── [cluster_frag_kh1-kh6_kh7a_md1l1] 08:58:10 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh1-kh6_kh7a_md1l1 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh1-kh6_kh7a_md1l1] OK (09:00:46)
+
+── [cluster_frag_kh1-kh6_kh7a_md1l1_md2] 09:00:46 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh1-kh6_kh7a_md1l1_md2 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh1-kh6_kh7a_md1l1_md2] OK (09:03:53)
+
+── [cluster_frag_kh1-kh6_kh7a_md1l1_md2_md3] 09:03:53 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh1-kh6_kh7a_md1l1_md2_md3 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh1-kh6_kh7a_md1l1_md2_md3] OK (09:07:52)
+
+── [cluster_frag_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8] 09:07:52 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8] OK (09:11:19)
+
+── [cluster_frag_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe] 09:11:19 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe] OK (09:14:52)
+
+── [cluster_frag_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art] 09:14:52 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art] OK (09:21:38)
+
+── [cluster_frag_kh7a] 09:21:38 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh7a --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh7a] OK (09:21:40)
+
+── [cluster_frag_kh7a_md1l1] 09:21:40 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh7a_md1l1 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh7a_md1l1] OK (09:25:36)
+
+── [cluster_frag_kh7a_md1l1_md2] 09:25:36 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh7a_md1l1_md2 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh7a_md1l1_md2] OK (09:29:21)
+
+── [cluster_frag_kh7a_md1l1_md2_md3] 09:29:21 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh7a_md1l1_md2_md3 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh7a_md1l1_md2_md3] OK (09:34:26)
+
+── [cluster_frag_kh7a_md1l1_md2_md3_khb-kh8] 09:34:26 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh7a_md1l1_md2_md3_khb-kh8 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh7a_md1l1_md2_md3_khb-kh8] OK (09:40:35)
+
+── [cluster_frag_kh7a_md1l1_md2_md3_khb-kh8_wwe] 09:40:35 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh7a_md1l1_md2_md3_khb-kh8_wwe --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh7a_md1l1_md2_md3_khb-kh8_wwe] OK (09:44:25)
+
+── [cluster_frag_kh7a_md1l1_md2_md3_khb-kh8_wwe_art] 09:44:25 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set kh7a_md1l1_md2_md3_khb-kh8_wwe_art --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_kh7a_md1l1_md2_md3_khb-kh8_wwe_art] OK (09:51:27)
+
+── [cluster_frag_khb-kh8] 09:51:27 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set khb-kh8 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_khb-kh8] OK (09:51:29)
+
+── [cluster_frag_khb-kh8_wwe] 09:51:29 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set khb-kh8_wwe --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_khb-kh8_wwe] OK (09:51:31)
+
+── [cluster_frag_khb-kh8_wwe_art] 09:51:31 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set khb-kh8_wwe_art --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_khb-kh8_wwe_art] OK (09:54:09)
+
+── [cluster_frag_md1l1] 09:54:09 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md1l1 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md1l1] OK (09:54:12)
+
+── [cluster_frag_md1l1_md2] 09:54:12 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md1l1_md2 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md1l1_md2] OK (09:57:09)
+
+── [cluster_frag_md1l1_md2_md3] 09:57:10 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md1l1_md2_md3 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md1l1_md2_md3] OK (10:00:32)
+
+── [cluster_frag_md1l1_md2_md3_khb-kh8] 10:00:32 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md1l1_md2_md3_khb-kh8 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md1l1_md2_md3_khb-kh8] OK (10:03:20)
+
+── [cluster_frag_md1l1_md2_md3_khb-kh8_wwe] 10:03:20 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md1l1_md2_md3_khb-kh8_wwe --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md1l1_md2_md3_khb-kh8_wwe] OK (10:06:28)
+
+── [cluster_frag_md1l1_md2_md3_khb-kh8_wwe_art] 10:06:29 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md1l1_md2_md3_khb-kh8_wwe_art --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md1l1_md2_md3_khb-kh8_wwe_art] OK (10:11:11)
+
+── [cluster_frag_md2] 10:11:11 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md2 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md2] OK (10:11:13)
+
+── [cluster_frag_md2_md3] 10:11:13 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md2_md3 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md2_md3] OK (10:14:53)
+
+── [cluster_frag_md2_md3_khb-kh8] 10:14:53 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md2_md3_khb-kh8 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md2_md3_khb-kh8] OK (10:21:18)
+
+── [cluster_frag_md2_md3_khb-kh8_wwe] 10:21:18 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md2_md3_khb-kh8_wwe --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md2_md3_khb-kh8_wwe] OK (10:24:55)
+
+── [cluster_frag_md2_md3_khb-kh8_wwe_art] 10:24:55 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md2_md3_khb-kh8_wwe_art --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md2_md3_khb-kh8_wwe_art] OK (10:28:38)
+
+── [cluster_frag_md3] 10:28:38 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md3 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md3] OK (10:28:40)
+
+── [cluster_frag_md3_khb-kh8] 10:28:40 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md3_khb-kh8 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md3_khb-kh8] OK (10:28:43)
+
+── [cluster_frag_md3_khb-kh8_wwe] 10:28:43 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md3_khb-kh8_wwe --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md3_khb-kh8_wwe] OK (10:31:25)
+
+── [cluster_frag_md3_khb-kh8_wwe_art] 10:31:25 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set md3_khb-kh8_wwe_art --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_md3_khb-kh8_wwe_art] OK (10:34:31)
+
+── [cluster_frag_rrm1] 10:34:32 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set rrm1 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_rrm1] OK (10:34:34)
+
+── [cluster_frag_rrm1_rrm2] 10:34:34 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set rrm1_rrm2 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_rrm1_rrm2] OK (10:37:36)
+
+── [cluster_frag_rrm1_rrm2_rrm3] 10:37:36 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set rrm1_rrm2_rrm3 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_rrm1_rrm2_rrm3] OK (10:39:44)
+
+── [cluster_frag_rrm1_rrm2_rrm3_kh1-kh6] 10:39:44 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python cluster_states.py --set rrm1_rrm2_rrm3_kh1-kh6 --features ca --ca-stride 25 --reduce tica --tica-lag 80 --n-microstates 200 --pcca --msm-lag 80 --k 5 --ck-test --no-silhouette --workers 16
+   [cluster_frag_rrm1_rrm2_rrm3_kh1-kh6] FAILED rc=1 — see _batch_logs/2026-05-20_05-28-31_cluster_frag_rrm1_rrm2_rrm3_kh1-kh6.log
+   [cluster_frag_rrm1_rrm2_rrm3_kh1-kh6_kh7a] SKIP — no .dcd files
+   [cluster_frag_rrm2] SKIP — no .dcd files
+   [cluster_frag_rrm2_rrm3] SKIP — no .dcd files
+   [cluster_frag_rrm2_rrm3_kh1-kh6] SKIP — no .dcd files
+   [cluster_frag_rrm2_rrm3_kh1-kh6_kh7a] SKIP — no .dcd files
+   [cluster_frag_rrm3] SKIP — no .dcd files
+   [cluster_frag_rrm3_kh1-kh6] SKIP — no .dcd files
+   [cluster_frag_rrm3_kh1-kh6_kh7a] SKIP — no .dcd files
+   [cluster_frag_wwe] SKIP — no .dcd files
+   [cluster_frag_wwe_art] SKIP — no .dcd files
+
+════ STEP 4 — PyMOL sessions for 46 sets ════
+
+── [pse_fl] 10:39:52 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set fl --out-pml-only
+   [pse_fl] OK (10:39:52)
+
+── [pse_fl_optimized] 10:39:52 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set fl_optimized --out-pml-only
+   [pse_fl_optimized] OK (10:39:52)
+
+── [pse_md] 10:39:53 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md --out-pml-only
+   [pse_md] OK (10:39:53)
+
+── [pse_core] 10:39:53 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set core --out-pml-only
+   [pse_core] OK (10:39:53)
+
+── [pse_mka] 10:39:53 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set mka --out-pml-only
+   [pse_mka] OK (10:39:54)
+
+── [pse_norrm] 10:39:54 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set norrm --out-pml-only
+   [pse_norrm] OK (10:39:55)
+
+── [pse_noart] 10:39:55 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set noart --out-pml-only
+   [pse_noart] OK (10:39:56)
+
+── [pse_md3art] 10:39:56 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md3art --out-pml-only
+   [pse_md3art] OK (10:39:56)
+
+── [pse_art] 10:39:56 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set art --out-pml-only
+   [pse_art] FAILED rc=1 — see _batch_logs/2026-05-20_05-28-31_pse_art.log
+
+── [pse_kh1-kh6] 10:39:56 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh1-kh6 --out-pml-only
+   [pse_kh1-kh6] OK (10:39:56)
+
+── [pse_kh1-kh6_kh7a] 10:39:56 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh1-kh6_kh7a --out-pml-only
+   [pse_kh1-kh6_kh7a] OK (10:39:57)
+
+── [pse_kh1-kh6_kh7a_md1l1] 10:39:57 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh1-kh6_kh7a_md1l1 --out-pml-only
+   [pse_kh1-kh6_kh7a_md1l1] OK (10:39:57)
+
+── [pse_kh1-kh6_kh7a_md1l1_md2] 10:39:57 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh1-kh6_kh7a_md1l1_md2 --out-pml-only
+   [pse_kh1-kh6_kh7a_md1l1_md2] OK (10:39:57)
+
+── [pse_kh1-kh6_kh7a_md1l1_md2_md3] 10:39:57 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh1-kh6_kh7a_md1l1_md2_md3 --out-pml-only
+   [pse_kh1-kh6_kh7a_md1l1_md2_md3] OK (10:39:57)
+
+── [pse_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8] 10:39:57 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8 --out-pml-only
+   [pse_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8] OK (10:39:58)
+
+── [pse_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe] 10:39:58 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe --out-pml-only
+   [pse_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe] OK (10:39:58)
+
+── [pse_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art] 10:39:58 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art --out-pml-only
+   [pse_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art] OK (10:39:58)
+
+── [pse_kh7a] 10:39:58 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh7a --out-pml-only
+   [pse_kh7a] OK (10:39:58)
+
+── [pse_kh7a_md1l1] 10:39:58 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh7a_md1l1 --out-pml-only
+   [pse_kh7a_md1l1] OK (10:39:59)
+
+── [pse_kh7a_md1l1_md2] 10:39:59 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh7a_md1l1_md2 --out-pml-only
+   [pse_kh7a_md1l1_md2] OK (10:39:59)
+
+── [pse_kh7a_md1l1_md2_md3] 10:39:59 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh7a_md1l1_md2_md3 --out-pml-only
+   [pse_kh7a_md1l1_md2_md3] OK (10:39:59)
+
+── [pse_kh7a_md1l1_md2_md3_khb-kh8] 10:39:59 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh7a_md1l1_md2_md3_khb-kh8 --out-pml-only
+   [pse_kh7a_md1l1_md2_md3_khb-kh8] OK (10:39:59)
+
+── [pse_kh7a_md1l1_md2_md3_khb-kh8_wwe] 10:39:59 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh7a_md1l1_md2_md3_khb-kh8_wwe --out-pml-only
+   [pse_kh7a_md1l1_md2_md3_khb-kh8_wwe] OK (10:40:00)
+
+── [pse_kh7a_md1l1_md2_md3_khb-kh8_wwe_art] 10:40:00 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set kh7a_md1l1_md2_md3_khb-kh8_wwe_art --out-pml-only
+   [pse_kh7a_md1l1_md2_md3_khb-kh8_wwe_art] OK (10:40:00)
+
+── [pse_khb-kh8] 10:40:00 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set khb-kh8 --out-pml-only
+   [pse_khb-kh8] OK (10:40:00)
+
+── [pse_khb-kh8_wwe] 10:40:00 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set khb-kh8_wwe --out-pml-only
+   [pse_khb-kh8_wwe] OK (10:40:01)
+
+── [pse_khb-kh8_wwe_art] 10:40:01 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set khb-kh8_wwe_art --out-pml-only
+   [pse_khb-kh8_wwe_art] OK (10:40:01)
+
+── [pse_md1l1] 10:40:01 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md1l1 --out-pml-only
+   [pse_md1l1] OK (10:40:01)
+
+── [pse_md1l1_md2] 10:40:01 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md1l1_md2 --out-pml-only
+   [pse_md1l1_md2] OK (10:40:01)
+
+── [pse_md1l1_md2_md3] 10:40:01 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md1l1_md2_md3 --out-pml-only
+   [pse_md1l1_md2_md3] OK (10:40:02)
+
+── [pse_md1l1_md2_md3_khb-kh8] 10:40:02 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md1l1_md2_md3_khb-kh8 --out-pml-only
+   [pse_md1l1_md2_md3_khb-kh8] OK (10:40:02)
+
+── [pse_md1l1_md2_md3_khb-kh8_wwe] 10:40:02 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md1l1_md2_md3_khb-kh8_wwe --out-pml-only
+   [pse_md1l1_md2_md3_khb-kh8_wwe] OK (10:40:02)
+
+── [pse_md1l1_md2_md3_khb-kh8_wwe_art] 10:40:02 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md1l1_md2_md3_khb-kh8_wwe_art --out-pml-only
+   [pse_md1l1_md2_md3_khb-kh8_wwe_art] OK (10:40:02)
+
+── [pse_md2] 10:40:02 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md2 --out-pml-only
+   [pse_md2] OK (10:40:03)
+
+── [pse_md2_md3] 10:40:03 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md2_md3 --out-pml-only
+   [pse_md2_md3] OK (10:40:03)
+
+── [pse_md2_md3_khb-kh8] 10:40:03 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md2_md3_khb-kh8 --out-pml-only
+   [pse_md2_md3_khb-kh8] OK (10:40:03)
+
+── [pse_md2_md3_khb-kh8_wwe] 10:40:03 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md2_md3_khb-kh8_wwe --out-pml-only
+   [pse_md2_md3_khb-kh8_wwe] OK (10:40:03)
+
+── [pse_md2_md3_khb-kh8_wwe_art] 10:40:03 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md2_md3_khb-kh8_wwe_art --out-pml-only
+   [pse_md2_md3_khb-kh8_wwe_art] OK (10:40:04)
+
+── [pse_md3] 10:40:04 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md3 --out-pml-only
+   [pse_md3] OK (10:40:04)
+
+── [pse_md3_khb-kh8] 10:40:04 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md3_khb-kh8 --out-pml-only
+   [pse_md3_khb-kh8] OK (10:40:04)
+
+── [pse_md3_khb-kh8_wwe] 10:40:04 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md3_khb-kh8_wwe --out-pml-only
+   [pse_md3_khb-kh8_wwe] OK (10:40:05)
+
+── [pse_md3_khb-kh8_wwe_art] 10:40:05 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set md3_khb-kh8_wwe_art --out-pml-only
+   [pse_md3_khb-kh8_wwe_art] OK (10:40:05)
+
+── [pse_rrm1] 10:40:05 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set rrm1 --out-pml-only
+   [pse_rrm1] OK (10:40:05)
+
+── [pse_rrm1_rrm2] 10:40:05 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set rrm1_rrm2 --out-pml-only
+   [pse_rrm1_rrm2] OK (10:40:05)
+
+── [pse_rrm1_rrm2_rrm3] 10:40:05 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set rrm1_rrm2_rrm3 --out-pml-only
+   [pse_rrm1_rrm2_rrm3] OK (10:40:05)
+
+── [pse_rrm1_rrm2_rrm3_kh1-kh6] 10:40:05 — running: /home/sbali/miniconda3/envs/CALVADOS/bin/python make_cluster_pse.py --auto --set rrm1_rrm2_rrm3_kh1-kh6 --out-pml-only
+   [pse_rrm1_rrm2_rrm3_kh1-kh6] FAILED rc=1 — see _batch_logs/2026-05-20_05-28-31_pse_rrm1_rrm2_rrm3_kh1-kh6.log
+
+=== PARP14 batch finished Wed May 20 10:40:06 PDT 2026 ===
+Summary log: _batch_logs/summary_2026-05-20_05-28-31.log

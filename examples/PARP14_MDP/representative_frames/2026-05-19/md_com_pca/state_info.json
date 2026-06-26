@@ -1,0 +1,81 @@
+{
+  "set": "md",
+  "k": 5,
+  "feature_names": [
+    "dist_MD1L1_MD2",
+    "dist_MD1L1_MD3",
+    "dist_MD2_MD3"
+  ],
+  "states": [
+    {
+      "state": 1,
+      "population": 10267,
+      "fraction": 0.2106051282051282,
+      "representative_seed": 2,
+      "representative_sample": 3,
+      "representative_frame": 1863,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_pca/state_1.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 2.9319217585007844,
+        "dist_MD1L1_MD3": 4.907665302879509,
+        "dist_MD2_MD3": 3.1894611367884167
+      }
+    },
+    {
+      "state": 2,
+      "population": 6875,
+      "fraction": 0.14102564102564102,
+      "representative_seed": 3,
+      "representative_sample": 0,
+      "representative_frame": 811,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_pca/state_2.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 3.4681564228921093,
+        "dist_MD1L1_MD3": 3.1678561579261886,
+        "dist_MD2_MD3": 3.29501166622441
+      }
+    },
+    {
+      "state": 3,
+      "population": 9751,
+      "fraction": 0.2000205128205128,
+      "representative_seed": 2,
+      "representative_sample": 3,
+      "representative_frame": 482,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_pca/state_3.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 2.8599404173468375,
+        "dist_MD1L1_MD3": 3.332968219917892,
+        "dist_MD2_MD3": 4.65056867679908
+      }
+    },
+    {
+      "state": 4,
+      "population": 20420,
+      "fraction": 0.4188717948717949,
+      "representative_seed": 5,
+      "representative_sample": 0,
+      "representative_frame": 923,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_pca/state_4.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 2.8107143711092935,
+        "dist_MD1L1_MD3": 3.418265442478067,
+        "dist_MD2_MD3": 3.288993642445228
+      }
+    },
+    {
+      "state": 5,
+      "population": 1437,
+      "fraction": 0.029476923076923078,
+      "representative_seed": 3,
+      "representative_sample": 0,
+      "representative_frame": 1926,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_pca/state_5.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 4.801802484354066,
+        "dist_MD1L1_MD3": 2.9051748322707187,
+        "dist_MD2_MD3": 3.8436476284161945
+      }
+    }
+  ]
+}

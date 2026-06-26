@@ -291,6 +291,17 @@ def prepare_fl(n_steps=N_STEPS):
     set_dir = os.path.join(CWD, 'fl')
     os.makedirs(set_dir, exist_ok=True)
 
+    # metadata.json so analysis scripts can use `--sim-folder fl` (full-length
+    # contains all 11 domain units). See sim_registry.py / stamp_metadata.py.
+    try:
+        import json as _json
+        with open(os.path.join(set_dir, 'metadata.json'), 'w') as f:
+            _json.dump({'units': list(DOMAIN_UNITS.keys()), 'sysname': 'parp14',
+                        'sites': ['MD1', 'MD2', 'MD3', 'ART'],
+                        'label': 'Full Length (1-1801)'}, f, indent=2)
+    except Exception as _e:
+        print(f"  WARN: could not write metadata.json ({_e})")
+
     # Shared input — use fl/input/
     fl_input = os.path.join(set_dir, 'input')
     os.makedirs(fl_input, exist_ok=True)
@@ -386,6 +397,25 @@ def prepare_construct(key, n_steps=N_STEPS):
     domains_yaml = os.path.join(shared_input, 'domains.yaml')
     with open(domains_yaml, 'w') as f:
         yaml.dump({sysname: domains}, f, default_flow_style=False, sort_keys=False)
+
+    # Write metadata.json so the analysis scripts can analyze this set via
+    # `--sim-folder <set>` with no other arguments (units -> active-site/domain
+    # remapping). See sim_registry.py / stamp_metadata.py.
+    try:
+        import json as _json
+        _meta = {
+            'units': list(info['units']),
+            'sysname': sysname,
+            'sites': [s for u, s in [('md1l1', 'MD1'), ('md2', 'MD2'),
+                                     ('md3', 'MD3'), ('art', 'ART')]
+                      if u in info['units']],
+            'label': info.get('label', key),
+            'domain_ranges_construct': domains,
+        }
+        with open(os.path.join(set_dir, 'metadata.json'), 'w') as f:
+            _json.dump(_meta, f, indent=2)
+    except Exception as _e:
+        print(f"  WARN: could not write metadata.json ({_e})")
 
     print(f"  Domains (FL boundaries -> construct numbering):")
     for label, bounds in zip(domain_labels, domains):

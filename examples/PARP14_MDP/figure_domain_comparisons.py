@@ -28,8 +28,12 @@ from typing import Dict, List, Tuple, Optional, Set
 # ============================================================
 
 METRICS_DIR = Path('/home/sbali/CALVADOS/parp14/analysis/domain_metrics')
-FIG_DIR = Path('/home/sbali/CALVADOS/examples/PARP14_MDP/figures/domain_comparisons')
-FIG_DIR.mkdir(parents=True, exist_ok=True)
+# Dated category subdir: figures/02_main_analysis/<YYYY-MM-DD>/domain_comparisons/
+_HERE = Path('/home/sbali/CALVADOS/examples/PARP14_MDP')
+import sys as _sys
+_sys.path.insert(0, str(_HERE))
+from _fig_layout import get_fig_dir as _get_fig_dir
+FIG_DIR = _get_fig_dir('02_main_analysis', subname='domain_comparisons')
 
 DOMAIN_DEFS = {
     'rrm1': (1, 145), 'rrm2': (146, 224), 'rrm3': (225, 314),

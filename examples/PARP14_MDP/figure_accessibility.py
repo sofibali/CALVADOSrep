@@ -25,7 +25,11 @@ import os
 
 CWD = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(CWD, 'data')
-FIG_PATH = os.path.join(CWD, 'figures')
+# Dated category subdir: figures/03_accessibility/<YYYY-MM-DD>/
+import sys as _sys
+_sys.path.insert(0, CWD)
+from _fig_layout import get_fig_dir as _get_fig_dir
+FIG_PATH = str(_get_fig_dir('03_accessibility'))
 os.makedirs(FIG_PATH, exist_ok=True)
 
 # ============================================================
@@ -417,19 +421,20 @@ def make_fig4():
 # ============================================================
 
 def make_fig5():
-    fig, ax = plt.subplots(figsize=(8, 6))
+    # Big square + room on the right for the legends
+    fig, ax = plt.subplots(figsize=(14, 12))
 
     # Quadrant annotations
     ax.axhline(90, color='gray', ls='--', lw=0.8, alpha=0.4)
     ax.axvline(0.5, color='gray', ls='--', lw=0.8, alpha=0.4)
 
-    ax.fill_between([0.5, 1.0], 90, 180, alpha=0.06, color='green')
-    ax.fill_between([0.0, 0.3], 0, 90, alpha=0.06, color='red')
+    ax.fill_between([0.5, 1.0], 90, 200, alpha=0.06, color='green')
+    ax.fill_between([0.0, 0.3], 0, 90, alpha=0.10, color='red')
 
-    ax.text(0.75, 170, 'Readily\naccessible', ha='center', va='top',
-            fontsize=10, color='green', fontweight='bold', alpha=0.6)
-    ax.text(0.15, 20, 'Sterically\noccluded', ha='center', va='bottom',
-            fontsize=10, color='red', fontweight='bold', alpha=0.6)
+    ax.text(0.62, 170, 'Readily\naccessible', ha='center', va='top',
+            fontsize=14, color='green', fontweight='bold', alpha=0.6)
+    ax.text(0.10, 50, 'Sterically\noccluded', ha='center', va='bottom',
+            fontsize=14, color='red', fontweight='bold', alpha=0.6)
 
     markers = {'fl': 'o', 'norrm': 'p', 'noart': 'h', 'core': 'D', 'mka': '^',
                'md': 's', 'md3art': 'v', 'fl_optimized': '*'}
@@ -445,7 +450,7 @@ def make_fig5():
             # Individual replicate points (faded)
             jx = rng.normal(0, 0.005, len(saa))
             jy = rng.normal(0, 0.5, len(cone))
-            ax.scatter(saa + jx, cone + jy, marker=markers[sk], s=20,
+            ax.scatter(saa + jx, cone + jy, marker=markers[sk], s=35,
                       color=SITE_COLORS[sname], alpha=0.25,
                       edgecolors='none', zorder=2)
 
@@ -456,42 +461,107 @@ def make_fig5():
             s_cone = np.std(cone)
 
             ax.errorbar(m_saa, m_cone, xerr=s_saa, yerr=s_cone,
-                       marker=markers[sk], markersize=10, capsize=4,
+                       marker=markers[sk], markersize=18, capsize=5,
                        color=SITE_COLORS[sname], markeredgecolor='black',
-                       markeredgewidth=0.8, lw=1.5, capthick=1.2, zorder=5)
+                       markeredgewidth=1.0, lw=2.0, capthick=1.6, zorder=5)
 
-            # Label
-            ax.annotate(f'{SET_LABELS_SHORT[sk]}',
-                       (m_saa + 0.012, m_cone + 2.5),
-                       fontsize=7, color=SITE_COLORS[sname], alpha=0.8)
-
-    # Legend: sites by color
+    # Legend: sites by color + sets by marker, placed outside the axes
     site_handles = [Line2D([0], [0], marker='o', color=SITE_COLORS[s], lw=0,
-                           markersize=8, markeredgecolor='black', label=s)
+                           markersize=12, markeredgecolor='black', label=s)
                     for s in SITES]
     set_handles = [Line2D([0], [0], marker=markers[s], color='gray', lw=0,
-                          markersize=8, markeredgecolor='black',
+                          markersize=12, markeredgecolor='black',
                           label=SET_LABELS_SHORT[s])
                    for s in SETS]
 
     leg1 = ax.legend(handles=site_handles, title='Active Site',
-                     loc='upper left', fontsize=9, title_fontsize=10)
+                     loc='center left', bbox_to_anchor=(1.01, 0.78),
+                     fontsize=12, title_fontsize=13, frameon=True)
     ax.add_artist(leg1)
     ax.legend(handles=set_handles, title='Construct',
-              loc='lower right', fontsize=9, title_fontsize=10)
+              loc='center left', bbox_to_anchor=(1.01, 0.35),
+              fontsize=12, title_fontsize=13, frameon=True)
 
-    ax.set_xlabel('Solid-Angle Accessibility (fraction of open directions)', fontsize=12)
-    ax.set_ylabel('Max Approach Cone Half-Angle (\u00b0)', fontsize=12)
-    ax.set_xlim(0.1, 0.8)
-    ax.set_ylim(30, 115)
+    ax.set_xlabel('Solid-Angle Accessibility (fraction of open directions)', fontsize=14)
+    ax.set_ylabel('Max Approach Cone Half-Angle (\u00b0)', fontsize=14)
+    ax.tick_params(axis='both', labelsize=12)
+    ax.set_xlim(0.0, 0.72)
+    ax.set_ylim(40, 180)
     ax.set_title('Docking Feasibility: Cone Angle vs Accessibility',
-                 fontsize=14, fontweight='bold')
+                 fontsize=16, fontweight='bold')
 
     fig.tight_layout()
     fig.savefig(os.path.join(FIG_PATH, 'fig5_docking_feasibility.png'))
     fig.savefig(os.path.join(FIG_PATH, 'fig5_docking_feasibility.svg'))
     plt.close()
     print("  Fig 5: fig5_docking_feasibility")
+
+
+# ============================================================
+# Simplified single-panel SAA figure (presentation-ready)
+# ============================================================
+
+def make_fig_simple_saa():
+    """Single-panel SAA across all constructs, grouped by active site.
+    Constructs ordered by size; x-labels rotated 90 deg on single line."""
+
+    # Order constructs from smallest -> largest (FL + FL-optimized last)
+    set_order = ['md', 'md3art', 'mka', 'core', 'noart', 'norrm', 'fl', 'fl_optimized']
+    set_order = [s for s in set_order if s in SETS]
+
+    fig, ax = plt.subplots(figsize=(13, 6.5))
+
+    n_sets = len(set_order)
+    n_sites = len(SITES)
+    group_width = 0.85
+    sub_w = group_width / n_sites
+
+    x_base = np.arange(n_sets)
+
+    for j, sname in enumerate(SITES):
+        offset = (j - n_sites / 2 + 0.5) * sub_w
+        positions_j = []
+        data_j = []
+        colors_j = []
+        for i, sk in enumerate(set_order):
+            v = get_vals(sk, sname, 'saa')
+            if len(v) > 0:
+                positions_j.append(x_base[i] + offset)
+                data_j.append(v)
+                colors_j.append(SITE_COLORS[sname])
+        if data_j:
+            violin_with_points(ax, data_j, positions_j, colors_j,
+                               width=sub_w * 0.85, point_size=14)
+
+    ax.set_xticks(x_base)
+    ax.set_xticklabels([SET_LABELS_SHORT[s] for s in set_order],
+                       rotation=90, ha='center', va='top')
+    ax.tick_params(axis='x', labelsize=12, pad=2)
+    ax.tick_params(axis='y', labelsize=11)
+
+    ax.set_ylabel('Solid-Angle Accessibility\n(fraction of open directions)',
+                  fontsize=13)
+    ax.set_ylim(0, 0.85)
+
+    ax.axhline(0.5, color='gray', ls='--', lw=0.8, alpha=0.5)
+    ax.axhline(0.3, color='red', ls=':', lw=0.8, alpha=0.5)
+
+    # Site legend
+    handles = [Line2D([0], [0], marker='o', color=SITE_COLORS[s], lw=0,
+                      markersize=10, markeredgecolor='black', label=s)
+               for s in SITES]
+    ax.legend(handles=handles, title='Active Site', ncol=4,
+              loc='upper center', bbox_to_anchor=(0.5, 1.10),
+              fontsize=11, title_fontsize=12, frameon=False)
+
+    ax.set_title('Active-Site Crowding Across PARP14 Constructs',
+                 fontsize=15, fontweight='bold', pad=44)
+
+    fig.tight_layout()
+    fig.savefig(os.path.join(FIG_PATH, 'fig_simple_saa.png'))
+    fig.savefig(os.path.join(FIG_PATH, 'fig_simple_saa.svg'))
+    plt.close()
+    print("  Simple SAA: fig_simple_saa")
 
 
 # ============================================================
@@ -692,6 +762,7 @@ make_fig4()
 make_fig5()
 make_fig6()
 make_fig7()
+make_fig_simple_saa()
 
 print(f"\nAll figures saved to: {FIG_PATH}")
 print("=" * 60)

@@ -40,10 +40,14 @@ from matplotlib.colors import LinearSegmentedColormap
 
 CWD = Path(__file__).resolve().parent
 INPUT_DIR = CWD / 'input'
-FIG_DIR = CWD / 'figures'
 DATA_DIR = CWD / 'data'
-FIG_DIR.mkdir(exist_ok=True)
 DATA_DIR.mkdir(exist_ok=True)
+
+# Dated category subdir: figures/01_static_FL/<YYYY-MM-DD>/
+import sys as _sys
+_sys.path.insert(0, str(CWD))
+from _fig_layout import get_fig_dir as _get_fig_dir
+FIG_DIR = _get_fig_dir('01_static_FL')
 
 DEFAULT_PDB = INPUT_DIR / 'parp14.pdb'
 

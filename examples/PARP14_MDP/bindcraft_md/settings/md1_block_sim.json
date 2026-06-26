@@ -1,0 +1,12 @@
+{
+    "design_path": "/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/designs/md1_block_sim/",
+    "binder_name": "md1_block_sim",
+    "starting_pdb": "/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/md1_block_sim.pdb",
+    "chains": "A",
+    "target_hotspot_residues": "33,37,39,41,42,43,44,46,47,134,135,136,138,172,173",
+    "lengths": [
+        70,
+        130
+    ],
+    "number_of_final_designs": 8
+}

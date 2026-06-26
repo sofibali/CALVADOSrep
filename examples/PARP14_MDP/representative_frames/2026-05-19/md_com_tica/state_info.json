@@ -1,0 +1,81 @@
+{
+  "set": "md",
+  "k": 5,
+  "feature_names": [
+    "dist_MD1L1_MD2",
+    "dist_MD1L1_MD3",
+    "dist_MD2_MD3"
+  ],
+  "states": [
+    {
+      "state": 1,
+      "population": 14287,
+      "fraction": 0.29306666666666664,
+      "representative_seed": 2,
+      "representative_sample": 3,
+      "representative_frame": 1694,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_tica/state_1.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 2.8730656998951685,
+        "dist_MD1L1_MD3": 4.426611133452605,
+        "dist_MD2_MD3": 3.227869488392477
+      }
+    },
+    {
+      "state": 2,
+      "population": 2272,
+      "fraction": 0.0466051282051282,
+      "representative_seed": 3,
+      "representative_sample": 0,
+      "representative_frame": 1845,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_tica/state_2.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 4.443751256909315,
+        "dist_MD1L1_MD3": 2.8343086820076873,
+        "dist_MD2_MD3": 3.718943733601731
+      }
+    },
+    {
+      "state": 3,
+      "population": 1544,
+      "fraction": 0.03167179487179487,
+      "representative_seed": 2,
+      "representative_sample": 3,
+      "representative_frame": 1507,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_tica/state_3.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 3.186186370981233,
+        "dist_MD1L1_MD3": 5.907256478207002,
+        "dist_MD2_MD3": 3.241189128765393
+      }
+    },
+    {
+      "state": 4,
+      "population": 9668,
+      "fraction": 0.19831794871794872,
+      "representative_seed": 4,
+      "representative_sample": 3,
+      "representative_frame": 885,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_tica/state_4.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 2.8705842438516913,
+        "dist_MD1L1_MD3": 3.2871841732360005,
+        "dist_MD2_MD3": 4.637983025724673
+      }
+    },
+    {
+      "state": 5,
+      "population": 20979,
+      "fraction": 0.43033846153846156,
+      "representative_seed": 2,
+      "representative_sample": 3,
+      "representative_frame": 815,
+      "representative_pdb": "representative_frames/2026-05-19/md_com_tica/state_5.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 2.970203537016777,
+        "dist_MD1L1_MD3": 3.24408490651818,
+        "dist_MD2_MD3": 3.2900158365034837
+      }
+    }
+  ]
+}

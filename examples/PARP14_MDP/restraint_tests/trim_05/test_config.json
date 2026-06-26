@@ -1,0 +1,203 @@
+{
+  "name": "trim_05",
+  "shift": 5,
+  "custom_kh7a_khb": false,
+  "n_custom_pairs": 0,
+  "description": "Trim 5 residues each side, no custom restr",
+  "domains": {
+    "RRM1": [
+      11,
+      83
+    ],
+    "RRM2": [
+      151,
+      219
+    ],
+    "RRM3": [
+      230,
+      309
+    ],
+    "KH1": [
+      320,
+      379
+    ],
+    "KH2": [
+      390,
+      449
+    ],
+    "KH3": [
+      460,
+      515
+    ],
+    "KH4": [
+      526,
+      588
+    ],
+    "KH5": [
+      599,
+      660
+    ],
+    "KH6": [
+      671,
+      732
+    ],
+    "KH7a": [
+      743,
+      784
+    ],
+    "MD1L1": [
+      795,
+      973
+    ],
+    "MD2": [
+      1010,
+      1188
+    ],
+    "MD3": [
+      1212,
+      1383
+    ],
+    "KHb": [
+      1394,
+      1456
+    ],
+    "KH8": [
+      1467,
+      1528
+    ],
+    "WWE": [
+      1539,
+      1597
+    ],
+    "ART": [
+      1608,
+      1796
+    ]
+  },
+  "k_values": {
+    "RRM1": 700.0,
+    "RRM2": 700.0,
+    "RRM3": 700.0,
+    "KH1": 700.0,
+    "KH2": 700.0,
+    "KH3": 700.0,
+    "KH4": 700.0,
+    "KH5": 700.0,
+    "KH6": 700.0,
+    "KH7a": 700.0,
+    "MD1L1": 700.0,
+    "MD2": 700.0,
+    "MD3": 700.0,
+    "KHb": 700.0,
+    "KH8": 700.0,
+    "WWE": 700.0,
+    "ART": 700.0
+  },
+  "k_harmonic_mean": 700.0,
+  "n_domains": 17,
+  "n_restrained_residues": 1530,
+  "domain_info": {
+    "RRM1": {
+      "start": 11,
+      "end": 83,
+      "n_residues": 73,
+      "mean_plddt": 85.41410958904109
+    },
+    "RRM2": {
+      "start": 151,
+      "end": 219,
+      "n_residues": 69,
+      "mean_plddt": 83.86652173913045
+    },
+    "RRM3": {
+      "start": 230,
+      "end": 309,
+      "n_residues": 80,
+      "mean_plddt": 82.03412499999999
+    },
+    "KH1": {
+      "start": 320,
+      "end": 379,
+      "n_residues": 60,
+      "mean_plddt": 79.27583333333334
+    },
+    "KH2": {
+      "start": 390,
+      "end": 449,
+      "n_residues": 60,
+      "mean_plddt": 80.80933333333334
+    },
+    "KH3": {
+      "start": 460,
+      "end": 515,
+      "n_residues": 56,
+      "mean_plddt": 81.30964285714286
+    },
+    "KH4": {
+      "start": 526,
+      "end": 588,
+      "n_residues": 63,
+      "mean_plddt": 87.53492063492062
+    },
+    "KH5": {
+      "start": 599,
+      "end": 660,
+      "n_residues": 62,
+      "mean_plddt": 81.38193548387099
+    },
+    "KH6": {
+      "start": 671,
+      "end": 732,
+      "n_residues": 62,
+      "mean_plddt": 74.92870967741933
+    },
+    "KH7a": {
+      "start": 743,
+      "end": 784,
+      "n_residues": 42,
+      "mean_plddt": 74.67690476190475
+    },
+    "MD1L1": {
+      "start": 795,
+      "end": 973,
+      "n_residues": 179,
+      "mean_plddt": 92.16653631284917
+    },
+    "MD2": {
+      "start": 1010,
+      "end": 1188,
+      "n_residues": 179,
+      "mean_plddt": 92.9532402234637
+    },
+    "MD3": {
+      "start": 1212,
+      "end": 1383,
+      "n_residues": 172,
+      "mean_plddt": 89.52645348837208
+    },
+    "KHb": {
+      "start": 1394,
+      "end": 1456,
+      "n_residues": 63,
+      "mean_plddt": 61.533968253968254
+    },
+    "KH8": {
+      "start": 1467,
+      "end": 1528,
+      "n_residues": 62,
+      "mean_plddt": 82.5733870967742
+    },
+    "WWE": {
+      "start": 1539,
+      "end": 1597,
+      "n_residues": 59,
+      "mean_plddt": 86.23559322033897
+    },
+    "ART": {
+      "start": 1608,
+      "end": 1796,
+      "n_residues": 189,
+      "mean_plddt": 88.60317460317462
+    }
+  }
+}

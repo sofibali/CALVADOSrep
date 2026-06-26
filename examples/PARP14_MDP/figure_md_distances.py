@@ -32,15 +32,28 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
+import sim_registry as reg
+
 # ============================================================
 # Configuration
 # ============================================================
 
 CWD = Path(__file__).resolve().parent
 DATA_PATH = CWD / 'data'
-FIG_PATH = CWD / 'figures'
 DATA_PATH.mkdir(exist_ok=True)
-FIG_PATH.mkdir(exist_ok=True)
+
+# Arbitrary simulation folders registered via --sim-folder.
+# Populated in the main process before any worker pool is created so that
+# forked workers (Linux fork start method) inherit them.
+EXTERNAL_DIRS = {}      # set_key -> absolute Path to the sim folder
+EXTERNAL_SYSNAME = {}   # set_key -> dcd basename (sysname)
+CONSTRUCT_UNITS = {}    # set_key -> FL domain units (drives FL->construct remap)
+
+# Dated category subdir: figures/04_md_distances/<YYYY-MM-DD>/
+import sys as _sys
+_sys.path.insert(0, str(CWD))
+from _fig_layout import get_fig_dir as _get_fig_dir
+FIG_PATH = _get_fig_dir('04_md_distances')
 
 # Domain definitions in FL numbering
 DOMAINS_FL = {
@@ -69,6 +82,53 @@ SAMPLES = range(0, 5)
 
 
 # ============================================================
+# External simulation-folder registration (--sim-folder)
+# ============================================================
+
+def register_sim_folder(path, units=None):
+    """Register an arbitrary simulation folder (from --sim-folder) as a set so
+    this figure can be generated for it without editing the script. Domain units
+    are read from the folder's metadata.json, the `units` arg, or (if the
+    basename is a known set) that set. Returns the set_key it is registered under.
+
+    Call this in the main process before launching the worker pool so that
+    forked workers inherit EXTERNAL_DIRS / EXTERNAL_SYSNAME / CONSTRUCT_UNITS.
+    """
+    folder = Path(path).resolve()
+    if not folder.is_dir():
+        raise FileNotFoundError(f"sim folder not found: {folder}")
+    resolved_units = reg._resolve_units(str(folder), units)
+    meta = reg.read_metadata(str(folder)) or {}
+    sysname = meta.get('sysname') or reg.detect_sysname(str(folder))
+    set_key = folder.name
+    EXTERNAL_DIRS[set_key] = folder
+    EXTERNAL_SYSNAME[set_key] = sysname
+    CONSTRUCT_UNITS[set_key] = resolved_units
+    return set_key
+
+
+def domain_ranges_for_set(set_key):
+    """Domain residue ranges (construct numbering) for the inter-domain pairs.
+
+    For named/fragment sets the historical FL-numbering ranges (DOMAINS_FL) are
+    used unchanged. For folders registered via --sim-folder the FL ranges are
+    remapped into the construct's numbering using the resolved domain units, so
+    sub-construct trajectories select the correct residues.
+    """
+    units = CONSTRUCT_UNITS.get(set_key)
+    if not units:
+        return DOMAINS_FL
+    fl_to_c = reg.build_fl_to_construct_map(units)
+    mapped = {}
+    for dname, (fl_s, fl_e) in DOMAINS_FL.items():
+        c_s = fl_to_c(fl_s)
+        c_e = fl_to_c(fl_e)
+        if c_s is not None and c_e is not None:
+            mapped[dname] = (c_s, c_e)
+    return mapped
+
+
+# ============================================================
 # Worker: compute distances for one replicate
 # ============================================================
 
@@ -80,21 +140,26 @@ def compute_distances_one_replicate(args):
     set_key, seed, sample, metric = args
     import MDAnalysis as mda
 
-    if set_key.startswith('frag_'):
+    if set_key in EXTERNAL_DIRS:
+        sim_dir = EXTERNAL_DIRS[set_key] / f'seed-{seed}_sample-{sample}'
+        dcd = sim_dir / f'{EXTERNAL_SYSNAME[set_key]}.dcd'
+    elif set_key.startswith('frag_'):
         sim_dir = CWD / 'fragments' / set_key[5:] / f'seed-{seed}_sample-{sample}'
+        dcd = sim_dir / 'parp14.dcd'
     else:
         sim_dir = CWD / set_key / f'seed-{seed}_sample-{sample}'
+        dcd = sim_dir / 'parp14.dcd'
 
     pdb = sim_dir / 'top.pdb'
-    dcd = sim_dir / 'parp14.dcd'
     if not pdb.is_file() or not dcd.is_file():
         return None
 
     u = mda.Universe(str(pdb), str(dcd))
 
     # Pre-select domain atom groups
+    domains = domain_ranges_for_set(set_key)
     ags = {}
-    for dname, (ds, de) in DOMAINS_FL.items():
+    for dname, (ds, de) in domains.items():
         ag = u.select_atoms(f'resid {ds}:{de}')
         if len(ag) > 0:
             ags[dname] = ag
@@ -152,7 +217,32 @@ def main():
     parser.add_argument('--pairs', nargs='+', default=None,
                         help='Pairs to plot (e.g. MD1L1_MD3 MD1L1_ART). '
                              'Default: all 5 pairs')
+    parser.add_argument('--sim-folder', nargs='+', default=None, metavar='PATH',
+                        help='One or more NEW simulation-set folders to analyze '
+                             '(each containing seed-*_sample-*/ replicates with '
+                             'top.pdb + <sysname>.dcd). Domain units are read from '
+                             "the folder's metadata.json, or pass --units.")
+    parser.add_argument('--units', nargs='+', default=None, metavar='UNIT',
+                        help='FL domain units in the --sim-folder construct '
+                             '(e.g. md1l1 md2 md3). Required only if the folder '
+                             'has no metadata.json.')
     args = parser.parse_args()
+
+    # Register any --sim-folder folders before building jobs / launching workers
+    # so forked workers inherit EXTERNAL_DIRS / EXTERNAL_SYSNAME / CONSTRUCT_UNITS.
+    external_keys = []
+    if args.sim_folder:
+        for folder in args.sim_folder:
+            k = register_sim_folder(folder, units=args.units)
+            external_keys.append(k)
+            print(f"Registered --sim-folder '{folder}' as set '{k}' "
+                  f"(sysname: {EXTERNAL_SYSNAME[k]}, "
+                  f"units: {', '.join(CONSTRUCT_UNITS[k])})")
+        # Replace the default set with the folders unless --set was given explicitly.
+        if args.set == ['fl_optimized']:
+            args.set = external_keys
+        else:
+            args.set = args.set + [k for k in external_keys if k not in args.set]
 
     sets = args.set
     metric = args.metric

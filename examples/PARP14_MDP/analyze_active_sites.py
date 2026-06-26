@@ -9,14 +9,16 @@ Analyzes how active sites move and change in exposure during MD:
   4. Active site burial relative to protein surface (distance-to-COM / Rg)
   5. Per-site contact profiles (which domains contact each active site)
 
-Works for both:
-  - Full-length PARP14 (1801 residues, parp14/ directory)
-  - Construct (1474 residues, parp14_seed-*_sample-*/ directories)
+Set/construct handling, active-site numbering, domain boundaries and trajectory
+paths all come from the shared `sim_registry` module, so this works for ANY named
+set, fragment, or new simulation folder with no edits — point it at a folder with
+--sim-folder.
 
 Usage:
-    python analyze_active_sites.py                          # full-length sim
-    python analyze_active_sites.py --construct              # all 25 construct sims
-    python analyze_active_sites.py --construct --seed 1 --sample 0  # single construct
+    python analyze_active_sites.py --set fl                 # named set, all 25 reps (ensemble)
+    python analyze_active_sites.py --set md --seed 1 --sample 0   # single replicate, full plots
+    python analyze_active_sites.py --sim-folder mynewconstruct    # any new simulation folder
+    python analyze_active_sites.py --sim-folder path --units md1l1 md2 md3
 """
 
 import numpy as np
@@ -26,9 +28,11 @@ import matplotlib.pyplot as plt
 import MDAnalysis as mda
 from MDAnalysis.analysis import align
 import os
-import yaml
 import warnings
 from argparse import ArgumentParser
+
+import sim_registry as reg
+
 warnings.filterwarnings('ignore')
 
 # ============================================================
@@ -39,86 +43,18 @@ CWD = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(CWD, 'data')
 os.makedirs(DATA_PATH, exist_ok=True)
 
-# Active sites in FULL-LENGTH numbering (from parp14/input/active_sites.yaml)
-ACTIVE_SITES_FL = {
-    'MD1': {
-        'catalytic': [831, 923, 962],
-        'pocket': [822, 823, 824, 825, 826, 827, 828, 829, 830, 831, 832, 833,
-                   834, 835, 836, 919, 920, 921, 922, 923, 924, 925, 926, 927,
-                   961, 962, 966],
-    },
-    'MD2': {
-        'catalytic': [1035, 1046, 1134, 1171],
-        'pocket': [1021, 1022, 1023, 1024, 1034, 1035, 1036, 1037, 1038, 1039,
-                   1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1130, 1131,
-                   1132, 1133, 1134, 1135, 1136, 1137, 1138, 1139, 1140, 1141,
-                   1170, 1171, 1175, 1178],
-    },
-    'MD3': {
-        'catalytic': [1248, 1259, 1330, 1371],
-        'pocket': [1235, 1236, 1237, 1247, 1248, 1249, 1250, 1251, 1252, 1253,
-                   1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 1302, 1303,
-                   1304, 1324, 1325, 1326, 1327, 1328, 1329, 1330, 1331, 1332,
-                   1333, 1334, 1335, 1336, 1337, 1369, 1370, 1371, 1375],
-    },
-    'ART': {
-        'catalytic': [1684, 1705, 1706, 1722],
-        'pocket': [1681, 1682, 1683, 1684, 1685, 1688, 1701, 1704, 1705, 1706,
-                   1707, 1708, 1709, 1714, 1715, 1716, 1721, 1722, 1726, 1727,
-                   1781],
-    },
-}
-
-SITE_NAMES = ['MD1', 'MD2', 'MD3', 'ART']
-SITE_COLORS = {'MD1': '#e6194b', 'MD2': '#3cb44b', 'MD3': '#4363d8', 'ART': '#f58231'}
-
-# Domain definitions for contact profile (full-length numbering)
-DOMAINS_FL = {
-    'RRM1': (6, 88), 'RRM2': (150, 223), 'RRM3': (227, 301),
-    'KH1': (315, 396), 'KH2': (397, 465), 'KH3': (466, 530),
-    'KH4': (531, 596), 'KH5': (597, 669), 'KH6': (670, 737),
-    'KH7a': (738, 776), 'MD1': (791, 978), 'MD2': (1003, 1190),
-    'MD3': (1216, 1387), 'KHb': (1425, 1453), 'KH8': (1454, 1533),
-    'WWE': (1534, 1601), 'ART': (1605, 1801),
-}
-
-# Construct numbering: FL 315-1193 -> construct 1-879 (offset -314)
-#                       FL 1207-1801 -> construct 880-1474 (offset -327)
-def fl_to_construct(resid):
-    """Convert full-length residue number to construct numbering."""
-    if resid <= 1193:
-        return resid - 314
-    elif resid >= 1207:
-        return resid - 327
-    else:
-        return None  # in the gap (1194-1206)
-
-# Construct domain definitions
-DOMAINS_CONSTRUCT = {
-    'KH1-KH6': (1, 423), 'KH7a': (424, 475),
-    'MD1L1': (476, 690), 'MD2': (690, 879),
-    'MD3': (880, 1061), 'KHb-KH8': (1062, 1206),
-    'WWE': (1207, 1275), 'ART': (1276, 1474),
-}
+SITE_NAMES = reg.SITE_NAMES
+SITE_COLORS = reg.SITE_COLORS
 
 
-def get_active_sites(is_construct):
-    """Get active site residue numbers in appropriate numbering."""
-    if not is_construct:
-        return ACTIVE_SITES_FL
-
-    sites = {}
-    for name, data in ACTIVE_SITES_FL.items():
-        sites[name] = {
-            'catalytic': [fl_to_construct(r) for r in data['catalytic'] if fl_to_construct(r) is not None],
-            'pocket': [fl_to_construct(r) for r in data['pocket'] if fl_to_construct(r) is not None],
-        }
-    return sites
+def get_active_sites(set_key):
+    """Active sites with residue numbers in the set's construct numbering."""
+    return reg.get_active_sites_for_set(set_key)
 
 
-def get_domains(is_construct):
-    """Get domain definitions in appropriate numbering."""
-    return DOMAINS_CONSTRUCT if is_construct else DOMAINS_FL
+def get_domains(set_key):
+    """Domain boundaries (construct numbering) for the set's contact profile."""
+    return reg.get_construct_domains_for_set(set_key)
 
 
 # ============================================================
@@ -176,7 +112,7 @@ def compute_rmsf_site(u, site_ag):
     return rmsf
 
 
-def compute_domain_contacts_per_site(u, site_ag, domains, is_construct):
+def compute_domain_contacts_per_site(u, site_ag, domains):
     """
     For each active site, compute fraction of frames where it contacts each domain.
     Contact = any site residue within cutoff of any domain residue.
@@ -222,7 +158,7 @@ def compute_domain_contacts_per_site(u, site_ag, domains, is_construct):
 # Main analysis
 # ============================================================
 
-def analyze_simulation(pdb_path, dcd_path, is_construct, label, data_prefix,
+def analyze_simulation(pdb_path, dcd_path, set_key, label, data_prefix,
                        skip_frames=0):
     """Run active site analysis on a single simulation."""
     print(f"\n{'='*60}")
@@ -241,14 +177,16 @@ def analyze_simulation(pdb_path, dcd_path, is_construct, label, data_prefix,
         # MDAnalysis doesn't easily slice in_memory, so we track frame range
         print(f"  Skipping first {skip_frames} frames (equilibration)")
 
-    active_sites = get_active_sites(is_construct)
-    domains = get_domains(is_construct)
+    active_sites = get_active_sites(set_key)
+    domains = get_domains(set_key)
+    # Only the active sites actually present in this construct.
+    site_names = [s for s in SITE_NAMES if s in active_sites]
     all_ag = u.select_atoms('all')
 
     # --- 1. Active site RMSF ---
     print("\n--- Active site RMSF ---")
     site_rmsfs = {}
-    for sname in SITE_NAMES:
+    for sname in site_names:
         cat_resids = active_sites[sname]['catalytic']
         pocket_resids = active_sites[sname]['pocket']
 
@@ -277,7 +215,7 @@ def analyze_simulation(pdb_path, dcd_path, is_construct, label, data_prefix,
     # --- 2. Contact number time series (exposure proxy) ---
     print("\n--- Active site contact number (exposure proxy) ---")
     site_contacts = {}
-    for sname in SITE_NAMES:
+    for sname in site_names:
         pocket_resids = active_sites[sname]['pocket']
         pocket_sel = ' or '.join([f'resid {r}' for r in pocket_resids])
         pocket_ag = u.select_atoms(pocket_sel)
@@ -292,7 +230,7 @@ def analyze_simulation(pdb_path, dcd_path, is_construct, label, data_prefix,
     # --- 3. Pairwise inter-site distances ---
     print("\n--- Inter-active-site COM distances ---")
     site_coms = {}
-    for sname in SITE_NAMES:
+    for sname in site_names:
         cat_resids = active_sites[sname]['catalytic']
         cat_sel = ' or '.join([f'resid {r}' for r in cat_resids])
         cat_ag = u.select_atoms(cat_sel)
@@ -332,7 +270,7 @@ def analyze_simulation(pdb_path, dcd_path, is_construct, label, data_prefix,
     # --- 5. Domain contact profiles ---
     print("\n--- Domain contact profiles per active site ---")
     site_domain_contacts = {}
-    for sname in SITE_NAMES:
+    for sname in site_names:
         pocket_resids = active_sites[sname]['pocket']
         pocket_sel = ' or '.join([f'resid {r}' for r in pocket_resids])
         pocket_ag = u.select_atoms(pocket_sel)
@@ -340,7 +278,7 @@ def analyze_simulation(pdb_path, dcd_path, is_construct, label, data_prefix,
         if len(pocket_ag) == 0:
             continue
 
-        contacts = compute_domain_contacts_per_site(u, pocket_ag, domains, is_construct)
+        contacts = compute_domain_contacts_per_site(u, pocket_ag, domains)
         site_domain_contacts[sname] = contacts
         top_contacts = sorted(contacts.items(), key=lambda x: -x[1])[:5]
         print(f"  {sname} top contacts: {', '.join(f'{d}={v:.2f}' for d, v in top_contacts)}")
@@ -535,34 +473,32 @@ def analyze_simulation(pdb_path, dcd_path, is_construct, label, data_prefix,
     print(f"{'='*60}")
 
 
-def analyze_construct_ensemble(seeds=range(1, 6), samples=range(0, 5)):
-    """Analyze all construct simulations and compute ensemble statistics."""
+def analyze_ensemble(set_key, seeds=reg.SEEDS, samples=reg.SAMPLES, skip_frames=50):
+    """Analyze all replicates of a set/folder and compute ensemble statistics."""
+    label = reg.SETS[set_key]['label']
     print("\n" + "=" * 70)
-    print("CONSTRUCT ENSEMBLE ACTIVE SITE ANALYSIS")
+    print(f"ENSEMBLE ACTIVE SITE ANALYSIS — {label}")
     print("=" * 70)
 
-    active_sites = get_active_sites(is_construct=True)
-    all_contacts = {s: [] for s in SITE_NAMES}
-    all_relative_pos = {s: [] for s in SITE_NAMES}
+    active_sites = get_active_sites(set_key)
+    site_names = [s for s in SITE_NAMES if s in active_sites]
+    all_contacts = {s: [] for s in site_names}
+    all_relative_pos = {s: [] for s in site_names}
     all_inter_dists = {}
 
     n_analyzed = 0
     for seed in seeds:
         for sample in samples:
-            sim_name = f'parp14_seed-{seed}_sample-{sample}'
-            sim_dir = os.path.join(CWD, sim_name)
-            pdb = os.path.join(sim_dir, 'top.pdb')
-            dcd = os.path.join(sim_dir, 'parp14_construct.dcd')
-
+            pdb, dcd = reg.get_sim_paths(set_key, seed, sample)
             if not os.path.isfile(pdb) or not os.path.isfile(dcd):
                 continue
 
-            print(f"\n  Processing: {sim_name}")
+            print(f"\n  Processing: seed-{seed}_sample-{sample}")
             u = mda.Universe(pdb, dcd, in_memory=True)
             all_ag = u.select_atoms('all')
 
             # Contact numbers
-            for sname in SITE_NAMES:
+            for sname in site_names:
                 pocket_resids = active_sites[sname]['pocket']
                 pocket_sel = ' or '.join([f'resid {r}' for r in pocket_resids])
                 pocket_ag = u.select_atoms(pocket_sel)
@@ -580,7 +516,7 @@ def analyze_construct_ensemble(seeds=range(1, 6), samples=range(0, 5)):
                 prot_com[t] = com
                 prot_rg[t] = np.sqrt(np.mean(np.sum((pos - com)**2, axis=1)))
 
-            for sname in SITE_NAMES:
+            for sname in site_names:
                 cat_resids = active_sites[sname]['catalytic']
                 cat_sel = ' or '.join([f'resid {r}' for r in cat_resids])
                 cat_ag = u.select_atoms(cat_sel)
@@ -592,7 +528,7 @@ def analyze_construct_ensemble(seeds=range(1, 6), samples=range(0, 5)):
                     all_relative_pos[sname].append(np.mean(relative))
 
             # Inter-site distances
-            available = [s for s in SITE_NAMES if s in site_coms]
+            available = [s for s in site_names if s in site_coms]
             for i in range(len(available)):
                 for j in range(i + 1, len(available)):
                     pair = f'{available[i]}-{available[j]}'
@@ -604,7 +540,7 @@ def analyze_construct_ensemble(seeds=range(1, 6), samples=range(0, 5)):
             n_analyzed += 1
 
     if n_analyzed == 0:
-        print("  No completed construct simulations found.")
+        print(f"  No completed simulations found for set '{set_key}'.")
         return
 
     # --- Ensemble summary plot ---
@@ -612,7 +548,7 @@ def analyze_construct_ensemble(seeds=range(1, 6), samples=range(0, 5)):
 
     # Panel 1: Contact number distribution
     ax = axes[0]
-    for sname in SITE_NAMES:
+    for sname in site_names:
         if all_contacts[sname]:
             ax.hist(all_contacts[sname], bins=10, alpha=0.6, color=SITE_COLORS[sname],
                     label=f'{sname} ({np.mean(all_contacts[sname]):.1f})', edgecolor='black')
@@ -623,7 +559,7 @@ def analyze_construct_ensemble(seeds=range(1, 6), samples=range(0, 5)):
 
     # Panel 2: Radial position distribution
     ax = axes[1]
-    for sname in SITE_NAMES:
+    for sname in site_names:
         if all_relative_pos[sname]:
             ax.hist(all_relative_pos[sname], bins=10, alpha=0.6, color=SITE_COLORS[sname],
                     label=f'{sname} ({np.mean(all_relative_pos[sname]):.2f})', edgecolor='black')
@@ -645,12 +581,12 @@ def analyze_construct_ensemble(seeds=range(1, 6), samples=range(0, 5)):
     ax.set_ylabel('Distance (nm)')
     ax.set_title('Inter-Site Distances')
 
-    fig.suptitle(f'Construct Ensemble ({n_analyzed} replicates)', fontsize=14, y=1.02)
+    fig.suptitle(f'{label} — Ensemble ({n_analyzed} replicates)', fontsize=14, y=1.02)
     fig.tight_layout()
-    fig.savefig(os.path.join(DATA_PATH, 'construct_ensemble_active_sites.png'),
-                dpi=150, bbox_inches='tight')
+    out = os.path.join(DATA_PATH, f'{set_key}_ensemble_active_sites.png')
+    fig.savefig(out, dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"\n  Saved: construct_ensemble_active_sites.png")
+    print(f"\n  Saved: {os.path.basename(out)}")
 
     # Print ensemble summary
     print(f"\n{'='*60}")
@@ -658,7 +594,7 @@ def analyze_construct_ensemble(seeds=range(1, 6), samples=range(0, 5)):
     print(f"{'='*60}")
     print(f"{'Site':<6} {'Contact# (mean+/-std)':<25} {'Radial pos (mean+/-std)':<25}")
     print("-" * 56)
-    for sname in SITE_NAMES:
+    for sname in site_names:
         cn = all_contacts[sname]
         rp = all_relative_pos[sname]
         cn_str = f"{np.mean(cn):.1f} +/- {np.std(cn):.1f}" if cn else "N/A"
@@ -671,56 +607,61 @@ def analyze_construct_ensemble(seeds=range(1, 6), samples=range(0, 5)):
 # CLI
 # ============================================================
 
+def resolve_set_key(args):
+    """Resolve which registered set to analyze from --set / --sim-folder."""
+    if args.sim_folder:
+        # Register the (first) external folder and return its key.
+        keys = [reg.register_external_folder(f, units=args.units)
+                for f in args.sim_folder]
+        if len(keys) > 1:
+            print(f"  Note: multiple --sim-folder given; using first ('{keys[0]}'). "
+                  f"Run again per folder for the rest.")
+        return keys[0]
+    s = args.set
+    if s in reg.SETS:
+        return s
+    # bare fragment name?
+    reg.discover_fragments()
+    if f'frag_{s}' in reg.SETS:
+        return f'frag_{s}'
+    if s in reg.SETS:
+        return s
+    raise SystemExit(f"unknown set '{s}'. Known: {', '.join(sorted(reg.SETS))} "
+                     f"(or pass --sim-folder PATH)")
+
+
 def main():
     parser = ArgumentParser(description='PARP14 active site analysis')
-    parser.add_argument('--construct', action='store_true',
-                        help='Analyze construct simulations (default: full-length)')
+    parser.add_argument('--set', default='fl',
+                        help='Named set (fl/md/core/mka/norrm/noart/md3art/'
+                             'fl_optimized) or fragment name. Default: fl')
+    reg.add_sim_folder_args(parser)
     parser.add_argument('--seed', type=int, default=None,
-                        help='Specific seed (1-5) for single construct analysis')
+                        help='Specific seed (1-5) for single-replicate analysis')
     parser.add_argument('--sample', type=int, default=None,
-                        help='Specific sample (0-4) for single construct analysis')
+                        help='Specific sample (0-4) for single-replicate analysis')
     parser.add_argument('--ensemble', action='store_true',
-                        help='Run ensemble analysis across all construct replicates')
+                        help='Ensemble analysis across all replicates (default '
+                             'when no --seed/--sample given)')
     parser.add_argument('--skip-frames', type=int, default=50,
-                        help='Number of initial frames to skip (equilibration, default=50 = 0.5 ns)')
+                        help='Initial frames to skip (equilibration, default=50 = 0.5 ns)')
     args = parser.parse_args()
 
-    if args.construct:
-        if args.seed is not None and args.sample is not None:
-            # Single construct simulation
-            sim_name = f'parp14_seed-{args.seed}_sample-{args.sample}'
-            sim_dir = os.path.join(CWD, sim_name)
-            pdb = os.path.join(sim_dir, 'top.pdb')
-            dcd = os.path.join(sim_dir, 'parp14_construct.dcd')
-            analyze_simulation(pdb, dcd, is_construct=True,
-                             label=f'Construct ({sim_name})',
-                             data_prefix=f'construct_{sim_name}',
-                             skip_frames=args.skip_frames)
-        elif args.ensemble:
-            analyze_construct_ensemble()
-        else:
-            # Analyze first available construct sim
-            for seed in range(1, 6):
-                for sample in range(0, 5):
-                    sim_name = f'parp14_seed-{seed}_sample-{sample}'
-                    sim_dir = os.path.join(CWD, sim_name)
-                    pdb = os.path.join(sim_dir, 'top.pdb')
-                    dcd = os.path.join(sim_dir, 'parp14_construct.dcd')
-                    if os.path.isfile(pdb) and os.path.isfile(dcd):
-                        analyze_simulation(pdb, dcd, is_construct=True,
-                                         label=f'Construct ({sim_name})',
-                                         data_prefix=f'construct_{sim_name}',
-                                         skip_frames=args.skip_frames)
-                        return
-            print("No completed construct simulations found.")
+    set_key = resolve_set_key(args)
+    label = reg.SETS[set_key]['label']
+
+    if args.seed is not None and args.sample is not None:
+        # Single replicate — full per-replicate plots
+        pdb, dcd = reg.get_sim_paths(set_key, args.seed, args.sample)
+        if not (os.path.isfile(pdb) and os.path.isfile(dcd)):
+            raise SystemExit(f"missing trajectory: {dcd}")
+        analyze_simulation(pdb, dcd, set_key,
+                           label=f'{label} (seed-{args.seed}_sample-{args.sample})',
+                           data_prefix=f'{set_key}_seed-{args.seed}_sample-{args.sample}',
+                           skip_frames=args.skip_frames)
     else:
-        # Full-length simulation
-        pdb = os.path.join(CWD, 'parp14', 'top.pdb')
-        dcd = os.path.join(CWD, 'parp14', 'parp14.dcd')
-        analyze_simulation(pdb, dcd, is_construct=False,
-                         label='Full-length PARP14',
-                         data_prefix='fulllength',
-                         skip_frames=args.skip_frames)
+        # Ensemble across all replicates (the common case)
+        analyze_ensemble(set_key, skip_frames=args.skip_frames)
 
 
 if __name__ == '__main__':

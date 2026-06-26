@@ -1,0 +1,99 @@
+{
+  "set": "fl_optimized",
+  "k": 5,
+  "feature_names": [
+    "dist_MD1L1_MD2",
+    "dist_MD1L1_MD3",
+    "dist_MD1L1_ART",
+    "dist_MD2_MD3",
+    "dist_MD2_ART",
+    "dist_MD3_ART"
+  ],
+  "states": [
+    {
+      "state": 1,
+      "population": 11381,
+      "fraction": 0.23345641025641026,
+      "representative_seed": 3,
+      "representative_sample": 0,
+      "representative_frame": 1131,
+      "representative_pdb": "representative_frames/fl_optimized_tica/state_1.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 5.541186647358659,
+        "dist_MD1L1_MD3": 5.112605488175886,
+        "dist_MD1L1_ART": 6.953942206297066,
+        "dist_MD2_MD3": 5.509285224347891,
+        "dist_MD2_ART": 9.479909045331583,
+        "dist_MD3_ART": 7.212253375091068
+      }
+    },
+    {
+      "state": 2,
+      "population": 9351,
+      "fraction": 0.1918153846153846,
+      "representative_seed": 2,
+      "representative_sample": 4,
+      "representative_frame": 1237,
+      "representative_pdb": "representative_frames/fl_optimized_tica/state_2.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 5.782567987539445,
+        "dist_MD1L1_MD3": 8.037867211826981,
+        "dist_MD1L1_ART": 8.243482275735326,
+        "dist_MD2_MD3": 5.514559948448801,
+        "dist_MD2_ART": 10.97002813989544,
+        "dist_MD3_ART": 11.924067051712075
+      }
+    },
+    {
+      "state": 3,
+      "population": 10335,
+      "fraction": 0.212,
+      "representative_seed": 1,
+      "representative_sample": 0,
+      "representative_frame": 994,
+      "representative_pdb": "representative_frames/fl_optimized_tica/state_3.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 5.380093391326364,
+        "dist_MD1L1_MD3": 7.95832004225588,
+        "dist_MD1L1_ART": 10.677346198024464,
+        "dist_MD2_MD3": 5.8056573798886575,
+        "dist_MD2_ART": 9.46432480336656,
+        "dist_MD3_ART": 7.130577154781202
+      }
+    },
+    {
+      "state": 4,
+      "population": 8431,
+      "fraction": 0.17294358974358975,
+      "representative_seed": 5,
+      "representative_sample": 0,
+      "representative_frame": 1624,
+      "representative_pdb": "representative_frames/fl_optimized_tica/state_4.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 6.020872322738192,
+        "dist_MD1L1_MD3": 5.578978766454201,
+        "dist_MD1L1_ART": 10.032889620525939,
+        "dist_MD2_MD3": 6.061018464229606,
+        "dist_MD2_ART": 8.134859735400662,
+        "dist_MD3_ART": 10.811300934985741
+      }
+    },
+    {
+      "state": 5,
+      "population": 9252,
+      "fraction": 0.18978461538461538,
+      "representative_seed": 4,
+      "representative_sample": 4,
+      "representative_frame": 1868,
+      "representative_pdb": "representative_frames/fl_optimized_tica/state_5.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 5.043870931660742,
+        "dist_MD1L1_MD3": 5.297616116449649,
+        "dist_MD1L1_ART": 12.857110625886294,
+        "dist_MD2_MD3": 5.578403266413552,
+        "dist_MD2_ART": 15.347193144563775,
+        "dist_MD3_ART": 12.798360966883953
+      }
+    }
+  ]
+}

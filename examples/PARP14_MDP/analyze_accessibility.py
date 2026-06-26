@@ -38,6 +38,8 @@ import warnings
 from argparse import ArgumentParser
 from collections import defaultdict
 
+import sim_registry as reg
+
 warnings.filterwarnings('ignore')
 
 # ============================================================
@@ -46,6 +48,11 @@ warnings.filterwarnings('ignore')
 
 CWD = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(CWD, 'data')
+# Dated category subdir for figures: figures/03_accessibility/<YYYY-MM-DD>/
+import sys as _sys
+_sys.path.insert(0, CWD)
+from _fig_layout import get_fig_dir as _get_fig_dir
+FIG_PATH = str(_get_fig_dir('03_accessibility'))
 os.makedirs(DATA_PATH, exist_ok=True)
 
 SEEDS = range(1, 6)
@@ -113,6 +120,32 @@ CONSTRUCT_UNITS = {
     'core': ['kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
     'mka': ['md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
 }
+
+# Directories registered via --sim-folder: set_key -> absolute folder path.
+EXTERNAL_DIRS = {}
+
+
+def register_sim_folder(path, units=None):
+    """Register an arbitrary simulation folder (from --sim-folder) as a set so
+    accessibility analysis can process it. Domain units are read from the folder's
+    metadata.json, the `units` arg, or (if the basename is a known set) that set.
+    Returns the set_key under which it is registered.
+    """
+    folder = os.path.abspath(path)
+    if not os.path.isdir(folder):
+        raise FileNotFoundError(f"sim folder not found: {folder}")
+    resolved_units = reg._resolve_units(folder, units)
+    meta = reg.read_metadata(folder) or {}
+    sysname = meta.get('sysname') or reg.detect_sysname(folder)
+    set_key = os.path.basename(os.path.normpath(folder))
+    SETS[set_key] = {'sysname': sysname,
+                     'label': meta.get('label') or set_key,
+                     'color': '#444444'}
+    CONSTRUCT_UNITS[set_key] = resolved_units
+    CONSTRUCT_SITES[set_key] = [reg.UNIT_TO_SITE[u] for u in resolved_units
+                                if u in reg.UNIT_TO_SITE]
+    EXTERNAL_DIRS[set_key] = folder
+    return set_key
 
 
 # ============================================================
@@ -331,8 +364,11 @@ def run_accessibility(active_sets, n_rays):
         for seed in SEEDS:
             for sample in SAMPLES:
                 sysname = info['sysname']
-                # Handle fragment sets (prefix frag_) and nested layout
-                if set_key.startswith('frag_'):
+                # Handle fragment sets (prefix frag_), --sim-folder dirs, and nested layout
+                if set_key in EXTERNAL_DIRS:
+                    sim_dir = os.path.join(EXTERNAL_DIRS[set_key],
+                                            f'seed-{seed}_sample-{sample}')
+                elif set_key.startswith('frag_'):
                     frag_name = set_key[5:]
                     sim_dir = os.path.join(CWD, 'fragments', frag_name,
                                             f'seed-{seed}_sample-{sample}')
@@ -472,7 +508,7 @@ def run_accessibility(active_sets, n_rays):
                  f'probe={PROBE_RADIUS} nm, range={MAX_DIST} nm)',
                  fontsize=12, y=1.06)
     fig.tight_layout()
-    fig.savefig(os.path.join(DATA_PATH, 'accessibility_saa.png'),
+    fig.savefig(os.path.join(FIG_PATH, 'accessibility_saa.png'),
                 dpi=150, bbox_inches='tight')
     plt.close()
     print(f"  Saved: accessibility_saa.png")
@@ -513,7 +549,7 @@ def run_accessibility(active_sets, n_rays):
                  '(half-angle of largest empty cone from pocket COM)',
                  fontsize=12, y=1.06)
     fig.tight_layout()
-    fig.savefig(os.path.join(DATA_PATH, 'accessibility_cone.png'),
+    fig.savefig(os.path.join(FIG_PATH, 'accessibility_cone.png'),
                 dpi=150, bbox_inches='tight')
     plt.close()
     print(f"  Saved: accessibility_cone.png")
@@ -556,7 +592,7 @@ def run_accessibility(active_sets, n_rays):
 
     fig.suptitle('Active Site Accessibility Summary', fontsize=14, y=1.04)
     fig.tight_layout()
-    fig.savefig(os.path.join(DATA_PATH, 'accessibility_summary.png'),
+    fig.savefig(os.path.join(FIG_PATH, 'accessibility_summary.png'),
                 dpi=150, bbox_inches='tight')
     plt.close()
     print(f"  Saved: accessibility_summary.png")
@@ -630,9 +666,26 @@ def main():
                              "md1l1_md2, or 'all')")
     parser.add_argument('--include-fragments', action='store_true',
                         help='Auto-discover and include fragments/')
+    parser.add_argument('--sim-folder', nargs='+', default=None, metavar='PATH',
+                        help='One or more simulation-set folders to analyze '
+                             '(each containing seed-*_sample-*/ replicates). '
+                             "Domain units are read from the folder's metadata.json, "
+                             'or pass --units. Use this for new simulations '
+                             'without editing the script.')
+    parser.add_argument('--units', nargs='+', default=None, metavar='UNIT',
+                        help='FL domain units in the --sim-folder construct '
+                             '(e.g. md1l1 md2 md3). Needed only when the folder '
+                             'has no metadata.json.')
     parser.add_argument('--nrays', type=int, default=N_RAYS,
                         help=f'Number of probe rays (default: {N_RAYS})')
     args = parser.parse_args()
+
+    # Register any folders passed via --sim-folder before running analysis.
+    folder_keys = [register_sim_folder(f, units=args.units)
+                   for f in (args.sim_folder or [])]
+    for k in folder_keys:
+        print(f"  Registered sim folder -> set '{k}' "
+              f"(units: {', '.join(CONSTRUCT_UNITS[k])})")
 
     if args.include_fragments or (args.set and 'all' in args.set):
         discovered = discover_fragments()
@@ -650,6 +703,10 @@ def main():
                     active_sets.append(f'frag_{s}')
                 else:
                     print(f"  WARN: unknown set '{s}'")
+        # --sim-folder always adds its folders on top of --set selection
+        active_sets += [k for k in folder_keys if k not in active_sets]
+    elif folder_keys:
+        active_sets = folder_keys
     else:
         active_sets = ['fl', 'md', 'core', 'mka']
 

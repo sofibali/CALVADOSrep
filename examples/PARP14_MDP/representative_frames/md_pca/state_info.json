@@ -1,0 +1,67 @@
+{
+  "set": "md",
+  "k": 4,
+  "feature_names": [
+    "dist_MD1L1_MD2",
+    "dist_MD1L1_MD3",
+    "dist_MD2_MD3"
+  ],
+  "states": [
+    {
+      "state": 1,
+      "population": 10825,
+      "fraction": 0.22205128205128205,
+      "representative_seed": 1,
+      "representative_sample": 1,
+      "representative_frame": 1199,
+      "representative_pdb": "representative_frames/md_pca/state_1.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 2.9295898883012135,
+        "dist_MD1L1_MD3": 4.869048642725934,
+        "dist_MD2_MD3": 3.1872697291541634
+      }
+    },
+    {
+      "state": 2,
+      "population": 10265,
+      "fraction": 0.21056410256410257,
+      "representative_seed": 4,
+      "representative_sample": 3,
+      "representative_frame": 885,
+      "representative_pdb": "representative_frames/md_pca/state_2.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 2.860057699526507,
+        "dist_MD1L1_MD3": 3.327560717414192,
+        "dist_MD2_MD3": 4.616613879761233
+      }
+    },
+    {
+      "state": 3,
+      "population": 23972,
+      "fraction": 0.4917333333333333,
+      "representative_seed": 2,
+      "representative_sample": 1,
+      "representative_frame": 1776,
+      "representative_pdb": "representative_frames/md_pca/state_3.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 2.9052464940044427,
+        "dist_MD1L1_MD3": 3.3679848169030193,
+        "dist_MD2_MD3": 3.267789900027623
+      }
+    },
+    {
+      "state": 4,
+      "population": 3688,
+      "fraction": 0.07565128205128205,
+      "representative_seed": 1,
+      "representative_sample": 1,
+      "representative_frame": 1865,
+      "representative_pdb": "representative_frames/md_pca/state_4.pdb",
+      "mean_features": {
+        "dist_MD1L1_MD2": 4.1789590452151995,
+        "dist_MD1L1_MD3": 2.993304251528441,
+        "dist_MD2_MD3": 3.5803888035867337
+      }
+    }
+  ]
+}

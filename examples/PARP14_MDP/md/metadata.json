@@ -1,0 +1,13 @@
+{
+  "units": [
+    "md1l1",
+    "md2",
+    "md3"
+  ],
+  "sysname": "parp14_macrodomains",
+  "sites": [
+    "MD1",
+    "MD2",
+    "MD3"
+  ]
+}

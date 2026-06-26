@@ -1,0 +1,104 @@
+{
+  "name": "baseline_current",
+  "shift": null,
+  "custom_kh7a_khb": false,
+  "n_custom_pairs": 0,
+  "description": "Current restraints (no KH domains)",
+  "domains": {
+    "RRM1": [
+      6,
+      88
+    ],
+    "RRM2": [
+      150,
+      223
+    ],
+    "RRM3": [
+      227,
+      301
+    ],
+    "MD1L1": [
+      791,
+      978
+    ],
+    "MD2": [
+      1003,
+      1190
+    ],
+    "MD3": [
+      1216,
+      1387
+    ],
+    "WWE": [
+      1523,
+      1601
+    ],
+    "ART": [
+      1605,
+      1801
+    ]
+  },
+  "k_values": {
+    "RRM1": 700.0,
+    "RRM2": 700.0,
+    "RRM3": 700.0,
+    "MD1L1": 700.0,
+    "MD2": 700.0,
+    "MD3": 700.0,
+    "WWE": 700.0,
+    "ART": 700.0
+  },
+  "k_harmonic_mean": 700.0,
+  "n_domains": 8,
+  "n_restrained_residues": 1056,
+  "domain_info": {
+    "RRM1": {
+      "start": 6,
+      "end": 88,
+      "n_residues": 83,
+      "mean_plddt": 85.59855421686747
+    },
+    "RRM2": {
+      "start": 150,
+      "end": 223,
+      "n_residues": 74,
+      "mean_plddt": 84.16040540540538
+    },
+    "RRM3": {
+      "start": 227,
+      "end": 301,
+      "n_residues": 75,
+      "mean_plddt": 82.41666666666666
+    },
+    "MD1L1": {
+      "start": 791,
+      "end": 978,
+      "n_residues": 188,
+      "mean_plddt": 91.84952127659574
+    },
+    "MD2": {
+      "start": 1003,
+      "end": 1190,
+      "n_residues": 188,
+      "mean_plddt": 91.75297872340427
+    },
+    "MD3": {
+      "start": 1216,
+      "end": 1387,
+      "n_residues": 172,
+      "mean_plddt": 89.61691860465116
+    },
+    "WWE": {
+      "start": 1523,
+      "end": 1601,
+      "n_residues": 79,
+      "mean_plddt": 82.87379746835444
+    },
+    "ART": {
+      "start": 1605,
+      "end": 1801,
+      "n_residues": 197,
+      "mean_plddt": 88.60411167512692
+    }
+  }
+}

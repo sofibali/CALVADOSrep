@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-General PARP14 CALVADOS trajectory analysis across all 4 construct sets.
+General PARP14 CALVADOS trajectory analysis across all simulation sets.
 Parallelized with ProcessPoolExecutor (--workers N).
 
 Integrates CALVADOS built-in analysis (calc_rg, calc_ete, calc_dmap, calc_cmap,
 cmap_traj, calc_fnc, calc_wcn, calc_energy, fit_scaling_exp) with custom
 SAA accessibility analysis.
 
-Analyses:
+Analyses (each writes its own data file to data/ and figures to figures/02_main_analysis/<date>/):
   1. Conformational properties: Rg, Ree (via CALVADOS calc_rg/calc_ete)
   2. Distance maps: interdomain COM distance matrices
   3. Contact maps: trajectory-averaged inter-domain contact frequency (cmap_traj)
@@ -18,20 +18,54 @@ Analyses:
   7. Active site analysis: inter-site distances, radial position, RMSF
   8. Accessibility: SAA ray-casting, cone angle, shell density (unique)
 
+Recognized simulation sets:
+  fl              — full-length (1801 res, EBI AF2)
+  fl_optimized    — full-length with optimized per-domain restraint trims
+                    + KH7a–KHb custom inter-domain restraints
+  md              — Macrodomains only (MD1L1+MD2+MD3, 586 res)
+  core            — KH7a+MD1L1+MD2+MD3+KHb-KH8+WWE+ART (1051 res)
+  mka             — MD1L1+MD2+MD3+KHb-KH8+WWE+ART (999 res)
+  norrm           — KH1-6+KH7a+MDs+KHb-KH8+WWE+ART (1474 res)
+  noart           — KH1-6+KH7a+MDs+KHb-KH8+WWE (1275 res)
+  md3art          — MD3+KHb-KH8+WWE+ART (595 res)
+
+Fragments (--include-fragments or --set all):
+  Auto-discovers ALL prepared contiguous fragments under fragments/<name>/.
+  Each fragment lives in `fragments/<units_joined>/seed-{1-5}_sample-{0-4}/`
+  with a `metadata.json` describing units, restraints, and box size. They
+  are registered internally as `frag_<name>` to avoid collisions with the
+  named sets above.
+
+  Fragment naming convention: lowercase domain units joined by '_', e.g.
+  `md1l1_md2_md3`, `kh7a_md1l1_md2_md3`, `khb-kh8_wwe_art`.
+
+Data caching (avoid re-computing expensive trajectory analyses):
+  Each module saves results to data/<set>_<analysis>.npy/.npz. By default,
+  if the data files exist for a set, that module SKIPS the parallel
+  trajectory compute and rebuilds figures from the cached data. Use
+  --force / --force-recompute to overwrite (regenerate the data from
+  trajectories). Note: --force re-runs the slow MDAnalysis loop.
+
 Usage:
-    python analyze_all.py                     # run everything (auto-detect cores)
-    python analyze_all.py --workers 10        # limit to 10 parallel workers
-    python analyze_all.py --conf-prop         # conformational properties only
-    python analyze_all.py --dmap              # distance maps only
-    python analyze_all.py --cmap              # contact maps only
-    python analyze_all.py --fnc               # fraction native contacts only
-    python analyze_all.py --energy            # energy decomposition only
-    python analyze_all.py --wcn               # weighted coordination number only
-    python analyze_all.py --active-sites      # active site analysis only
-    python analyze_all.py --accessibility     # SAA accessibility only
-    python analyze_all.py --set fl md         # specific sets only
+    python analyze_all.py                            # everything, all known sets
+    python analyze_all.py --workers 10               # limit parallel workers
+    python analyze_all.py --conf-prop                # conformational properties only
+    python analyze_all.py --dmap                     # distance maps only
+    python analyze_all.py --cmap                     # contact maps only
+    python analyze_all.py --fnc                      # FNC only
+    python analyze_all.py --energy                   # energy decomposition only
+    python analyze_all.py --wcn                      # WCN at active sites
+    python analyze_all.py --active-sites             # active site analysis
+    python analyze_all.py --accessibility            # SAA accessibility
+    python analyze_all.py --set fl_optimized md      # specific sets
+    python analyze_all.py --set md1l1_md2_md3        # specific fragment
+    python analyze_all.py --include-fragments        # auto-discover all fragments
+    python analyze_all.py --set all                  # all sets + all fragments
+    python analyze_all.py --force                    # force data recompute
+    python analyze_all.py --cmap --force             # force one module's recompute
 """
 
+import json
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -58,7 +92,11 @@ from calvados.analysis import (
 
 CWD = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(CWD, 'data')
-FIG_PATH = os.path.join(CWD, 'figures')
+# Dated category subdir: figures/02_main_analysis/<YYYY-MM-DD>/
+import sys as _sys
+_sys.path.insert(0, CWD)
+from _fig_layout import get_fig_dir as _get_fig_dir
+FIG_PATH = str(_get_fig_dir('02_main_analysis'))
 
 RESIDUES_FILE = os.path.join(CWD, 'input', 'residues_CALVADOS3.csv')
 
@@ -67,11 +105,15 @@ SAMPLES = list(range(0, 5))
 SKIP_FRAMES = 50  # 0.5 ns equilibration
 
 # Simulation parameters
-EPS_LJ = 0.2
-CUTOFF_LJ = 2.0
-CUTOFF_YU = 4.0
-IONIC = 0.19
-TEMP = 293
+# NOTE ON UNITS: CALVADOS works entirely in nanometers (nm). MDAnalysis, however,
+# stores trajectory coordinates in Angstroms (Å). Every `positions / 10.0` and
+# `center_of_mass() / 10.0` below is the Å -> nm conversion (1 nm = 10 Å). So all
+# distances, COMs, radii, and energy cutoffs in this script are in nm unless noted.
+EPS_LJ = 0.2       # Ashbaugh-Hatch well depth epsilon (kJ/mol)
+CUTOFF_LJ = 2.0    # Ashbaugh-Hatch (hydrophobic) interaction cutoff distance = 2.0 nm
+CUTOFF_YU = 4.0    # Yukawa (electrostatic) interaction cutoff distance = 4.0 nm
+IONIC = 0.19       # ionic strength (mol/L), sets Debye screening length
+TEMP = 293         # temperature (K)
 
 # Set definitions
 SETS = {
@@ -227,11 +269,20 @@ def discover_fragments():
     return discovered
 
 
+# Directories registered via --sim-folder: set_key -> absolute folder path.
+# Populated in main() before the worker pool is created so forked workers inherit it.
+EXTERNAL_DIRS = {}
+
+
 def get_sim_paths_dispatch(set_key, seed, sample):
-    """get_sim_paths but handles fragment sets by stripping 'frag_' prefix."""
-    if set_key.startswith('frag_'):
+    """get_sim_paths but handles fragment + --sim-folder sets."""
+    if set_key in EXTERNAL_DIRS:
+        sysname = SETS[set_key]['sysname']
+        sim_dir = os.path.join(EXTERNAL_DIRS[set_key],
+                                f'seed-{seed}_sample-{sample}')
+    elif set_key.startswith('frag_'):
         frag_name = set_key[5:]  # strip prefix
-        sysname = 'parp14'
+        sysname = SETS[set_key]['sysname']
         sim_dir = os.path.join(CWD, 'fragments', frag_name,
                                 f'seed-{seed}_sample-{sample}')
     else:
@@ -241,14 +292,89 @@ def get_sim_paths_dispatch(set_key, seed, sample):
     dcd = os.path.join(sim_dir, f'{sysname}.dcd')
     return pdb, dcd
 
-# SAA parameters
-PROBE_RADIUS = 0.5
-MAX_DIST = 5.0
-N_RAYS = 200
-SEQ_SEP = 10
+
+def register_sim_folder(path, units=None):
+    """Register an arbitrary simulation folder (from --sim-folder) as a set so
+    every analysis module can process it. Domain units are read from the folder's
+    metadata.json, the `units` arg, or (if the basename is a known set) that set.
+    Returns the set_key under which it is registered.
+    """
+    import sim_registry as _reg
+    folder = os.path.abspath(path)
+    if not os.path.isdir(folder):
+        raise FileNotFoundError(f"sim folder not found: {folder}")
+    resolved_units = _reg._resolve_units(folder, units)
+    meta = _reg.read_metadata(folder) or {}
+    sysname = meta.get('sysname') or _reg.detect_sysname(folder)
+    set_key = os.path.basename(os.path.normpath(folder))
+    SETS[set_key] = {'sysname': sysname,
+                     'label': meta.get('label') or set_key,
+                     'color': '#444444'}
+    CONSTRUCT_UNITS[set_key] = resolved_units
+    CONSTRUCT_SITES[set_key] = [_reg.UNIT_TO_SITE[u] for u in resolved_units
+                                if u in _reg.UNIT_TO_SITE]
+    # Restraint domains (construct numbering) for the FNC module, if available.
+    dranges = meta.get('domain_ranges_construct')
+    if dranges is None:
+        dyaml = os.path.join(folder, 'input', 'domains.yaml')
+        if os.path.isfile(dyaml):
+            import yaml as _yaml
+            with open(dyaml) as f:
+                d = _yaml.safe_load(f) or {}
+            dranges = d.get(sysname) or (next(iter(d.values())) if d else None)
+    if dranges is not None:
+        CONSTRUCT_DOMAINS[set_key] = {sysname: dranges}
+    EXTERNAL_DIRS[set_key] = folder
+    return set_key
+
+# SAA (Solid-Angle Accessibility) parameters — all lengths in nm
+PROBE_RADIUS = 0.5   # SPHERE: radius (nm) of the spherical "ligand probe" swept along
+                     #         each ray. A ray is blocked if any protein bead lies within
+                     #         0.5 nm of it (≈ small-fragment / ADP-ribose probe size).
+MAX_DIST = 5.0       # vector length cap (nm): only blocker beads within 5.0 nm along a
+                     #         ray count — beyond this the active site is considered "open".
+N_RAYS = 200         # number of unit VECTORS (ray directions) cast over the 4π sphere.
+SEQ_SEP = 10         # sequence separation (residues, NOT nm): beads within +/-10 of a site
+                     #         residue are excluded as self-blockers (own-domain scaffold).
 
 # Global worker count (set from CLI)
 N_WORKERS = 1
+
+# Global force-recompute flag (set from CLI)
+FORCE_RECOMPUTE = False
+
+
+def all_data_exist(set_keys, file_pattern):
+    """Return True if data files for all given sets exist.
+
+    file_pattern: e.g. '{set}_interdomain_com_dist.npy' (uses .format()).
+    A set is considered cached if at least one expected file is present.
+    """
+    if FORCE_RECOMPUTE:
+        return False
+    for sk in set_keys:
+        # Substitute set name into the pattern
+        candidates = [file_pattern.format(set=sk)]
+        # Also try the fragment name (with frag_ prefix stripped)
+        if sk.startswith('frag_'):
+            candidates.append(file_pattern.format(set=sk[5:]))
+        if not any(os.path.isfile(os.path.join(DATA_PATH, c))
+                   for c in candidates):
+            return False
+    return True
+
+
+def cached_data_path(set_key, pattern):
+    """Return the actual cached data path for a set, trying both with and
+    without frag_ prefix."""
+    p1 = os.path.join(DATA_PATH, pattern.format(set=set_key))
+    if os.path.isfile(p1):
+        return p1
+    if set_key.startswith('frag_'):
+        p2 = os.path.join(DATA_PATH, pattern.format(set=set_key[5:]))
+        if os.path.isfile(p2):
+            return p2
+    return None
 
 
 # ============================================================
@@ -381,47 +507,64 @@ def build_force_maps(u, residues_df):
 # ============================================================
 
 def fibonacci_sphere(n):
+    """VECTORS: n evenly-spread unit direction vectors (|v| = 1, dimensionless)
+    tiling the surface of a unit SPHERE. These are the ray directions cast
+    outward from an active-site COM to probe steric openness."""
     golden = (1 + np.sqrt(5)) / 2
     indices = np.arange(n)
     theta = np.arccos(1 - 2 * (indices + 0.5) / n)
     phi = 2 * np.pi * indices / golden
+    # Each row is a unit vector (x, y, z) on the unit sphere (radius 1, unitless).
     return np.column_stack([np.sin(theta)*np.cos(phi),
                             np.sin(theta)*np.sin(phi),
                             np.cos(theta)])
 
 
 def compute_ray_accessibility(site_com, blocker_pos, ray_dirs, probe_radius, max_dist):
-    vecs = blocker_pos - site_com
-    proj = ray_dirs @ vecs.T
-    ahead = (proj > 0) & (proj < max_dist)
-    perp_sq = np.sum(vecs**2, axis=1)[None, :] - proj**2
+    """Fraction of the 4π solid angle around the active site that is sterically open.
+    SPHERES: each protein bead is treated as a point obstacle, the ligand as a
+    probe sphere of radius `probe_radius` (nm). VECTORS: `vecs` = site_com -> each
+    blocker bead (nm); `ray_dirs` = unit ray directions."""
+    vecs = blocker_pos - site_com            # VECTORS (nm): active-site COM -> each blocker bead
+    proj = ray_dirs @ vecs.T                 # projection of each bead-vector onto each ray (nm)
+    ahead = (proj > 0) & (proj < max_dist)   # bead lies in front of site, within max_dist (nm)
+    perp_sq = np.sum(vecs**2, axis=1)[None, :] - proj**2  # squared perpendicular offset (nm^2)
+    # A ray is blocked if a bead passes within one probe radius of it (probe sphere collides).
     blocked = np.any(ahead & (perp_sq < probe_radius**2), axis=1)
-    return 1.0 - np.sum(blocked) / len(ray_dirs)
+    return 1.0 - np.sum(blocked) / len(ray_dirs)  # fraction of rays unobstructed (0-1)
 
 
 def compute_max_cone_angle(site_com, blocker_pos, ray_dirs, probe_radius, max_dist):
-    vecs = blocker_pos - site_com
-    proj = ray_dirs @ vecs.T
-    ahead = (proj > 0) & (proj < max_dist)
-    perp_sq = np.sum(vecs**2, axis=1)[None, :] - proj**2
-    blocked = np.any(ahead & (perp_sq < probe_radius**2), axis=1)
-    free_dirs = ray_dirs[~blocked]
+    """Half-angle (degrees) of the widest unobstructed approach cone at the site.
+    Same probe SPHERE (radius `probe_radius` nm) and bead-VECTORS (nm) as above;
+    `mean_dir` is a unit VECTOR pointing down the center of the open cone."""
+    vecs = blocker_pos - site_com            # VECTORS (nm): site COM -> each blocker bead
+    proj = ray_dirs @ vecs.T                 # bead-vector projected onto each ray (nm)
+    ahead = (proj > 0) & (proj < max_dist)   # in front of site and within max_dist (nm)
+    perp_sq = np.sum(vecs**2, axis=1)[None, :] - proj**2  # squared perp offset (nm^2)
+    blocked = np.any(ahead & (perp_sq < probe_radius**2), axis=1)  # probe sphere collides
+    free_dirs = ray_dirs[~blocked]           # unit VECTORS of the unblocked rays
     if len(free_dirs) == 0:
         return 0.0
-    mean_dir = np.mean(free_dirs, axis=0)
+    mean_dir = np.mean(free_dirs, axis=0)    # VECTOR: average open direction (cone axis)
     norm = np.linalg.norm(mean_dir)
     if norm < 1e-10:
         return 180.0
-    mean_dir /= norm
+    mean_dir /= norm                         # normalize to unit VECTOR (cone axis, |v|=1)
+    # widest angular deviation of any open ray from the cone axis -> cone half-angle (deg)
     return np.degrees(np.arccos(np.clip(np.min(free_dirs @ mean_dir), -1, 1)))
 
 
 def compute_shell_density(site_com, all_pos, r_inner=2.0, r_outer=5.0):
-    dists = np.linalg.norm(all_pos - site_com, axis=1)
-    n_in_shell = np.sum((dists >= r_inner) & (dists < r_outer))
-    bead_vol = (4/3) * np.pi * (0.25)**3
-    shell_vol = (4/3) * np.pi * (r_outer**3 - r_inner**3)
-    return n_in_shell * bead_vol / shell_vol
+    """Protein volume fraction packed in a spherical shell around the active site.
+    SPHERES: an inner sphere of radius r_inner = 2.0 nm and an outer sphere of
+    radius r_outer = 5.0 nm define the shell; each amino-acid bead is a sphere of
+    radius 0.25 nm (diameter 0.5 nm). VECTOR magnitudes `dists` = |site_com -> bead| (nm)."""
+    dists = np.linalg.norm(all_pos - site_com, axis=1)        # |VECTOR| site COM -> each bead (nm)
+    n_in_shell = np.sum((dists >= r_inner) & (dists < r_outer))  # beads inside the 2-5 nm shell
+    bead_vol = (4/3) * np.pi * (0.25)**3                      # one bead SPHERE volume, r=0.25 nm (nm^3)
+    shell_vol = (4/3) * np.pi * (r_outer**3 - r_inner**3)     # shell volume between the two spheres (nm^3)
+    return n_in_shell * bead_vol / shell_vol                  # occupied volume fraction (unitless)
 
 
 # ============================================================
@@ -454,13 +597,15 @@ def _worker_dmap(set_key, seed, sample):
     n_dom = len(dnames)
     dom_ags = [u.select_atoms(f'resid {s}:{e}') for s, e in domains.values()]
 
+    # DISTANCE MEASURED: center-of-mass (COM) to COM distance between every pair of
+    # structured domains, per frame. Each domain is reduced to a single point = its COM.
     n_eq = len(u.trajectory) - SKIP_FRAMES
     frame_dists = np.zeros((n_eq, n_dom, n_dom))
     for t, ts in enumerate(u.trajectory[SKIP_FRAMES:]):
-        coms = np.array([ag.center_of_mass() / 10.0 for ag in dom_ags])
+        coms = np.array([ag.center_of_mass() / 10.0 for ag in dom_ags])  # domain COMs (nm; /10 = Å->nm)
         for i in range(n_dom):
             for j in range(i, n_dom):
-                d = np.linalg.norm(coms[i] - coms[j])
+                d = np.linalg.norm(coms[i] - coms[j])  # |VECTOR| COM_i -> COM_j = inter-domain distance (nm)
                 frame_dists[t, i, j] = d
                 frame_dists[t, j, i] = d
 
@@ -480,12 +625,14 @@ def _worker_cmap(set_key, seed, sample):
     n_dom = len(dnames)
     dom_ags = {d: u.select_atoms(f'resid {s}:{e}') for d, (s, e) in domains.items()}
 
+    # DISTANCE MEASURED: residue–residue bead distances between two domains. A contact
+    # is counted when two beads fall within a contact SPHERE of radius cutoff = 1.0 nm.
     freq = np.zeros((n_dom, n_dom))
     for i, di in enumerate(dnames):
         for j, dj in enumerate(dnames):
             if j < i:
                 continue
-            cmap = cmap_traj(u, dom_ags[di], dom_ags[dj], cutoff=1.0, start=SKIP_FRAMES)
+            cmap = cmap_traj(u, dom_ags[di], dom_ags[dj], cutoff=1.0, start=SKIP_FRAMES)  # 1.0 nm contact cutoff
             freq[i, j] = np.mean(cmap)
             if j > i:
                 freq[j, i] = freq[i, j]
@@ -501,12 +648,15 @@ def _worker_fnc(set_key, seed, sample):
     sysname = SETS[set_key]['sysname']
     domain_ranges = CONSTRUCT_DOMAINS[set_key][sysname]
 
+    # DISTANCE MEASURED: intra-domain bead–bead distances vs the reference (PDB) structure.
+    # A "native contact" is any bead pair within a contact SPHERE of radius cutoff = 1.0 nm
+    # in the reference; FNC = fraction of those still satisfied each frame (rigidity check).
     fnc_results = {}
     for ds, de in domain_ranges:
         sel = f'resid {ds}:{de}'
         u = mda.Universe(pdb, dcd, in_memory=True)
         uref = mda.Universe(pdb)
-        fnc = calc_fnc(u, uref, sel, cutoff=1.0)
+        fnc = calc_fnc(u, uref, sel, cutoff=1.0)  # 1.0 nm native-contact cutoff sphere
         fnc_eq = fnc[SKIP_FRAMES:]
         fnc_results[f'{ds}_{de}'] = np.mean(fnc_eq)
 
@@ -527,11 +677,14 @@ def _worker_wcn(set_key, seed, sample):
     sample_frames = np.linspace(SKIP_FRAMES, n_total - 1,
                                 min(20, n_total - SKIP_FRAMES), dtype=int)
 
+    # DISTANCE MEASURED: number of neighboring beads around each catalytic residue,
+    # smoothly weighted by a coordination SPHERE of characteristic radius r0 = 0.7 nm
+    # (higher WCN = more buried/crowded active site).
     site_wcn = {s: [] for s in available_sites}
     for frame_idx in sample_frames:
         u.trajectory[frame_idx]
-        pos = ag.positions / 10.0
-        wcn_all = calc_wcn(None, pos, fdomains=None, ssonly=False, r0=0.7)
+        pos = ag.positions / 10.0                 # all bead positions (nm; /10 = Å->nm)
+        wcn_all = calc_wcn(None, pos, fdomains=None, ssonly=False, r0=0.7)  # 0.7 nm coordination radius
         for sname in available_sites:
             indices = [r - 1 for r in sites[sname]['catalytic'] if r - 1 < len(wcn_all)]
             if indices:
@@ -688,6 +841,29 @@ def group_by_set(results):
     return dict(grouped)
 
 
+def merge_savez(path, new_dict, active_sets):
+    """Save a shared .npz cache WITHOUT clobbering sets that weren't recomputed.
+
+    The conf-prop / active-site / accessibility / wcn caches are single files
+    keyed as '<set>_...'. Running on a subset (e.g. one --sim-folder) used to
+    overwrite the whole file. This loads the existing cache, drops only the keys
+    belonging to the sets being (re)written, then merges in the new data.
+    """
+    merged = {}
+    if os.path.isfile(path):
+        try:
+            old = np.load(path, allow_pickle=True)
+            prefixes = tuple(f'{s}_' for s in active_sets)
+            for k in old.files:
+                if not k.startswith(prefixes):
+                    merged[k] = old[k]
+        except Exception as e:
+            print(f"  WARN: could not read existing {os.path.basename(path)} "
+                  f"({e}); rewriting")
+    merged.update(new_dict)
+    np.savez(path, **merged)
+
+
 # ============================================================
 # 1. Conformational Properties
 # ============================================================
@@ -696,6 +872,30 @@ def run_conf_prop(active_sets):
     print("\n" + "=" * 70)
     print("CONFORMATIONAL PROPERTIES (Rg, Ree) — parallel")
     print("=" * 70)
+
+    cache_file = os.path.join(DATA_PATH, 'conf_prop.npz')
+    # Try to reload from cache (skip slow parallel compute)
+    if os.path.isfile(cache_file) and not FORCE_RECOMPUTE:
+        try:
+            cached = np.load(cache_file, allow_pickle=True)
+            all_data = {}
+            for sk in active_sets:
+                rg_keys = sorted([k for k in cached.files
+                                   if k.startswith(f'{sk}_rg_rep')])
+                ree_keys = sorted([k for k in cached.files
+                                    if k.startswith(f'{sk}_ree_rep')])
+                if rg_keys and ree_keys:
+                    all_data[sk] = {
+                        'rg': [cached[k] for k in rg_keys],
+                        'ree': [cached[k] for k in ree_keys],
+                    }
+            if all_data:
+                print(f"  Loaded cached data ({len(all_data)} sets, "
+                      f"--force to recompute)")
+                _plot_conf_prop(active_sets, all_data)
+                return all_data
+        except Exception as e:
+            print(f"  Cache reload failed ({e}) — recomputing")
 
     jobs = replicate_jobs(active_sets)
     results = parallel_map(_worker_conf_prop, jobs, "conf_prop")
@@ -722,7 +922,7 @@ def run_conf_prop(active_sets):
             save_dict[f'{set_key}_rg_rep{i}'] = rg
         for i, ree in enumerate(d['ree']):
             save_dict[f'{set_key}_ree_rep{i}'] = ree
-    np.savez(os.path.join(DATA_PATH, 'conf_prop.npz'), **save_dict)
+    merge_savez(os.path.join(DATA_PATH, 'conf_prop.npz'), save_dict, active_sets)
     print(f"  Saved: data/conf_prop.npz")
 
     _plot_conf_prop(active_sets, all_data)
@@ -818,9 +1018,63 @@ def run_dmap_analysis(active_sets):
     print("DISTANCE MAP ANALYSIS — parallel")
     print("=" * 70)
 
-    jobs = replicate_jobs(active_sets)
-    results = parallel_map(_worker_dmap, jobs, "dmap")
-    by_set = group_by_set(results)
+    # Cache-aware: separate sets into cached vs needs-compute
+    needs_compute = [
+        sk for sk in active_sets
+        if FORCE_RECOMPUTE or
+        cached_data_path(sk, '{set}_interdomain_com_dist.npy') is None
+    ]
+    cached = [sk for sk in active_sets if sk not in needs_compute]
+    if cached:
+        print(f"  Loading cached data for {len(cached)} sets: "
+              f"{', '.join(cached)}")
+    if not needs_compute:
+        # All cached — just rebuild figures from saved data
+        by_set = {}
+        for sk in active_sets:
+            p_mean = cached_data_path(sk, '{set}_interdomain_com_dist.npy')
+            p_std = cached_data_path(sk, '{set}_interdomain_com_dist_std.npy')
+            if p_mean and p_std:
+                # Reconstruct minimal reps list (one fake "rep" with the
+                # already-aggregated mean/std)
+                mean_d = np.load(p_mean)
+                std_d = np.load(p_std)
+                # Try to recover dnames from CONSTRUCT_DOMAINS or fragment metadata
+                if sk.startswith('frag_'):
+                    units = CONSTRUCT_UNITS.get(sk, [])
+                    dnames = [u.upper() for u in units]
+                else:
+                    domains = get_construct_domains_for_set(sk)
+                    dnames = list(domains.keys())
+                # Pad dnames to match matrix size if mismatch
+                n = mean_d.shape[0]
+                if len(dnames) != n:
+                    dnames = [f'D{i}' for i in range(n)]
+                by_set[sk] = [{'mean': mean_d, 'std': std_d,
+                               'dnames': dnames}]
+    else:
+        print(f"  Computing for {len(needs_compute)} sets: "
+              f"{', '.join(needs_compute)}")
+        jobs = replicate_jobs(needs_compute)
+        results = parallel_map(_worker_dmap, jobs, "dmap")
+        by_set = group_by_set(results)
+        # Also load any cached
+        for sk in cached:
+            p_mean = cached_data_path(sk, '{set}_interdomain_com_dist.npy')
+            p_std = cached_data_path(sk, '{set}_interdomain_com_dist_std.npy')
+            if p_mean and p_std:
+                mean_d = np.load(p_mean)
+                std_d = np.load(p_std)
+                if sk.startswith('frag_'):
+                    units = CONSTRUCT_UNITS.get(sk, [])
+                    dnames = [u.upper() for u in units]
+                else:
+                    domains = get_construct_domains_for_set(sk)
+                    dnames = list(domains.keys())
+                if len(dnames) != mean_d.shape[0]:
+                    dnames = [f'D{i}' for i in range(mean_d.shape[0])]
+                by_set[sk] = [{'mean': mean_d, 'std': std_d,
+                               'dnames': dnames}]
 
     for set_key in active_sets:
         info = SETS[set_key]
@@ -829,11 +1083,19 @@ def run_dmap_analysis(active_sets):
             continue
         dnames = reps[0]['dnames']
         n_dom = len(dnames)
-        mean_d = np.mean([r['mean'] for r in reps], axis=0)
-        std_d = np.mean([r['std'] for r in reps], axis=0)
-
-        np.save(os.path.join(DATA_PATH, f'{set_key}_interdomain_com_dist.npy'), mean_d)
-        np.save(os.path.join(DATA_PATH, f'{set_key}_interdomain_com_dist_std.npy'), std_d)
+        # If only one "rep" entry from cache, use it as-is; else average
+        if len(reps) == 1 and 'mean' in reps[0]:
+            mean_d = reps[0]['mean']
+            std_d = reps[0]['std']
+        else:
+            mean_d = np.mean([r['mean'] for r in reps], axis=0)
+            std_d = np.mean([r['std'] for r in reps], axis=0)
+            np.save(os.path.join(DATA_PATH,
+                                  f'{set_key}_interdomain_com_dist.npy'),
+                    mean_d)
+            np.save(os.path.join(DATA_PATH,
+                                  f'{set_key}_interdomain_com_dist_std.npy'),
+                    std_d)
 
         print(f"  {info['label']}: {len(reps)} reps, {n_dom} domains")
 
@@ -863,8 +1125,38 @@ def run_cmap_analysis(active_sets):
     print("CONTACT MAP ANALYSIS — parallel")
     print("=" * 70)
 
+    # Cache-aware: split into cached vs needs-compute
+    needs_compute = [
+        sk for sk in active_sets
+        if FORCE_RECOMPUTE or
+        cached_data_path(sk, '{set}_interdomain_contact_freq.npy') is None
+    ]
+    cached_sets = [sk for sk in active_sets if sk not in needs_compute]
+    if cached_sets:
+        print(f"  Cached: {', '.join(cached_sets)}")
+    if not needs_compute:
+        print(f"  All data cached (--force to recompute). Rebuilding figures.")
+        for sk in active_sets:
+            p = cached_data_path(sk, '{set}_interdomain_contact_freq.npy')
+            if not p:
+                continue
+            freq = np.load(p)
+            info = SETS[sk]
+            n_dom = freq.shape[0]
+            if sk.startswith('frag_'):
+                units = CONSTRUCT_UNITS.get(sk, [])
+                dnames = [u.upper() for u in units][:n_dom]
+            else:
+                domains = get_construct_domains_for_set(sk)
+                dnames = list(domains.keys())[:n_dom]
+            if len(dnames) < n_dom:
+                dnames = [f'D{i}' for i in range(n_dom)]
+            _plot_cmap(sk, info, freq, dnames)
+        return
+
+    print(f"  Computing for: {', '.join(needs_compute)}")
     # Use seed=1 only (cmap_traj is expensive)
-    jobs = [(sk, 1, sa) for sk in active_sets for sa in SAMPLES
+    jobs = [(sk, 1, sa) for sk in needs_compute for sa in SAMPLES
             if os.path.isfile(get_sim_paths(sk, 1, sa)[0]) and
                os.path.isfile(get_sim_paths(sk, 1, sa)[1])]
 
@@ -882,22 +1174,32 @@ def run_cmap_analysis(active_sets):
 
         np.save(os.path.join(DATA_PATH, f'{set_key}_interdomain_contact_freq.npy'), freq)
         print(f"  {info['label']}: {len(reps)} reps, {n_dom} domains")
-
-        fig, ax = plt.subplots(figsize=(8, 7))
-        im = ax.imshow(freq, cmap='hot_r', origin='lower', vmin=0)
-        ax.set_xticks(range(n_dom)); ax.set_xticklabels(dnames, rotation=45, ha='right', fontsize=8)
-        ax.set_yticks(range(n_dom)); ax.set_yticklabels(dnames, fontsize=8)
-        plt.colorbar(im, ax=ax, label='Mean contact frequency', shrink=0.8)
-        for i in range(n_dom):
-            for j in range(n_dom):
-                ax.text(j, i, f'{freq[i,j]:.3f}', ha='center', va='center', fontsize=6,
-                        color='white' if freq[i,j] > 0.3*np.max(freq) else 'black')
-        ax.set_title(f'{info["label"]} — Interdomain Contact Frequency')
-        fig.tight_layout()
-        for ext in ['png', 'svg']:
-            fig.savefig(os.path.join(FIG_PATH, f'{set_key}_interdomain_cmap.{ext}'), dpi=150, bbox_inches='tight')
-        plt.close()
+        _plot_cmap(set_key, info, freq, dnames)
     print(f"  Saved: figures/*_interdomain_cmap")
+
+
+def _plot_cmap(set_key, info, freq, dnames):
+    """Plot one cmap heatmap from frequency matrix + domain names."""
+    n_dom = freq.shape[0]
+    fig, ax = plt.subplots(figsize=(8, 7))
+    im = ax.imshow(freq, cmap='hot_r', origin='lower', vmin=0)
+    ax.set_xticks(range(n_dom))
+    ax.set_xticklabels(dnames, rotation=45, ha='right', fontsize=8)
+    ax.set_yticks(range(n_dom))
+    ax.set_yticklabels(dnames, fontsize=8)
+    plt.colorbar(im, ax=ax, label='Mean contact frequency', shrink=0.8)
+    for i in range(n_dom):
+        for j in range(n_dom):
+            ax.text(j, i, f'{freq[i,j]:.3f}', ha='center', va='center',
+                    fontsize=6,
+                    color='white' if freq[i, j] > 0.3 * np.max(freq) else 'black')
+    ax.set_title(f'{info["label"]} — Interdomain Contact Frequency')
+    fig.tight_layout()
+    for ext in ['png', 'svg']:
+        fig.savefig(os.path.join(FIG_PATH,
+                                  f'{set_key}_interdomain_cmap.{ext}'),
+                    dpi=150, bbox_inches='tight')
+    plt.close()
 
 
 # ============================================================
@@ -908,6 +1210,21 @@ def run_fnc_analysis(active_sets):
     print("\n" + "=" * 70)
     print("FRACTION OF NATIVE CONTACTS — parallel")
     print("=" * 70)
+
+    # Cache-aware
+    needs_compute = [
+        sk for sk in active_sets
+        if FORCE_RECOMPUTE or
+        cached_data_path(sk, '{set}_fnc.npz') is None
+    ]
+    if not needs_compute:
+        print(f"  All FNC data cached for active sets (--force to "
+              f"recompute). Skipping.")
+        return None
+    if len(needs_compute) < len(active_sets):
+        print(f"  Cached: {set(active_sets) - set(needs_compute)}, "
+              f"computing: {needs_compute}")
+    active_sets = needs_compute
 
     jobs = replicate_jobs(active_sets)
     results = parallel_map(_worker_fnc, jobs, "fnc")
@@ -1077,6 +1394,20 @@ def run_energy_analysis(active_sets):
     print("\n" + "=" * 70)
     print("ENERGY DECOMPOSITION (calc_energy, trimmed domain boundaries)")
     print("=" * 70)
+
+    # Cache-aware: only compute sets whose energy.npz is missing
+    needs_compute = [
+        sk for sk in active_sets
+        if FORCE_RECOMPUTE or
+        cached_data_path(sk, '{set}_energy.npz') is None
+    ]
+    cached_sets = [sk for sk in active_sets if sk not in needs_compute]
+    if cached_sets:
+        print(f"  Cached: {', '.join(cached_sets)}")
+    if not needs_compute:
+        print(f"  All energy data cached (--force to recompute). Skipping.")
+        return None
+    active_sets = needs_compute
 
     residues = pd.read_csv(RESIDUES_FILE).set_index('three')
 
@@ -1269,32 +1600,68 @@ def run_wcn_analysis(active_sets):
     print("WEIGHTED COORDINATION NUMBER — parallel")
     print("=" * 70)
 
-    jobs = replicate_jobs(active_sets)
-    results = parallel_map(_worker_wcn, jobs, "wcn")
-    by_set = group_by_set(results)
+    # Per-set caching: each set saved to data/{set}_wcn.npz
+    needs_compute = [
+        sk for sk in active_sets
+        if FORCE_RECOMPUTE or
+        cached_data_path(sk, '{set}_wcn.npz') is None
+    ]
+    cached_sets = [sk for sk in active_sets if sk not in needs_compute]
+    if cached_sets:
+        print(f"  Cached: {', '.join(cached_sets)}")
 
+    # Compute fresh data for sets that need it
     all_wcn = {}
-    for set_key in active_sets:
-        info = SETS[set_key]
-        reps = by_set.get(set_key, [])
-        available = CONSTRUCT_SITES[set_key]
-        site_vals = {s: [r['wcn'][s] for r in reps if not np.isnan(r['wcn'].get(s, np.nan))]
-                     for s in available}
-        all_wcn[set_key] = site_vals
-        for s in available:
-            v = site_vals[s]
-            if v:
-                print(f"  {info['label']} {s}: WCN={np.mean(v):.2f}+/-{np.std(v):.2f}")
+    if needs_compute:
+        print(f"  Computing: {', '.join(needs_compute)}")
+        jobs = replicate_jobs(needs_compute)
+        results = parallel_map(_worker_wcn, jobs, "wcn")
+        by_set = group_by_set(results)
 
-    save_dict = {}
+        for set_key in needs_compute:
+            info = SETS[set_key]
+            reps = by_set.get(set_key, [])
+            available = CONSTRUCT_SITES[set_key]
+            site_vals = {s: [r['wcn'][s] for r in reps
+                              if not np.isnan(r['wcn'].get(s, np.nan))]
+                         for s in available}
+            all_wcn[set_key] = site_vals
+            for s in available:
+                v = site_vals[s]
+                if v:
+                    print(f"  {info['label']} {s}: WCN={np.mean(v):.2f}"
+                          f"+/-{np.std(v):.2f}")
+
+            # Save per-set cache
+            save_dict = {f'{s}_wcn': np.array(v)
+                         for s, v in site_vals.items() if v}
+            np.savez(os.path.join(DATA_PATH, f'{set_key}_wcn.npz'),
+                     **save_dict)
+
+    # Load cached data for cross-set figure
+    for sk in cached_sets:
+        p = cached_data_path(sk, '{set}_wcn.npz')
+        if not p:
+            continue
+        cached = np.load(p, allow_pickle=True)
+        site_vals = {}
+        for key in cached.files:
+            if key.endswith('_wcn'):
+                site = key[:-4]
+                site_vals[site] = cached[key].tolist()
+        all_wcn[sk] = site_vals
+
+    # Also write the aggregated (legacy) global file for backward compat
+    legacy = {}
     for sk, sw in all_wcn.items():
         for s, v in sw.items():
             if v:
-                save_dict[f'{sk}_{s}_wcn'] = np.array(v)
-    np.savez(os.path.join(DATA_PATH, 'wcn_active_sites.npz'), **save_dict)
+                legacy[f'{sk}_{s}_wcn'] = np.array(v)
+    merge_savez(os.path.join(DATA_PATH, 'wcn_active_sites.npz'), legacy, active_sets)
 
-    _plot_violins(active_sets, all_wcn, 'WCN', 'Weighted Coordination Number at Active Sites',
-                       'wcn_active_sites')
+    _plot_violins(active_sets, all_wcn, 'WCN',
+                   'Weighted Coordination Number at Active Sites',
+                   'wcn_active_sites')
     print(f"  Saved: figures/wcn_active_sites")
 
 
@@ -1306,6 +1673,11 @@ def run_active_site_analysis(active_sets):
     print("\n" + "=" * 70)
     print("ACTIVE SITE ANALYSIS — parallel")
     print("=" * 70)
+
+    cache_file = os.path.join(DATA_PATH, 'active_site_stats.npz')
+    if os.path.isfile(cache_file) and not FORCE_RECOMPUTE:
+        print(f"  Cached: {cache_file} (--force to recompute)")
+        return None
 
     jobs = replicate_jobs(active_sets)
     results = parallel_map(_worker_active_sites, jobs, "active_sites")
@@ -1343,7 +1715,7 @@ def run_active_site_analysis(active_sets):
                 save_dict[f'{sk}_{s}_rmsf'] = np.array(res['rmsf'][s])
         for pair, vals in res['inter_dists'].items():
             save_dict[f'{sk}_dist_{pair}'] = np.array(vals)
-    np.savez(os.path.join(DATA_PATH, 'active_site_stats.npz'), **save_dict)
+    merge_savez(os.path.join(DATA_PATH, 'active_site_stats.npz'), save_dict, active_sets)
 
     # RMSF bars
     rmsf_data = {sk: all_results[sk]['rmsf'] for sk in active_sets}
@@ -1434,6 +1806,11 @@ def run_accessibility_analysis(active_sets):
     print("=" * 70)
     print(f"  Probe={PROBE_RADIUS}nm, MaxDist={MAX_DIST}nm, Rays={N_RAYS}, SeqSep=+/-{SEQ_SEP}")
 
+    cache_file = os.path.join(DATA_PATH, 'accessibility_stats.npz')
+    if os.path.isfile(cache_file) and not FORCE_RECOMPUTE:
+        print(f"  Cached: {cache_file} (--force to recompute)")
+        return None
+
     jobs = replicate_jobs(active_sets)
     results = parallel_map(_worker_accessibility, jobs, "accessibility")
     by_set = group_by_set(results)
@@ -1467,7 +1844,7 @@ def run_accessibility_analysis(active_sets):
                 v = st[metric][sn]
                 if v:
                     save_dict[f'{sk}_{sn}_{metric}'] = np.array(v)
-    np.savez(os.path.join(DATA_PATH, 'accessibility_stats.npz'), **save_dict)
+    merge_savez(os.path.join(DATA_PATH, 'accessibility_stats.npz'), save_dict, active_sets)
 
     # SAA bars
     _plot_violins(active_sets, {sk: all_stats[sk]['saa'] for sk in active_sets},
@@ -1601,12 +1978,55 @@ def main():
                              "(e.g. md1l1_md2), or 'all' for everything")
     parser.add_argument('--include-fragments', action='store_true',
                         help='Auto-discover and include all fragments/')
+    parser.add_argument('--sim-folder', nargs='+', default=None, metavar='PATH',
+                        help='One or more simulation-set folders to analyze '
+                             '(each containing seed-*_sample-*/ replicates). '
+                             "Domain units are read from the folder's metadata.json, "
+                             'or pass --units. Use this for new simulations '
+                             'without editing the script.')
+    parser.add_argument('--units', nargs='+', default=None, metavar='UNIT',
+                        help='FL domain units in the --sim-folder construct '
+                             '(e.g. md1l1 md2 md3). Needed only when the folder '
+                             'has no metadata.json.')
+    parser.add_argument('--force', '--force-recompute', dest='force',
+                        action='store_true',
+                        help='Force re-computation of cached data files. '
+                             'Default: skip data computation when .npz/.npy '
+                             'files already exist; just rebuild figures.')
     args = parser.parse_args()
 
-    # Auto-discover fragments if requested or if 'all' specified
-    if args.include_fragments or (args.set and 'all' in args.set):
+    # Expose force flag globally for run_* functions to check
+    global FORCE_RECOMPUTE
+    FORCE_RECOMPUTE = args.force
+
+    # Auto-discover fragments only if --include-fragments is set.
+    # `--set all` without --include-fragments runs only the 8 NAMED sets;
+    # `--set all --include-fragments` runs named sets + all fragments.
+    # Specific `--set <fragment_name>` works without --include-fragments.
+    # Register any folders passed via --sim-folder (before the worker pool is
+    # created, so forked workers inherit the registration).
+    folder_keys = []
+    if args.sim_folder:
+        for folder in args.sim_folder:
+            k = register_sim_folder(folder, units=args.units)
+            folder_keys.append(k)
+            print(f"  Registered sim folder: {folder} -> set '{k}' "
+                  f"(units: {', '.join(CONSTRUCT_UNITS[k])})")
+
+    if args.include_fragments:
         discovered = discover_fragments()
         print(f"  Discovered {len(discovered)} fragment simulations")
+    elif args.set:
+        # User may have named specific fragments — register those (no full
+        # auto-discovery scan).
+        for s in args.set:
+            if s in SETS:
+                continue
+            frag_dir = os.path.join(CWD, 'fragments', s)
+            meta_file = os.path.join(frag_dir, 'metadata.json')
+            if os.path.isdir(frag_dir) and os.path.isfile(meta_file):
+                with open(meta_file) as f:
+                    register_fragment(s, json.load(f))
 
     global N_WORKERS
     if args.workers == 0:
@@ -1624,7 +2044,10 @@ def main():
     # Resolve active_sets: handle 'all', bare fragment names, normal sets
     if args.set:
         if 'all' in args.set:
-            active_sets = list(SETS.keys())  # all registered (incl. fragments)
+            # 'all' = everything currently registered in SETS.
+            # If --include-fragments was passed, that includes fragments.
+            # Otherwise, only the 8 named sets.
+            active_sets = list(SETS.keys())
         else:
             active_sets = []
             for s in args.set:
@@ -1634,7 +2057,13 @@ def main():
                     active_sets.append(f'frag_{s}')
                 else:
                     print(f"  WARN: unknown set '{s}', skipping")
+        # --sim-folder always adds its folders on top of --set selection
+        active_sets += [k for k in folder_keys if k not in active_sets]
+    elif folder_keys:
+        # Only --sim-folder given: analyze just those folders
+        active_sets = folder_keys
     else:
+        # Nothing specified: default = all named/registered sets
         active_sets = list(SETS.keys())
 
     print("=" * 70)

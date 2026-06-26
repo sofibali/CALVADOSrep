@@ -1,0 +1,13 @@
+{
+  "name": "no_restraints",
+  "shift": null,
+  "custom_kh7a_khb": false,
+  "n_custom_pairs": 0,
+  "description": "No restraints",
+  "domains": {},
+  "k_values": {},
+  "k_harmonic_mean": 700.0,
+  "n_domains": 0,
+  "n_restrained_residues": 0,
+  "domain_info": {}
+}

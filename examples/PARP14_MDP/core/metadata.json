@@ -1,0 +1,18 @@
+{
+  "units": [
+    "kh7a",
+    "md1l1",
+    "md2",
+    "md3",
+    "khb-kh8",
+    "wwe",
+    "art"
+  ],
+  "sysname": "parp14_core",
+  "sites": [
+    "MD1",
+    "MD2",
+    "MD3",
+    "ART"
+  ]
+}

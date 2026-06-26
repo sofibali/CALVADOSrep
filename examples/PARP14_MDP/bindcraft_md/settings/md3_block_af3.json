@@ -1,0 +1,12 @@
+{
+    "design_path": "/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/designs/md3_block_af3/",
+    "binder_name": "md3_block_af3",
+    "starting_pdb": "/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/targets/md3_block_af3.pdb",
+    "chains": "A",
+    "target_hotspot_residues": "433,435,446,447,448,449,451,452,453,454,455,456,457,458,459,502,528,531,532,533,534,535,569",
+    "lengths": [
+        70,
+        130
+    ],
+    "number_of_final_designs": 8
+}

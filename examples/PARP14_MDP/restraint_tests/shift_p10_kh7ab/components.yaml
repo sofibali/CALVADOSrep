@@ -1,0 +1,35 @@
+defaults:
+  alpha: 0
+  bfac_shift: 0.8
+  bfac_width: 50.0
+  charge_termini: both
+  colabfold: 1
+  cutoff_restr: 0.9
+  ext_restraint: true
+  fdomains: /home/sbali/CALVADOS/examples/PARP14_MDP/restraint_tests/shift_p10_kh7ab/input/domains.yaml
+  ffasta: fastabib.fasta
+  fresidues: /home/sbali/CALVADOS/examples/PARP14_MDP/input/residues_CALVADOS3.csv
+  k_go: 15.0
+  k_harmonic: 700.0
+  kb: 8033.0
+  molecule_type: protein
+  n_ends: 1
+  nmol: 1
+  pae_shift: 0.3
+  pae_width: 15.0
+  pdb_folder: /home/sbali/CALVADOS/examples/PARP14_MDP/restraint_tests/shift_p10_kh7ab/input
+  periodic: false
+  ptm_locations: []
+  ptm_name: example_ptm
+  restraint: true
+  restraint_type: harmonic
+  rna_ka: 7.24
+  rna_kb1: 8033.0
+  rna_kb2: 8033.0
+  rna_nb_cutoff: 0.6
+  rna_nb_scale: 15
+  rna_nb_sigma: 0.4
+  rna_pa: 3.14
+  use_com: true
+system:
+  parp14: {}
