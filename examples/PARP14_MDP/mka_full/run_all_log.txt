@@ -1,0 +1,91 @@
+Adding charges for both termini of parp14_mka_full.
+Adding charges for both termini of parp14_mka_full.
+Adding charges for both termini of parp14_mka_full.
+Adding charges for both termini of parp14_mka_full.
+Adding charges for both termini of parp14_mka_full.
+Using domains [[2, 189], [214, 401], [427, 598], [734, 812], [816, 1012]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_mka_full
+Number of restraints for comp parp14_mka_full: 4449
+1012 particles in the system
+---------- FORCES ----------
+ah: 1012 particles, 5460 exclusions
+yu: 1012 particles, 5460 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+No checkpoint file restart.chk found: Starting from new system configuration
+Writing trajectory to new file ./parp14_mka_full.dcd
+Minimizing energy.
+STARTING SIMULATION
+  0%|          | 0/10 [00:00<?, ?it/s]Using domains [[2, 189], [214, 401], [427, 598], [734, 812], [816, 1012]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_mka_full
+Number of restraints for comp parp14_mka_full: 4449
+1012 particles in the system
+---------- FORCES ----------
+ah: 1012 particles, 5460 exclusions
+yu: 1012 particles, 5460 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+No checkpoint file restart.chk found: Starting from new system configuration
+Writing trajectory to new file ./parp14_mka_full.dcd
+Minimizing energy.
+STARTING SIMULATION
+Using domains [[2, 189], [214, 401], [427, 598], [734, 812], [816, 1012]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_mka_full
+Number of restraints for comp parp14_mka_full: 4449
+1012 particles in the system
+---------- FORCES ----------
+ah: 1012 particles, 5460 exclusions
+yu: 1012 particles, 5460 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+No checkpoint file restart.chk found: Starting from new system configuration
+Writing trajectory to new file ./parp14_mka_full.dcd
+Minimizing energy.
+STARTING SIMULATION
+  0%|          | 0/10 [00:00<?, ?it/s]Using domains [[2, 189], [214, 401], [427, 598], [734, 812], [816, 1012]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_mka_full
+Number of restraints for comp parp14_mka_full: 4449
+1012 particles in the system
+---------- FORCES ----------
+ah: 1012 particles, 5460 exclusions
+yu: 1012 particles, 5460 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+No checkpoint file restart.chk found: Starting from new system configuration
+Writing trajectory to new file ./parp14_mka_full.dcd
+Minimizing energy.
+STARTING SIMULATION
+  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]Using domains [[2, 189], [214, 401], [427, 598], [734, 812], [816, 1012]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_mka_full
+Number of restraints for comp parp14_mka_full: 4449
+1012 particles in the system
+---------- FORCES ----------
+ah: 1012 particles, 5460 exclusions
+yu: 1012 particles, 5460 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+No checkpoint file restart.chk found: Starting from new system configuration
+Writing trajectory to new file ./parp14_mka_full.dcd
+Minimizing energy.
+STARTING SIMULATION
+  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [3:20:08<30:01:19, 12008.88s/it] 10%|█         | 1/10 [3:26:10<30:55:32, 12370.29s/it] 10%|█         | 1/10 [3:39:42<32:57:18, 13182.02s/it]

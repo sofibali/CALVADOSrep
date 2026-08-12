@@ -1,0 +1,120 @@
+# Missing SASA/pLDDT Analysis
+# =============================
+# These structures have AlphaFold3 predictions but were NOT included in the
+# SASA/pLDDT per-residue analysis. This is because the original analysis
+# scripts only processed structures with the underscore naming convention
+# (kh1_kh2_kh3_kh4_kh5_kh6_...) and missed the hyphenated structures (kh1-kh6_...).
+#
+# Total missing: 1024 structures
+# - ART-containing: 512
+# - MD3-containing (no ART): 255
+# - MD2-containing (no MD3/ART): 128
+# - MD1-containing (no MD2/MD3/ART): 79
+# - Other (no macrodomains): 50
+
+# To run analysis on these missing structures:
+# 1. Run 05_pLDDT_analysis.py on the missing structures
+# 2. Run 06_sasa_analysis.py on the missing structures
+# 3. Re-run 10_active_site_analysis_fast.py to include new data
+
+# ============================================
+# MISSING ART-CONTAINING STRUCTURES (512)
+# ============================================
+art
+kh1-kh6_art
+kh1-kh6_kh7a_khb-kh8_art
+kh1-kh6_kh7a_khb-kh8_wwe_art
+kh1-kh6_kh7a_md1_khb-kh8_art
+kh1-kh6_kh7a_md1_khb-kh8_wwe_art
+kh1-kh6_kh7a_md1_md2_khb-kh8_art
+kh1-kh6_kh7a_md1_md2_khb-kh8_wwe_art
+kh1-kh6_kh7a_md1_md2_md3_khb-kh8_art
+kh1-kh6_kh7a_md1_md2_md3_khb-kh8_wwe_art
+kh1-kh6_kh7a_md1_md3_khb-kh8_art
+kh1-kh6_kh7a_md1_md3_khb-kh8_wwe_art
+kh1-kh6_kh7a_md1l1_art
+kh1-kh6_kh7a_md1l1_khb-kh8_art
+kh1-kh6_kh7a_md1l1_khb-kh8_wwe_art
+kh1-kh6_kh7a_md1l1_md2_art
+kh1-kh6_kh7a_md1l1_md2_khb-kh8_art
+kh1-kh6_kh7a_md1l1_md2_khb-kh8_wwe_art
+kh1-kh6_kh7a_md1l1_md2_md3_art
+kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_art
+kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+kh1-kh6_kh7a_md1l1_md2_md3_wwe_art
+kh1-kh6_kh7a_md1l1_md2_wwe_art
+kh1-kh6_kh7a_md1l1_md3_art
+kh1-kh6_kh7a_md1l1_md3_khb-kh8_art
+kh1-kh6_kh7a_md1l1_md3_khb-kh8_wwe_art
+kh1-kh6_kh7a_md1l1_md3_wwe_art
+kh1-kh6_kh7a_md1l1_wwe_art
+kh7a_md1l1_art
+kh7a_md1l1_khb-kh8_art
+kh7a_md1l1_khb-kh8_wwe_art
+kh7a_md1l1_md2_art
+kh7a_md1l1_md2_khb-kh8_art
+kh7a_md1l1_md2_khb-kh8_wwe_art
+kh7a_md1l1_md2_md3_art
+kh7a_md1l1_md2_md3_khb-kh8_art
+kh7a_md1l1_md2_md3_khb-kh8_wwe_art
+kh7a_md1l1_md2_md3_wwe_art
+kh7a_md1l1_md2_wwe_art
+kh7a_md1l1_md3_art
+kh7a_md1l1_md3_khb-kh8_art
+kh7a_md1l1_md3_khb-kh8_wwe_art
+kh7a_md1l1_md3_wwe_art
+kh7a_md1l1_wwe_art
+md1_art
+md1_md2_art
+md1_md2_md3_art
+md1_md2_md3_wwe_art
+md1_md2_wwe_art
+md1_md3_art
+md1_md3_wwe_art
+md1_wwe_art
+md1l1_art
+md1l1_khb-kh8_art
+md1l1_khb-kh8_wwe_art
+md1l1_md2_art
+md1l1_md2_khb-kh8_art
+md1l1_md2_khb-kh8_wwe_art
+md1l1_md2_md3_art
+md1l1_md2_md3_khb-kh8_art
+md1l1_md2_md3_khb-kh8_wwe_art
+md1l1_md2_md3_wwe_art
+md1l1_md2_wwe_art
+md1l1_md3_art
+md1l1_md3_khb-kh8_art
+md1l1_md3_khb-kh8_wwe_art
+md1l1_md3_wwe_art
+md1l1_wwe_art
+md2_art
+md2_md3_art
+md2_md3_wwe_art
+md2_wwe_art
+md3_art
+md3_wwe_art
+rrm1_art
+rrm1_kh1-kh6_art
+rrm1_kh7a_art
+rrm1_md1l1_art
+rrm2_art
+rrm3_art
+wwe_art
+# ... (and more RRM combinations)
+
+# ============================================
+# SIMPLE DOMAIN STRUCTURES MISSING ANALYSIS
+# ============================================
+# These simple structures are critical for understanding isolated domain behavior:
+art                 # ART alone
+md3_art             # MD3 + ART
+md2_md3_art         # MD2 + MD3 + ART
+md1_art             # MD1 + ART
+md1_md2_art         # MD1 + MD2 + ART
+md1_md2_md3_art     # MD1 + MD2 + MD3 + ART
+wwe_art             # WWE + ART
+md3_wwe_art         # MD3 + WWE + ART
+md1l1_art           # MD1L1 + ART
+md1l1_md2_art       # MD1L1 + MD2 + ART
+md1l1_md2_md3_art   # MD1L1 + MD2 + MD3 + ART

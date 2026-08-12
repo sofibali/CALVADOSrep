@@ -147,6 +147,10 @@ SETS = {
         'sysname': 'parp14', 'label': 'FL (optimized restraints)', 'color': '#aec7e8',
         'units': list(DOMAIN_UNITS.keys()),
     },
+    'fl_go': {
+        'sysname': 'parp14', 'label': 'FL (Go-model restraints, 2us extensions)', 'color': '#7f7f7f',
+        'units': list(DOMAIN_UNITS.keys()),
+    },
 }
 
 # Restraint-domain boundaries (CONSTRUCT numbering) for the named sets. Used by the
@@ -164,12 +168,36 @@ CONSTRUCT_DOMAINS = {
                                 [531, 583], [599, 660], [676, 727], [738, 789], [800, 968],
                                 [1015, 1183], [1217, 1378], [1389, 1461], [1462, 1533],
                                 [1549, 1587], [1613, 1791]]},
+    # fl_go's input/domains.yaml has these identical boundaries (same AF2 structure,
+    # same restraint domain trims); it differs only in restraint TYPE (custom Go-model
+    # contacts, input/custom_restraints_go.txt) rather than harmonic domain restraints.
+    'fl_go': {'parp14': [[16, 78], [156, 214], [235, 304], [320, 379], [390, 449], [460, 515],
+                         [531, 583], [599, 660], [676, 727], [738, 789], [800, 968],
+                         [1015, 1183], [1217, 1378], [1389, 1461], [1462, 1533],
+                         [1549, 1587], [1613, 1791]]},
 }
 
 # Holds absolute directories for folders registered via register_external_folder().
 # Populated in a process before any ProcessPoolExecutor is created so forked
 # workers inherit it (Linux fork start method).
 EXTERNAL_DIRS = {}
+
+# Cache: set_key -> replicate dirs discovered by _flat_replicate_dirs() below.
+_FLAT_DIRS_CACHE = {}
+
+
+def _flat_replicate_dirs(folder, sysname):
+    """Every immediate subdirectory of `folder` containing a `<sysname>.dcd`.
+
+    Fallback for --sim-folder layouts that aren't a seed-{1-5}_sample-{0-4}
+    grid -- e.g. a handful of independent long runs named arbitrarily
+    (fl_go's state-*_tica_seed-*_sample-*_fr*/ dirs)."""
+    dirs = []
+    for entry in sorted(os.listdir(folder)):
+        d = os.path.join(folder, entry)
+        if os.path.isdir(d) and os.path.isfile(os.path.join(d, f'{sysname}.dcd')):
+            dirs.append(d)
+    return dirs
 
 
 # ============================================================
@@ -220,7 +248,14 @@ def get_construct_sites(set_key):
 
 def get_active_sites_for_set(set_key):
     """Active sites with residue numbers remapped into the set's construct numbering."""
-    if set_key == 'fl':
+    if set_key in ('fl', 'fl_optimized', 'fl_go'):
+        # Both are the full uncompressed 1801-residue sequence (fl_optimized
+        # differs only in per-domain restraint trims, not numbering) -- must
+        # bypass build_fl_to_construct_map(), which compresses out gaps
+        # between DOMAIN_UNITS (e.g. the 1194-1206 MD2/MD3 linker) under the
+        # assumption those residues are genuinely absent, as they are for a
+        # real sub-construct like 'noart'. That assumption is false here and
+        # silently shifted every MD3/ART residue number by -13.
         return ACTIVE_SITES_FL
     fl_to_c = build_fl_to_construct_map(get_units(set_key))
     sites = {}
@@ -235,7 +270,7 @@ def get_active_sites_for_set(set_key):
 
 def get_construct_domains_for_set(set_key):
     """FL_DOMAINS remapped into the set's construct numbering (energy boundaries)."""
-    if set_key == 'fl':
+    if set_key in ('fl', 'fl_optimized', 'fl_go'):
         return FL_DOMAINS
     fl_to_c = build_fl_to_construct_map(get_units(set_key))
     mapped = {}
@@ -259,16 +294,27 @@ def get_sim_dir(set_key, seed, sample):
         base = os.path.join(CWD, 'fragments', set_key[5:])
     else:
         base = os.path.join(CWD, set_key)
-    return os.path.join(base, f'seed-{seed}_sample-{sample}')
+    sim_dir = os.path.join(base, f'seed-{seed}_sample-{sample}')
+    if set_key in EXTERNAL_DIRS and not os.path.isdir(sim_dir):
+        if set_key not in _FLAT_DIRS_CACHE:
+            _FLAT_DIRS_CACHE[set_key] = _flat_replicate_dirs(base, SETS[set_key]['sysname'])
+        flat = _FLAT_DIRS_CACHE[set_key]
+        idx = (seed - 1) * len(SAMPLES) + sample
+        if idx < len(flat):
+            sim_dir = flat[idx]
+    return sim_dir
 
 
 def get_sim_paths(set_key, seed, sample):
     """Return (pdb, dcd) for one replicate of any registered set."""
     sysname = SETS[set_key]['sysname']
     sim_dir = get_sim_dir(set_key, seed, sample)
-    pdb = os.path.join(sim_dir, 'top.pdb')
     dcd = os.path.join(sim_dir, f'{sysname}.dcd')
-    return pdb, dcd
+    for name in ('top.pdb', 'restart.pdb', 'checkpoint.pdb'):
+        pdb = os.path.join(sim_dir, name)
+        if os.path.isfile(pdb):
+            return pdb, dcd
+    return os.path.join(sim_dir, 'top.pdb'), dcd
 
 
 def replicate_jobs(active_sets, seeds=SEEDS, samples=SAMPLES):

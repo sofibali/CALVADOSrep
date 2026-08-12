@@ -49,6 +49,25 @@ renders/
 # Editor backups
 .*.swp
 
+# Top-level simulation set dirs (only their input/ and metadata are
+# tracked; sim subdirs and outputs are ignored above)
+# Keep these listed so git status doesn't show them as untracked
+core/seed-*
+fl/seed-*
+md/seed-*
+mka/seed-*
+norrm/seed-*
+noart/seed-*
+md3art/seed-*
+fragments/*/seed-*
+
+# Fragments that haven't had their metadata committed yet
+fragments/rrm1_rrm2_rrm3_kh1-kh6_kh7a_md1l1_md2_md3_khb-kh8_wwe_art/
+
+# Old / stale snapshot dirs
+parp14_10/
+fragments/launch_commands.txt~
+
 # Output of analysis scripts
 parp14_accessibility.pse
 fl_movie.pse

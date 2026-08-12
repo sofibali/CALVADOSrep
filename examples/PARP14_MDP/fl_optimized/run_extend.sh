@@ -1,6 +1,6 @@
 #!/bin/bash
 # Extend fl_optimized from checkpoint (domain + custom restraints retained).
-# Each run appends to the DCD. Arg: "parallel" or "serial" (default).
+# Each run appends to the DCD until this round's target. Arg: "parallel" or "serial".
 set -e
 HERE="$(cd "$(dirname "$0")" && pwd)"
 MODE="${1:-serial}"

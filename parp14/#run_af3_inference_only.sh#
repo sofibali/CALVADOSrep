@@ -1,0 +1,194 @@
+#!/bin/bash
+#
+# Run AF3 INFERENCE ONLY for 517 constructs that already have MSA (_data.json)
+# These are the non-MD1L1 constructs from the previous batch.
+#
+# Usage:
+#   ./run_af3_inference_only.sh                    # 2 GPUs (default 0,1)
+#   ./run_af3_inference_only.sh --gpu0 0 --gpu1 1  # specify GPU IDs
+#   ./run_af3_inference_only.sh --dry-run           # show plan without running
+#
+# Monitor:
+#   tail -f run_af3_gpu0_inference.log
+#   tail -f run_af3_gpu1_inference.log
+
+set +e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Defaults
+GPU0=0
+GPU1=1
+DRY_RUN=0
+JAX_CACHE_DIR="$SCRIPT_DIR/.jax_cache"
+NUM_DIFFUSION_SAMPLES=5
+
+# Paths
+LIST_FILE="$SCRIPT_DIR/missing_inference_only.txt"
+OUTPUT_DIR="$SCRIPT_DIR/alphafold_outputs"
+DB_DIR="/mnt/alphafold3"
+MODEL_DIR="/mnt/alphafold3"
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --gpu0)       GPU0="$2"; shift 2 ;;
+        --gpu1)       GPU1="$2"; shift 2 ;;
+        --dry-run)    DRY_RUN=1; shift ;;
+        --diffusion-samples) NUM_DIFFUSION_SAMPLES="$2"; shift 2 ;;
+        *)            echo "Unknown arg: $1"; exit 1 ;;
+    esac
+done
+
+# Environment
+source /programs/sbgrid.shrc 2>/dev/null
+export TRITON_PTXAS_PATH=/usr/local/cuda-12.4/bin/ptxas
+mkdir -p "$JAX_CACHE_DIR"
+
+# ============================================================================
+# Build list of constructs that still need inference
+# ============================================================================
+if [ ! -f "$LIST_FILE" ]; then
+    echo "ERROR: $LIST_FILE not found. Generate it first."
+    exit 1
+fi
+
+NEED_INFERENCE=()
+ALREADY_DONE=0
+
+while IFS= read -r name; do
+    outdir="$OUTPUT_DIR/${name,,}"
+    # Skip if inference already completed
+    if [ -n "$(find "$outdir" -name 'model.cif' -print -quit 2>/dev/null)" ]; then
+        ((ALREADY_DONE++))
+        continue
+    fi
+    # Verify _data.json exists
+    data_json=$(find "$outdir" -name '*_data.json' -print -quit 2>/dev/null)
+    if [ -z "$data_json" ]; then
+        echo "WARNING: No _data.json for $name, skipping"
+        continue
+    fi
+    NEED_INFERENCE+=("$data_json")
+done < "$LIST_FILE"
+
+N_TODO=${#NEED_INFERENCE[@]}
+HALF=$(( (N_TODO + 1) / 2 ))
+GPU0_INPUTS=("${NEED_INFERENCE[@]:0:$HALF}")
+GPU1_INPUTS=("${NEED_INFERENCE[@]:$HALF}")
+
+echo "============================================================================"
+echo "AF3 Inference Only (517 constructs with pre-computed MSA)"
+echo "============================================================================"
+echo "  From list:        $(wc -l < "$LIST_FILE") constructs"
+echo "  Already done:     $ALREADY_DONE (skipped)"
+echo "  Need inference:   $N_TODO"
+echo "  GPU 0 ($GPU0):    ${#GPU0_INPUTS[@]} inputs"
+echo "  GPU 1 ($GPU1):    ${#GPU1_INPUTS[@]} inputs"
+echo "============================================================================"
+
+if [ $DRY_RUN -eq 1 ]; then
+    echo "[DRY RUN] Exiting."
+    exit 0
+fi
+
+if [ $N_TODO -eq 0 ]; then
+    echo "Nothing to do."
+    exit 0
+fi
+
+START_TIME=$(date +%s)
+
+# ============================================================================
+# Prepare batch directories with symlinks to _data.json files
+# ============================================================================
+prepare_batch() {
+    local batch_dir=$1
+    shift
+    local inputs=("$@")
+
+    rm -rf "$batch_dir"
+    mkdir -p "$batch_dir"
+    for data_json in "${inputs[@]}"; do
+        ln -sf "$data_json" "$batch_dir/"
+    done
+    echo "${#inputs[@]} _data.json files linked"
+}
+
+run_gpu_inference() {
+    local gpu_id=$1
+    local label=$2
+    local batch_dir=$3
+    local log_file="$SCRIPT_DIR/run_af3_gpu${label}_inference.log"
+
+    local n_inputs=$(ls "$batch_dir"/*.json 2>/dev/null | wc -l)
+    if [ "$n_inputs" -eq 0 ]; then
+        echo "GPU $label: nothing to process" | tee "$log_file"
+        return 0
+    fi
+
+    echo "[$(date '+%H:%M:%S')] GPU $label ($gpu_id): $n_inputs inputs (inference only)" | tee "$log_file"
+
+    CUDA_VISIBLE_DEVICES=$gpu_id \
+    /programs/x86_64-linux/system/sbgrid_bin/run_alphafold.py \
+        --db_dir "$DB_DIR" \
+        --model_dir "$MODEL_DIR" \
+        --output_dir "$OUTPUT_DIR" \
+        --input_dir "$batch_dir" \
+        --jax_compilation_cache_dir "$JAX_CACHE_DIR" \
+        --flash_attention_implementation triton \
+        --num_diffusion_samples $NUM_DIFFUSION_SAMPLES \
+        --norun_data_pipeline \
+        >> "$log_file" 2>&1
+
+    echo "[$(date '+%H:%M:%S')] GPU $label: done (exit $?)" | tee -a "$log_file"
+}
+
+BATCH0="$SCRIPT_DIR/.af3_batch_gpu0_inf"
+BATCH1="$SCRIPT_DIR/.af3_batch_gpu1_inf"
+
+echo ""
+echo "Preparing GPU batches..."
+echo "  GPU 0: $(prepare_batch "$BATCH0" "${GPU0_INPUTS[@]}")"
+echo "  GPU 1: $(prepare_batch "$BATCH1" "${GPU1_INPUTS[@]}")"
+echo ""
+
+echo "Launching inference on both GPUs..."
+echo "  Monitor: tail -f $SCRIPT_DIR/run_af3_gpu0_inference.log"
+echo "           tail -f $SCRIPT_DIR/run_af3_gpu1_inference.log"
+echo ""
+
+run_gpu_inference "$GPU0" "0" "$BATCH0" &
+PID0=$!
+echo "  GPU 0: PID $PID0"
+
+run_gpu_inference "$GPU1" "1" "$BATCH1" &
+PID1=$!
+echo "  GPU 1: PID $PID1"
+
+echo ""
+echo "Waiting for both GPUs..."
+FAILURES=0
+wait $PID0 || ((FAILURES++))
+wait $PID1 || ((FAILURES++))
+
+rm -rf "$BATCH0" "$BATCH1"
+
+# Summary
+END_TIME=$(date +%s)
+ELAPSED=$(( END_TIME - START_TIME ))
+
+echo ""
+echo "============================================================================"
+echo "Inference-Only Batch Complete"
+echo "============================================================================"
+echo "  Elapsed: $(( ELAPSED / 3600 ))h $(( (ELAPSED % 3600) / 60 ))m"
+
+N_COMPLETE=$(find "$OUTPUT_DIR" -maxdepth 3 -name 'model.cif' -print 2>/dev/null | \
+    sed 's|/seed-[0-9]*_sample-[0-9]*/model.cif||' | sort -u | wc -l)
+echo "  Completed combinations: $N_COMPLETE / 2047 target"
+
+if [ "$FAILURES" -gt 0 ]; then
+    echo "  WARNING: $FAILURES GPU(s) had errors. Check inference logs."
+fi
+echo "============================================================================"

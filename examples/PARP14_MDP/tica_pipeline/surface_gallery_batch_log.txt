@@ -1,0 +1,53 @@
+[13:27:24] === fl_optimized_ca25_tica (fl_optimized): 4 states ===
+[13:27:24] --- fl_optimized_ca25_tica/state_1 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_ca25_tica/state_1 ---
+[13:32:46]     OK in 322s (returncode=0)
+[13:32:46] --- fl_optimized_ca25_tica/state_2 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_ca25_tica/state_2 ---
+[13:38:05]     OK in 319s (returncode=0)
+[13:38:05] --- fl_optimized_ca25_tica/state_3 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_ca25_tica/state_3 ---
+[13:41:36]     OK in 211s (returncode=0)
+[13:41:36]     [13:39:48]   APBS prep FAILED: ation.
+[13:41:36]     [13:39:48]   electrostatics will be SKIPPED for this state (APBS prep failed)
+[13:41:36]     [13:40:55]   electrostatic SKIPPED for pocket_MD1 (no APBS map)
+[13:41:36]     [13:41:01]   electrostatic SKIPPED for pocket_MD2 (no APBS map)
+[13:41:36]     [13:41:10]   electrostatic SKIPPED for pocket_MD3 (no APBS map)
+[13:41:36]     [13:41:23]   electrostatic SKIPPED for pocket_ART (no APBS map)
+[13:41:36] --- fl_optimized_ca25_tica/state_4 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_ca25_tica/state_4 ---
+[13:43:15]     OK in 99s (returncode=0)
+[13:43:15]     [13:41:48]   APBS prep FAILED: peline for the setup, execution,
+[13:43:15]     [13:41:48]   electrostatics will be SKIPPED for this state (APBS prep failed)
+[13:43:15]     [13:42:38]   electrostatic SKIPPED for pocket_MD1 (no APBS map)
+[13:43:15]     [13:42:44]   electrostatic SKIPPED for pocket_MD2 (no APBS map)
+[13:43:15]     [13:42:51]   electrostatic SKIPPED for pocket_MD3 (no APBS map)
+[13:43:15]     [13:43:01]   electrostatic SKIPPED for pocket_ART (no APBS map)
+[13:43:15] === fl_optimized_iface10_tica (fl_optimized): 2 states ===
+[13:43:15] --- fl_optimized_iface10_tica/state_1 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_iface10_tica/state_1 ---
+[13:49:23]     OK in 368s (returncode=0)
+[13:49:23] --- fl_optimized_iface10_tica/state_2 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_iface10_tica/state_2 ---
+[13:53:55]     OK in 272s (returncode=0)
+[13:53:55]     [13:51:43]   APBS prep FAILED: ation.
+[13:53:55]     [13:51:43]   electrostatics will be SKIPPED for this state (APBS prep failed)
+[13:53:55]     [13:52:58]   electrostatic SKIPPED for pocket_MD1 (no APBS map)
+[13:53:55]     [13:53:05]   electrostatic SKIPPED for pocket_MD2 (no APBS map)
+[13:53:55]     [13:53:16]   electrostatic SKIPPED for pocket_MD3 (no APBS map)
+[13:53:55]     [13:53:31]   electrostatic SKIPPED for pocket_ART (no APBS map)
+[13:53:56] === md_full_pose (md): 4 states ===
+[13:53:56] --- md_full_pose/state_1 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/md_full_pose/state_1 ---
+[13:59:13]     OK in 317s (returncode=0)
+[13:59:13] --- md_full_pose/state_2 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/md_full_pose/state_2 ---
+[14:00:08]     OK in 54s (returncode=0)
+[14:00:08] --- md_full_pose/state_3 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/md_full_pose/state_3 ---
+[14:00:59]     OK in 51s (returncode=0)
+[14:00:59] --- md_full_pose/state_4 -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/md_full_pose/state_4 ---
+[14:01:49]     OK in 50s (returncode=0)
+[14:01:49] === BATCH SUMMARY ===
+[14:01:49] 10/10 states completed without a fatal error
+[14:01:49]   [OK] fl_optimized_ca25_tica/state_1 (322s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_ca25_tica/state_1
+[14:01:49]   [OK] fl_optimized_ca25_tica/state_2 (319s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_ca25_tica/state_2
+[14:01:49]   [OK] fl_optimized_ca25_tica/state_3 (211s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_ca25_tica/state_3
+[14:01:49]   [OK] fl_optimized_ca25_tica/state_4 (99s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_ca25_tica/state_4
+[14:01:49]   [OK] fl_optimized_iface10_tica/state_1 (368s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_iface10_tica/state_1
+[14:01:49]   [OK] fl_optimized_iface10_tica/state_2 (272s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/fl_optimized_iface10_tica/state_2
+[14:01:49]   [OK] md_full_pose/state_1 (317s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/md_full_pose/state_1
+[14:01:49]   [OK] md_full_pose/state_2 (54s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/md_full_pose/state_2
+[14:01:49]   [OK] md_full_pose/state_3 (51s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/md_full_pose/state_3
+[14:01:49]   [OK] md_full_pose/state_4 (50s) -> /home/sbali/CALVADOS/examples/PARP14_MDP/figures/09_surface_gallery/2026-08-07/md_full_pose/state_4

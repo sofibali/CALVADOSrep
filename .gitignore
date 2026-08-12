@@ -235,8 +235,28 @@ parp14/PARP14_AlphaFold3_Pipeline.ipynb
 # PARP14 large derived data
 parp14/logs/
 parp14/results/per_residue/
-parp14/figures/improved/*.svg
-
+parp14/figures/**/*.svg
+*.parquet
+*.json 
 # Large trajectory/movie files
 examples/foxP_model/**/allatom.dcd
 examples/foxP_model/rendered_movies/*.mp4
+
+# PARP14 analysis outputs - generated data (keep .py/.md/.png; drop everything else)
+parp14/analysis/**/*.parquet
+parp14/analysis/**/*.npz
+parp14/analysis/**/*.svg
+parp14/analysis/**/*.pdf
+parp14/analysis/**/*.csv
+parp14/analysis/**/*.txt
+
+# AF3 raw prediction outputs dumped outside alphafold_outputs/ (keep .py/.md)
+parp14/md1_md2_md3_khb-kh8_wwe_art/**/*.cif
+parp14/md1_md2_md3_khb-kh8_wwe_art/**/*.csv
+
+# Per-frame TICA state-extraction scratch dirs (keep run.py)
+examples/PARP14_MDP/fl_go/state-*_tica_*/**/*.pdb
+examples/PARP14_MDP/fl_go/state-*_tica_*/**/*.xml
+examples/PARP14_MDP/fl_go/state-*_tica_*/**/*.txt
+examples/PARP14_MDP/fl_go/state-*_tica_*/**/*.yaml
+examples/PARP14_MDP/fl_go/state-*_tica_*/**/*.csv

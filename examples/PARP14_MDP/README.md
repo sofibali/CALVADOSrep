@@ -112,3 +112,32 @@ Initial structures come from AlphaFold3 predictions in:
 ```
 
 See [`../../parp14/README.md`](../../parp14/README.md) for the structure generation pipeline, and [`../../docs/PARP14_PROJECT.md`](../../docs/PARP14_PROJECT.md) for the full protocol.
+
+---
+
+## Repository layout (current)
+
+Scripts are grouped by role. Build/simulation scripts and shared helpers stay in this
+root; analysis and the TICA state pipeline live in labeled folders. **Every script
+resolves `data/`, `figures/`, and the simulation folders to this root**, no matter
+where it lives or is invoked from (a root-bootstrap handles the shared imports).
+
+| Location | Contents |
+|----------|----------|
+| **root** (build/simulation) | `prepare*.py` (build+launch runs), `setup_extend_*.py` / `extend_sims.py` (extend from checkpoint), `stamp_metadata.py` |
+| **root** (shared) | `sim_registry.py` (sets / domain units / FL→construct remap / `--sim-folder`), `_fig_layout.py` (figure styling), `environment.yml` (env `calvados-tica`) |
+| **`sim_analysis/`** | `run_analysis.sh` + `analyze_*.py` + `figure_*.py` + `make_analysis_pse.py` + `ANALYSIS_README.md` |
+| **`tica_pipeline/`** | `run_pipeline.sh` + `01/02/03_*.py` + engine (`cluster_states.py`, `fullatom_minimize_states.py`, `backmap_states.py`) + `sweep_its.py` + `make_cluster_pse.py` + `README.md` |
+| **`archive_analysis/`** | superseded / one-off scripts (movie & pymol sessions, render_scenes, test/compare_restraints, analyze_parp14, …) |
+| **shared outputs** | `data/`, `figures/`, `input/`, `representative_frames/`, `states/`; simulation sets `fl_optimized/`, `md_full/`, `fragments/`, … |
+
+Setup: `conda env create -f environment.yml && conda activate calvados-tica`
+(then `pip install -e /path/to/CALVADOS` only to run new simulations).
+
+Typical flow:
+```bash
+python prepare_md_full.py; bash md_full/run_all.sh parallel   # 1. build+run   (root)
+cd sim_analysis && bash run_analysis.sh --set md_full; cd ..   # 2. analyze     (sim_analysis/)
+SET=md_full FEATURES=pose K=4 bash tica_pipeline/run_pipeline.sh  # 3. states    (tica_pipeline/)
+```
+Any new construct works with no code edits via `--set NAME` or `--sim-folder PATH`.

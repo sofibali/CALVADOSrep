@@ -1,0 +1,96 @@
+EXTEND /home/sbali/CALVADOS/examples/PARP14_MDP/md_full/seed-1_sample-0/
+EXTEND /home/sbali/CALVADOS/examples/PARP14_MDP/md_full/seed-2_sample-0/
+EXTEND /home/sbali/CALVADOS/examples/PARP14_MDP/md_full/seed-3_sample-0/
+EXTEND /home/sbali/CALVADOS/examples/PARP14_MDP/md_full/seed-4_sample-0/
+EXTEND /home/sbali/CALVADOS/examples/PARP14_MDP/md_full/seed-5_sample-0/
+Adding charges for both termini of parp14_md1md3_full.
+Adding charges for both termini of parp14_md1md3_full.
+Adding charges for both termini of parp14_md1md3_full.
+Adding charges for both termini of parp14_md1md3_full.
+Adding charges for both termini of parp14_md1md3_full.
+Using domains [[2, 189], [214, 401], [427, 598]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_md1md3_full
+Number of restraints for comp parp14_md1md3_full: 3133
+599 particles in the system
+---------- FORCES ----------
+ah: 599 particles, 3731 exclusions
+yu: 599 particles, 3731 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+Reading check point file ./restart.chk
+Appending trajectory to ./parp14_md1md3_full.dcd
+Appending log file to ./parp14_md1md3_full.log
+STARTING SIMULATION
+Using domains [[2, 189], [214, 401], [427, 598]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_md1md3_full
+Number of restraints for comp parp14_md1md3_full: 3128
+599 particles in the system
+---------- FORCES ----------
+ah: 599 particles, 3726 exclusions
+yu: 599 particles, 3726 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+Reading check point file ./restart.chk
+Appending trajectory to ./parp14_md1md3_full.dcd
+Appending log file to ./parp14_md1md3_full.log
+STARTING SIMULATION
+Using domains [[2, 189], [214, 401], [427, 598]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_md1md3_full
+Number of restraints for comp parp14_md1md3_full: 3134
+599 particles in the system
+---------- FORCES ----------
+ah: 599 particles, 3732 exclusions
+yu: 599 particles, 3732 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+Reading check point file ./restart.chk
+Appending trajectory to ./parp14_md1md3_full.dcd
+Appending log file to ./parp14_md1md3_full.log
+STARTING SIMULATION
+Using domains [[2, 189], [214, 401], [427, 598]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_md1md3_full
+Number of restraints for comp parp14_md1md3_full: 3117
+599 particles in the system
+---------- FORCES ----------
+ah: 599 particles, 3715 exclusions
+yu: 599 particles, 3715 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+Reading check point file ./restart.chk
+Appending trajectory to ./parp14_md1md3_full.dcd
+Appending log file to ./parp14_md1md3_full.log
+STARTING SIMULATION
+Using domains [[2, 189], [214, 401], [427, 598]]
+Total number of components in the system: 1
+Total number of molecules in the system: 1
+Ashbaugh-Hatch potential between particles with lambda=1 and sigma=0.68 at 2.0 nm: -0.0051627815139227455 kJ/mol
+Debye-Hückel potential between unit charges at 4.0 nm: 0.001423929938331891 kJ/mol
+Component 0, Molecule 0: parp14_md1md3_full
+Number of restraints for comp parp14_md1md3_full: 3145
+599 particles in the system
+---------- FORCES ----------
+ah: 599 particles, 3743 exclusions
+yu: 599 particles, 3743 exclusions
+0.01 /ps 293.0 K
+Running on CPU
+Reading check point file ./restart.chk
+Appending trajectory to ./parp14_md1md3_full.dcd
+Appending log file to ./parp14_md1md3_full.log
+STARTING SIMULATION
+  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [2:30:50<22:37:37, 9050.86s/it] 10%|█         | 1/10 [2:33:21<23:00:14, 9201.61s/it] 10%|█         | 1/10 [2:33:58<23:05:49, 9238.85s/it] 10%|█         | 1/10 [2:34:12<23:07:49, 9252.18s/it] 10%|█         | 1/10 [2:46:14<24:56:08, 9974.22s/it]

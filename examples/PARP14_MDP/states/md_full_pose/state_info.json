@@ -1,0 +1,40 @@
+{
+  "set": "md_full",
+  "features": "pose",
+  "k": 4,
+  "rep_mode": "spread",
+  "states": [
+    {
+      "state": 1,
+      "seed": 4,
+      "sample": 0,
+      "frame": 212,
+      "population": 131419,
+      "fraction": 0.5283175879396985
+    },
+    {
+      "state": 2,
+      "seed": 2,
+      "sample": 2,
+      "frame": 3994,
+      "population": 22351,
+      "fraction": 0.08985326633165829
+    },
+    {
+      "state": 3,
+      "seed": 1,
+      "sample": 0,
+      "frame": 4999,
+      "population": 59225,
+      "fraction": 0.23809045226130654
+    },
+    {
+      "state": 4,
+      "seed": 1,
+      "sample": 1,
+      "frame": 9410,
+      "population": 35755,
+      "fraction": 0.14373869346733667
+    }
+  ]
+}

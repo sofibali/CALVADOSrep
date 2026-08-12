@@ -1,0 +1,63 @@
+PARP14 restraint optimization + per-residue analysis + clustering
+
+This commit captures the restraint optimization workflow, optimized FL +
+fragment library, and the per-residue / state-clustering analysis tools
+built on top.
+
+Restraint optimization framework (test_restraints.py):
+- Trim-sweep mode: start from full domain extents (RRM1 from structured
+  core 6-88), remove N residues from each side for N in {0,5,10,15,20,
+  25,30}. Tested with/without KH7a-KHb custom inter-domain restraints.
+- Crystal-anchored scoring: experimental Rg from 3VFQ/3Q6Z/3GOY/1X4R
+  weighted higher than AF2; KH homolog Rg scaled from FUBP1 6Y2D /
+  Nova1 2ANR (Saleh 2024 JMB).
+- Outputs boundary schematic (with PARP14_domains_atS.fasta boundary
+  serines), simulation summary CSV/MD, score-vs-shift curves, per-domain
+  metric panels, PCA cartoon snapshots.
+
+Comparison + visualization (compare_restraints.py):
+- Per-domain RMSD vs crystal (or AF2 fallback) bar/box plots, Rg + CMap
+  heatmap, best-config-per-domain bar chart, KH domain comparison PyMOL
+  session with FL scenes colored by tight/medium/loose boundaries and
+  by pLDDT.
+
+Optimized FL + 66-fragment library:
+- prepare_fl_optimized.py: 25-replicate FL with chosen trims (RRM trim
+  10; KH1/2/3/5 trim 5; KH4/6 trim 10; KH7a/KHb/KH8 trim 0; MDs trim
+  10; WWE trim 15; ART trim 10) and KH7a-KHb custom restraints (141
+  pairs at k=350).
+- prepare_all_fragments.py: All 66 contiguous PARP14 fragments (48
+  prepared from AF3 outputs, 17 missing AF3 not yet run). Each fragment
+  gets 25 replicates with the same trim scheme mapped to construct
+  numbering; box size scales with construct length.
+- fragments/run_all_fragments.sh: parallel launcher (e.g. 60 jobs on
+  240-core machine).
+
+Per-residue / per-state analysis:
+- figure_sasa_faces.py: RSA (Chothia Gly-X-Gly normalized per Wu 2017)
+  heatmap, active-site face vs back face classification, PyMOL scenes.
+- figure_md_distances.py: inter-domain COM-COM distance violins, pooled
+  across all 25 replicates; histogram + CDF + % time in contact.
+- cluster_states.py: K-means clustering on inter-domain distance
+  features, with silhouette/elbow validation, PCA scatter, per-state
+  feature heatmap, replicate-by-state distribution, and centroid PDB
+  extraction. (Requires scikit-learn.)
+
+Analysis scripts updated for new sets:
+- analyze_all.py / analyze_accessibility.py / figure_accessibility.py /
+  analyze_lys_contacts.py / make_pymol_session.py / make_analysis_pse.py
+  / extend_sims.py: register fl_optimized + auto-discover fragments
+  (frag_NAME prefix). UTF-8 encoding declaration added.
+
+Input data:
+- examples/PARP14_MDP/input/xtal_refs/: PARP14 reference PDBs (3VFQ,
+  3Q6Z, 3GOY, 1X4R) moved from /tmp for permanence.
+- examples/PARP14_MDP/input/custom_restraints.txt: 141 KH7a-KHb pairs.
+- examples/PARP14_MDP/fl_optimized/input/, fragments/*/input/: per-set
+  domain definitions and KH7a-KHb pairs.
+
+CLAUDE.md updated with Phase 2.5/2.6/3 sections and the analysis tools.
+.gitignore added for examples/PARP14_MDP/ — exclude trajectories,
+checkpoints, per-replicate sim dirs, and rendered figures.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>

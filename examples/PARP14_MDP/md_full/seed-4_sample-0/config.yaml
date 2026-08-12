@@ -37,11 +37,11 @@ runtime: 0
 slab_eq: false
 slab_outer: 40
 slab_width: 100
-steps: 9500000
+steps: 90000000
 steps_eq: 1000
 sysname: parp14_md1md3_full
 temp: 293
-threads: 4
+threads: 16
 topol: center
 verbose: true
 wfreq: 1000
