@@ -260,3 +260,9 @@ examples/PARP14_MDP/fl_go/state-*_tica_*/**/*.xml
 examples/PARP14_MDP/fl_go/state-*_tica_*/**/*.txt
 examples/PARP14_MDP/fl_go/state-*_tica_*/**/*.yaml
 examples/PARP14_MDP/fl_go/state-*_tica_*/**/*.csv
+
+# --- PARP14 BindCraft campaign: bulk run outputs (regenerable / huge) ---
+examples/PARP14_MDP/bindcraft_md/designs/
+examples/PARP14_MDP/bindcraft_md/logs/
+examples/PARP14_MDP/bindcraft_md/figures/
+examples/PARP14_MDP/bindcraft_md/__pycache__/

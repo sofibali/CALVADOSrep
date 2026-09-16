@@ -15,11 +15,11 @@
 #   sbatch bindcraft_job.slurm -s settings/md1_block_af3.json
 #
 # IMPORTANT: set BC_ENV to the env created by install_bindcraft.sh.
-# On this system the env is in ~/.conda/envs (NOT $CONDA_BASE/envs), so the
-# repo's stock bindcraft.slurm path is wrong -- we activate explicitly here.
+# 2026-08-14 reinstall put the env at $CONDA_BASE/envs (miniconda3/envs), not
+# ~/.conda/envs as an earlier session assumed -- updated below.
 
-BC_REPO=/home/sbali/Projects/BindCraft
-BC_ENV=/home/sbali/.conda/envs/BindCraft          # <-- adjust if install put it elsewhere
+BC_REPO=/home/sbali/BindCraft
+BC_ENV=/home/sbali/miniconda3/envs/BindCraft
 ADV=${BC_REPO}/settings_advanced/default_4stage_multimer.json
 FIL=${BC_REPO}/settings_filters/default_filters.json
 
