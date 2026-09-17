@@ -5,10 +5,25 @@ Per-residue SASA analysis and domain-face annotation for full-length PARP14.
 
 For each residue:
   1. Compute SASA from the AF2 (or AF3) structure.
-  2. Classify as buried (SASA <30 Å²) / partially exposed / surface (>100 Å²).
-  3. For domains with active sites (MD1, MD2, MD3, ART), assign each residue
-     to "active-site face" or "back face" based on the dot product between
-     (residue_CA - domain_COM) and (active_site_COM - domain_COM).
+  2. Classify burial. Two schemes, both emitted:
+       RSA  (preferred, used downstream) buried <0.05 / partial <0.20 / surface
+       raw SASA (legacy)                 buried <30 Å² / partial <80 Å² / surface
+  3. For domains with active sites (MD1, MD2, MD3, ART), assign each residue to
+     one of THREE faces from the dot product between (residue_CA - domain_COM)
+     and (active_site_COM - domain_COM):
+
+       active  - the active-site pole
+       rim     - the equatorial band where the projection is small, i.e. the
+                 residues a strict sign test would assign arbitrarily. Treated
+                 as a face in its own right, not as noise: it is the lateral
+                 surface a domain presents to its neighbours while leaving both
+                 poles free, so it is the natural candidate for inter-domain
+                 interfaces (see figure_face_contacts.py).
+       back    - the opposite pole
+
+     The rim is deliberately WIDE (default |proj| < 0.35 of the domain's
+     half-extent, ~35% of residues) because the sign of a near-zero projection
+     carries no real geometric information.
 
 Outputs:
     figures/sasa_per_residue_FL.png/svg            (1D track over FL sequence)
@@ -91,9 +106,59 @@ POCKET_RESIDUES = {
               1709,1714,1715,1716,1721,1722,1726,1727,1781],
 }
 
-# SASA classification thresholds (Å²)
+# Raw-SASA classification thresholds (Å²). Legacy: RSA below is what every
+# downstream analysis actually uses. The module docstring used to claim the
+# surface cut was 100 while the code said 80 -- the code is authoritative and
+# the docstring is now corrected to match.
 BURIED_MAX = 30
 SURFACE_MIN = 80
+
+# Half-width of the "rim" band, as a fraction of the domain's half-extent along
+# the domain-COM -> active-site axis. A residue with |normalised projection|
+# below this is rim rather than active/back.
+#
+# For an approximately spherical domain the projection of uniformly distributed
+# residues onto an axis is roughly uniform over [-R, +R], so this fraction is
+# about the fraction of residues that land in the rim: 0.35 -> ~35%. Wide on
+# purpose -- near the equator the SIGN of the projection is arbitrary, so a
+# strict > 0 test invents a distinction the geometry does not support.
+RIM_FRACTION = 0.35
+
+# Restraint definition used to decide which residues count as folded domain.
+# fl_optimized is the per-domain-optimised scheme from the restraint sweep (Q1),
+# so its blocks are the tightest defensible folded cores -- e.g. WWE is 39
+# restrained residues (trim 15) against 65 in the looser FL_DOMAINS core.
+RESTRAINT_YAML = CWD / 'fl_optimized' / 'input' / 'domains.yaml'
+
+
+def load_restraint_domains(yaml_path, canonical=None):
+    """Folded-core range per domain, taken from a CALVADOS domains.yaml.
+
+    The YAML is an unnamed list of restrained [start, end] blocks, so each block
+    is matched to the canonical domain it overlaps. Returns
+    {domain_name: (min_start, max_end)} spanning that domain's restrained
+    block(s); domains with no restrained block are absent.
+
+    Falls back to {} (callers then use the full unit range) if the file is
+    missing, so this never becomes a hard dependency.
+    """
+    if canonical is None:
+        canonical = {'MD1L1': (790, 1004), 'MD2': (1005, 1193),
+                     'MD3': (1207, 1388), 'ART': (1603, 1801),
+                     'WWE': (1534, 1602)}
+    try:
+        import yaml
+        blocks = list(yaml.safe_load(open(yaml_path)).values())[0]
+    except Exception as e:
+        print(f"  NOTE: could not read restraint domains from {yaml_path} ({e});"
+              f" falling back to full unit ranges")
+        return {}
+    out = {}
+    for dname, (lo, hi) in canonical.items():
+        ov = [b for b in blocks if b[1] >= lo and b[0] <= hi]
+        if ov:
+            out[dname] = (min(b[0] for b in ov), max(b[1] for b in ov))
+    return out
 
 # Chothia Gly-X-Gly extended-tripeptide max ASA (Å²), values from
 # Wu et al. 2017 BioData Mining (https://doi.org/10.1186/s13040-016-0121-5)
@@ -143,13 +208,22 @@ def compute_sasa(pdb_path):
 # Domain face assignment
 # ============================================================
 
-def classify_face(ca_coords_dict, domain_range, active_resids):
-    """For residues in `domain_range`, classify as 'active' face or 'back'.
+def classify_face(ca_coords_dict, domain_range, active_resids,
+                  rim_fraction=RIM_FRACTION):
+    """Classify residues in `domain_range` as 'active', 'rim' or 'back'.
 
-    Method: project residue offset (CA - domain_COM) onto unit vector from
-    domain COM to active-site COM. Positive => active face.
+    Project the residue offset (CA - domain_COM) onto the unit vector from the
+    domain COM to the active-site COM, then split on the projection NORMALISED
+    by the domain's own half-extent along that axis:
 
-    Returns: dict {resid: (dot_product, face)}
+        |norm| <= rim_fraction   -> 'rim'   (equatorial band)
+        norm   >  rim_fraction   -> 'active'
+        norm   < -rim_fraction   -> 'back'
+
+    Normalising matters: domains here differ several-fold in size, so a fixed
+    Angstrom band would be a large fraction of KH7a and a sliver of KH1-6.
+
+    Returns: dict {resid: (projection_A, normalised_projection, face)}
     """
     d_start, d_end = domain_range
 
@@ -181,12 +255,26 @@ def classify_face(ca_coords_dict, domain_range, active_resids):
         return {}
     dir_unit = dir_vec / dir_norm
 
-    # Per-residue projection
+    # Per-residue projection, then normalise by the domain's own half-extent
+    # along this axis so the rim band means the same thing for every domain.
+    projs = {rid: float(np.dot(coord - d_com, dir_unit))
+             for rid, coord in zip(d_resids, d_coords)}
+    # 95th percentile, not max: a single protruding element sets the scale and
+    # squashes the whole globular body into the rim. MD1L1 is the live example --
+    # it carries the L1 linker, and using max() put 62% of its residues in the
+    # rim against ~35% for the compact domains.
+    half_extent = float(np.percentile([abs(p) for p in projs.values()], 95)) or 1.0
+
     result = {}
-    for rid, coord in zip(d_resids, d_coords):
-        proj = float(np.dot(coord - d_com, dir_unit))
-        face = 'active' if proj > 0 else 'back'
-        result[rid] = (proj, face)
+    for rid, proj in projs.items():
+        norm = proj / half_extent
+        if norm > rim_fraction:
+            face = 'active'
+        elif norm < -rim_fraction:
+            face = 'back'
+        else:
+            face = 'rim'
+        result[rid] = (proj, norm, face)
     return result
 
 
@@ -240,13 +328,23 @@ def analyze(pdb_path):
     face_data = {}
     domain_lookup = {d[0]: (d[1], d[2]) for d in DOMAINS}
 
+    # Use the RESTRAINED residues as the folded domain, not the full unit range.
+    #
+    # The restraint list is the simulation's own definition of what is rigid:
+    # those residues are held by harmonic restraints, everything else is free to
+    # flex. Using anything wider drags the domain COM with flexible material and
+    # skews the projection axis -- MD1L1 is the live example, where including the
+    # L1 linker put 62% of the domain in the rim and inverted its exposure
+    # result, the same contamination behind the retracted MD1-MD2 claim in Q5.
+    core_range = load_restraint_domains(RESTRAINT_YAML)
     for dname, sites in ACTIVE_SITES.items():
-        d_range = domain_lookup[dname]
+        d_range = core_range.get(dname) or domain_lookup[dname]
         faces = classify_face(ca_dict, d_range, sites)
         face_data[dname] = faces
-        n_active = sum(1 for v in faces.values() if v[1] == 'active')
-        n_back = sum(1 for v in faces.values() if v[1] == 'back')
-        print(f"  {dname}: {n_active} active-face, {n_back} back-face residues")
+        n_active = sum(1 for v in faces.values() if v[2] == 'active')
+        n_rim = sum(1 for v in faces.values() if v[2] == 'rim')
+        n_back = sum(1 for v in faces.values() if v[2] == 'back')
+        print(f"  {dname}: {n_active} active-face, {n_rim} rim, {n_back} back-face")
 
     # Build per-residue annotation
     rows = []
@@ -281,8 +379,9 @@ def analyze(pdb_path):
         # Face?
         face = ''
         face_proj = 0.0
+        face_norm = 0.0
         if domain_name in face_data and rid in face_data[domain_name]:
-            face_proj, face = face_data[domain_name][rid]
+            face_proj, face_norm, face = face_data[domain_name][rid]
 
         rows.append({
             'resid': rid,
@@ -294,6 +393,7 @@ def analyze(pdb_path):
             'domain': domain_name,
             'face': face,
             'face_projection_A': round(face_proj, 2),
+            'face_projection_norm': round(face_norm, 3),
             'is_catalytic_in': is_catalytic,
             'is_pocket_in': is_pocket,
         })
@@ -361,11 +461,13 @@ def plot_sasa_track(rows, outpath):
     # Bottom: face annotation track
     for r in rows:
         if r['face'] == 'active':
-            color = '#27ae60'  # green for active face
+            color = '#27ae60'   # green  - active-site pole
+        elif r['face'] == 'rim':
+            color = '#f0b323'   # amber  - equatorial band
         elif r['face'] == 'back':
-            color = '#7f8c8d'  # gray for back
+            color = '#7f8c8d'   # gray   - opposite pole
         else:
-            color = '#f5f5f5'  # very light
+            color = '#f5f5f5'   # very light - no face (domain has no site)
         ax_face.bar(r['resid'], 1, width=1.0, color=color,
                     edgecolor='none', alpha=0.9)
 
@@ -387,6 +489,7 @@ def plot_sasa_track(rows, outpath):
         Patch(facecolor='#f39c12', label=f'Partial ({BURIED_MAX}-{SURFACE_MIN})'),
         Patch(facecolor='#e74c3c', label=f'Surface (>{SURFACE_MIN})'),
         Patch(facecolor='#27ae60', label='Active face'),
+        Patch(facecolor='#f0b323', label=f'Rim (|proj|<{RIM_FRACTION})'),
         Patch(facecolor='#7f8c8d', label='Back face'),
         plt.Line2D([0], [0], color='red', linewidth=2, label='Catalytic'),
     ]
@@ -404,30 +507,25 @@ def plot_face_per_domain(rows, outpath):
     # Active-site domains only
     domains_with_sites = list(ACTIVE_SITES.keys())
 
-    categories = ['Active+Surface', 'Active+Partial', 'Active+Buried',
-                  'Back+Surface', 'Back+Partial', 'Back+Buried']
-    cat_colors = ['#27ae60', '#82c89f', '#1e6e3a',
-                  '#7f8c8d', '#bdc3c7', '#34495e']
+    # 3 faces x 3 burial classes. Colour families: green = active pole,
+    # amber = rim, grey = back pole; lightness within a family = burial.
+    faces = ['active', 'rim', 'back']
+    burials = ['surface', 'partial', 'buried']
+    categories = [f'{f.capitalize()}+{b.capitalize()}'
+                  for f in faces for b in burials]
+    cat_colors = ['#27ae60', '#82c89f', '#1e6e3a',      # active
+                  '#f0b323', '#f7d888', '#a87608',      # rim
+                  '#7f8c8d', '#bdc3c7', '#34495e']      # back
+    idx_of = {(f, b): i * 3 + j
+              for i, f in enumerate(faces) for j, b in enumerate(burials)}
 
-    data = {d: [0] * 6 for d in domains_with_sites}
+    data = {d: [0] * len(categories) for d in domains_with_sites}
     for r in rows:
         if not r['face'] or r['domain'] not in domains_with_sites:
             continue
-        if r['face'] == 'active':
-            if r['burial'] == 'surface':
-                idx = 0
-            elif r['burial'] == 'partial':
-                idx = 1
-            else:
-                idx = 2
-        else:
-            if r['burial'] == 'surface':
-                idx = 3
-            elif r['burial'] == 'partial':
-                idx = 4
-            else:
-                idx = 5
-        data[r['domain']][idx] += 1
+        key = (r['face'], r['burial'])
+        if key in idx_of:
+            data[r['domain']][idx_of[key]] += 1
 
     fig, ax = plt.subplots(figsize=(12, 6))
     x = np.arange(len(domains_with_sites))
@@ -441,7 +539,7 @@ def plot_face_per_domain(rows, outpath):
     ax.set_xticks(x)
     ax.set_xticklabels(domains_with_sites, fontsize=11)
     ax.set_ylabel('Number of residues', fontsize=12)
-    ax.set_title('Domain face composition: active-site face vs back face\n'
+    ax.set_title('Domain face composition: active pole / rim / back pole\n'
                  f'(RSA-based burial: buried<{RSA_BURIED_MAX}, '
                  f'partial<{RSA_PARTIAL_MAX}, surface>{RSA_PARTIAL_MAX})',
                  fontsize=12)
@@ -545,6 +643,8 @@ def plot_rsa_heatmap(rows, outpath):
             continue
         if r['face'] == 'active':
             face_strip[0, rid - 1] = mcolors.to_rgb('#27ae60')
+        elif r['face'] == 'rim':
+            face_strip[0, rid - 1] = mcolors.to_rgb('#f0b323')
         elif r['face'] == 'back':
             face_strip[0, rid - 1] = mcolors.to_rgb('#7f8c8d')
     ax_face.imshow(face_strip, aspect='auto',
@@ -668,6 +768,8 @@ def write_pymol_script(rows, pdb_path, pml_path, pse_path):
         for dname in domains_with_sites:
             active_resids = [str(r['resid']) for r in rows
                              if r['domain'] == dname and r['face'] == 'active']
+            rim_resids = [str(r['resid']) for r in rows
+                          if r['domain'] == dname and r['face'] == 'rim']
             back_resids = [str(r['resid']) for r in rows
                            if r['domain'] == dname and r['face'] == 'back']
             if active_resids:
@@ -675,6 +777,11 @@ def write_pymol_script(rows, pdb_path, pml_path, pse_path):
                         f"{'+'.join(active_resids)}\n")
                 f.write(f"create {dname}_active_face, sel_{dname}_active\n")
                 f.write(f"color limegreen, {dname}_active_face\n")
+            if rim_resids:
+                f.write(f"select sel_{dname}_rim, parp14 and resi "
+                        f"{'+'.join(rim_resids)}\n")
+                f.write(f"create {dname}_rim_face, sel_{dname}_rim\n")
+                f.write(f"color orange, {dname}_rim_face\n")
             if back_resids:
                 f.write(f"select sel_{dname}_back, parp14 and resi "
                         f"{'+'.join(back_resids)}\n")

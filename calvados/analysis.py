@@ -769,11 +769,14 @@ class SlabAnalysis:
         cutoffs_dense = np.array([res1.x[2]-pden*res1.x[3],-res2.x[2]+pden*res2.x[3]]) # position of interface - half width
         cutoffs_dilute = np.array([res1.x[2]+pdil*res1.x[3],-res2.x[2]-pdil*res2.x[3]]) # get far enough from interface for dilute phase calculation
 
-        return cutoffs_dense, cutoffs_dilute
-
+        # The convergence check below used to sit AFTER this return, so it was
+        # dead code and a failed interface fit never warned -- c_sat would come
+        # back silently wrong. Moved ahead of the return.
         if (np.abs(cutoffs_dilute[1]/cutoffs_dilute[0]) > 2) or (np.abs(cutoffs_dilute[1]/cutoffs_dilute[0]) < 0.5): # ratio between right and left should be close to 1
             print('NOT CONVERGED',cutoffs_dense,cutoffs_dilute)
             print(res1.x,res2.x)
+
+        return cutoffs_dense, cutoffs_dilute
 
     @staticmethod
     def calc_block_errors(denarray, dilarray):

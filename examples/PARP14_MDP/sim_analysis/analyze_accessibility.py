@@ -110,46 +110,20 @@ MAX_DIST = 5.0        # nm — how far to check for obstruction
 N_RAYS = 200          # rays per site per frame (Fibonacci sphere)
 SEQ_SEP = 10          # ignore beads within ±10 residues of pocket (own fold)
 
-# Set definitions
-SETS = {
-    'fl':   {'sysname': 'parp14',              'label': 'Full-length (1801)'},
-    'md':   {'sysname': 'parp14_macrodomains', 'label': 'Macrodomains (586)'},
-    'core': {'sysname': 'parp14_core',         'label': 'Core (1051)'},
-    'mka':  {'sysname': 'parp14_mka',          'label': 'MKA (999)'},
-    'fl_optimized': {'sysname': 'parp14',      'label': 'FL (optimized restraints)'},
-}
+# Set definitions -- derived from sim_registry.SETS (the shared source of
+# truth) rather than a hardcoded literal, which had gone stale and silently
+# KeyError'd on any set added there since (norrm/noart/md3art/md_full/mka_full).
+# Still a plain mutable dict: --sim-folder registration further down adds to
+# this SAME object at runtime (see register_external_folder-equivalent below).
+SETS = {k: {'sysname': v['sysname'], 'label': v['label']} for k, v in reg.SETS.items()}
 
 # Active sites (FL numbering)
-ACTIVE_SITES_FL = {
-    'MD1': {'catalytic': [831, 923, 962],
-            'pocket': [822, 823, 824, 825, 826, 827, 828, 829, 830, 831, 832, 833,
-                       834, 835, 836, 919, 920, 921, 922, 923, 924, 925, 926, 927,
-                       961, 962, 966]},
-    'MD2': {'catalytic': [1035, 1046, 1134, 1171],
-            'pocket': [1021, 1022, 1023, 1024, 1034, 1035, 1036, 1037, 1038, 1039,
-                       1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1130, 1131,
-                       1132, 1133, 1134, 1135, 1136, 1137, 1138, 1139, 1140, 1141,
-                       1170, 1171, 1175, 1178]},
-    'MD3': {'catalytic': [1248, 1259, 1330, 1371],
-            'pocket': [1235, 1236, 1237, 1247, 1248, 1249, 1250, 1251, 1252, 1253,
-                       1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 1302, 1303,
-                       1304, 1324, 1325, 1326, 1327, 1328, 1329, 1330, 1331, 1332,
-                       1333, 1334, 1335, 1336, 1337, 1369, 1370, 1371, 1375]},
-    'ART': {'catalytic': [1684, 1705, 1706, 1722],
-            'pocket': [1681, 1682, 1683, 1684, 1685, 1688, 1701, 1704, 1705, 1706,
-                       1707, 1708, 1709, 1714, 1715, 1716, 1721, 1722, 1726, 1727,
-                       1781]},
-}
-
-SITE_NAMES = ['MD1', 'MD2', 'MD3', 'ART']
-SITE_COLORS = {'MD1': '#e6194b', 'MD2': '#3cb44b', 'MD3': '#4363d8', 'ART': '#f58231'}
-
-CONSTRUCT_SITES = {
-    'fl': ['MD1', 'MD2', 'MD3', 'ART'],
-    'md': ['MD1', 'MD2', 'MD3'],
-    'core': ['MD1', 'MD2', 'MD3', 'ART'],
-    'mka': ['MD1', 'MD2', 'MD3', 'ART'],
-}
+# Was a stale hardcoded duplicate of sim_registry.ACTIVE_SITES_FL (missing
+# the later-added WWE site until this file was pointed at reg's copy
+# directly) -- same stale-duplicate-dict bug class already fixed elsewhere.
+ACTIVE_SITES_FL = reg.ACTIVE_SITES_FL
+SITE_NAMES = reg.SITE_NAMES
+SITE_COLORS = reg.SITE_COLORS
 
 # Domain unit mapping (for construct numbering)
 DOMAIN_UNITS = {
@@ -159,12 +133,12 @@ DOMAIN_UNITS = {
     'wwe': (1534, 1602), 'art': (1603, 1801),
 }
 
-CONSTRUCT_UNITS = {
-    'fl': list(DOMAIN_UNITS.keys()),
-    'md': ['md1l1', 'md2', 'md3'],
-    'core': ['kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
-    'mka': ['md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
-}
+# Derived from sim_registry.SETS rather than hardcoded -- the literal version
+# here had gone stale (missing norrm/noart/md3art/md_full/mka_full, which then
+# KeyError'd at every use below).
+CONSTRUCT_UNITS = {k: v['units'] for k, v in reg.SETS.items()}
+CONSTRUCT_SITES = {k: [reg.UNIT_TO_SITE[u] for u in units if u in reg.UNIT_TO_SITE]
+                    for k, units in CONSTRUCT_UNITS.items()}
 
 # Directories registered via --sim-folder: set_key -> absolute folder path.
 EXTERNAL_DIRS = {}
@@ -208,7 +182,23 @@ def compute_fl_blocks(unit_names):
     return [(s, e) for s, e in merged]
 
 
-def build_fl_to_construct_map(unit_names):
+def build_fl_to_construct_map(unit_names, set_key=None):
+    # Full-length (all 11 units): identity map -- see sim_registry.py's
+    # build_fl_to_construct_map for the full rationale. Without this,
+    # 'fl_optimized' (all 11 units in CONSTRUCT_UNITS, not special-cased by
+    # the literal 'fl' check below) silently mis-maps MD3/KHb-KH8/WWE/ART
+    # active sites by the un-excised 13-residue MD2-MD3 linker gap.
+    if set(unit_names) == set(DOMAIN_UNITS.keys()):
+        return lambda fl_resid: fl_resid if 1 <= fl_resid <= 1801 else None
+    # md_full/mka_full: same gap, but a genuine sub-range (not all 11 units)
+    # that was deliberately built to keep every linker within its span -- see
+    # sim_registry.CONTIGUOUS_FL_RANGE for why this can't be inferred from
+    # unit_names alone.
+    if set_key in reg.CONTIGUOUS_FL_RANGE:
+        fl_start, fl_end = reg.CONTIGUOUS_FL_RANGE[set_key]
+        offset = 1 - fl_start
+        return lambda fl_resid: (fl_resid + offset
+                                  if fl_start <= fl_resid <= fl_end else None)
     fl_blocks = compute_fl_blocks(unit_names)
     segments = []
     construct_pos = 1
@@ -228,7 +218,7 @@ def build_fl_to_construct_map(unit_names):
 def get_active_sites_for_set(set_key):
     if set_key == 'fl':
         return ACTIVE_SITES_FL
-    fl_to_c = build_fl_to_construct_map(CONSTRUCT_UNITS[set_key])
+    fl_to_c = build_fl_to_construct_map(CONSTRUCT_UNITS[set_key], set_key=set_key)
     sites = {}
     for sname in CONSTRUCT_SITES[set_key]:
         data = ACTIVE_SITES_FL[sname]
@@ -380,7 +370,7 @@ def analyze_site_frame(site_com, pocket_resids, all_pos, all_resids,
 # Main analysis
 # ============================================================
 
-def run_accessibility(active_sets, n_rays):
+def run_accessibility(active_sets, n_rays, stride=1, target_frames=None):
     print("\n" + "=" * 70)
     print("ACTIVE SITE STERIC ACCESSIBILITY ANALYSIS")
     print("=" * 70)
@@ -388,6 +378,13 @@ def run_accessibility(active_sets, n_rays):
     print(f"  Max distance:  {MAX_DIST} nm")
     print(f"  N rays:        {n_rays}")
     print(f"  Seq separation: ±{SEQ_SEP} residues excluded from blockers")
+    if target_frames:
+        print(f"  Frame budget:  ~{target_frames} frames/replicate "
+              f"(stride chosen per trajectory)")
+    else:
+        print(f"  Frame stride:  {stride}"
+              + ("" if stride == 1 else
+                 f" (2 us / 100k-frame runs -> 1 frame per {stride * 0.02:.2f} ns)"))
 
     ray_dirs = fibonacci_sphere(n_rays)
 
@@ -440,8 +437,25 @@ def run_accessibility(active_sets, n_rays):
                 site_cone = {s: [] for s in available_sites}
                 site_density = {s: [] for s in available_sites}
 
+                # Subsample post-equilibration frames. The 2 us extension runs
+                # hold 100k frames at 20 ps/frame, but accessibility follows
+                # domain reorientation, which decorrelates on tens of ns --
+                # consecutive frames are near-identical, so analyzing all of
+                # them costs ~50x more for no extra independent sampling.
+                #
+                # With --target-frames the stride is picked PER TRAJECTORY: the
+                # sets span 3-4k-frame originals and 100k-frame extensions, and
+                # one fixed stride cannot serve both (stride 50 leaves a
+                # 3514-frame run with only ~69 frames).
+                rep_stride = stride
+                if target_frames:
+                    usable = max(0, len(u.trajectory) - SKIP_FRAMES)
+                    rep_stride = max(1, usable // target_frames)
+
                 for t, ts in enumerate(u.trajectory):
                     if t < SKIP_FRAMES:
+                        continue
+                    if rep_stride > 1 and (t - SKIP_FRAMES) % rep_stride:
                         continue
 
                     all_pos = all_ag.positions / 10.0  # nm
@@ -492,15 +506,27 @@ def run_accessibility(active_sets, n_rays):
                       f"  ShellDens={np.mean(dens_vals):.4f}±{np.std(dens_vals):.4f}")
 
     # --- Save ---
+    # MERGE with any previously cached sets rather than overwriting the file.
+    # This run only holds `active_sets`; a plain np.savez here wiped every set
+    # computed by earlier invocations, so an incremental backfill (one set per
+    # run -- the only tractable way to cover 200+ replicates) destroyed its own
+    # results and left the npz holding just the set that happened to run last.
+    npz_path = os.path.join(DATA_PATH, 'accessibility_stats.npz')
     save_dict = {}
+    if os.path.isfile(npz_path):
+        with np.load(npz_path, allow_pickle=True) as _old:
+            save_dict = {k: _old[k] for k in _old.files}
+        n_prev = len({k.rsplit('_', 2)[0] for k in save_dict})
+        print(f"\n  Merging into {n_prev} previously cached set(s) in accessibility_stats.npz")
     for set_key, res in results.items():
         for sname in res['available_sites']:
             if res['saa'][sname]:
                 save_dict[f'{set_key}_{sname}_saa'] = np.array(res['saa'][sname])
                 save_dict[f'{set_key}_{sname}_cone'] = np.array(res['cone'][sname])
                 save_dict[f'{set_key}_{sname}_density'] = np.array(res['density'][sname])
-    np.savez(os.path.join(DATA_PATH, 'accessibility_stats.npz'), **save_dict)
-    print(f"\n  Saved: accessibility_stats.npz")
+    np.savez(npz_path, **save_dict)
+    print(f"  Saved: accessibility_stats.npz "
+          f"({len({k.rsplit('_', 2)[0] for k in save_dict})} sets total)")
 
     # ============================================================
     # Plots
@@ -711,7 +737,26 @@ def main():
                              'has no metadata.json.')
     parser.add_argument('--nrays', type=int, default=N_RAYS,
                         help=f'Number of probe rays (default: {N_RAYS})')
+    parser.add_argument('--stride', type=int, default=1,
+                        help='Analyze every Nth post-equilibration frame '
+                             '(default: 1 = every frame). The 2 us runs hold '
+                             '100k frames at 20 ps each; --stride 50 gives '
+                             '1 ns spacing (~2000 frames/replicate), which is '
+                             'still far finer than the ~10-100 ns decorrelation '
+                             'time of domain motion, at ~50x lower cost.')
+    parser.add_argument('--target-frames', type=int, default=None, metavar='N',
+                        help='Per-replicate frame budget; the stride is chosen '
+                             'PER TRAJECTORY as (n_frames - skip) // N. Prefer '
+                             'this over --stride when a run spans both the '
+                             '100k-frame extensions and the 3-4k-frame original '
+                             'sets, where one fixed stride would either waste '
+                             'compute on the long runs or leave the short ones '
+                             'with only a few dozen frames. Overrides --stride.')
     args = parser.parse_args()
+    if args.stride < 1:
+        parser.error('--stride must be >= 1')
+    if args.target_frames is not None and args.target_frames < 1:
+        parser.error('--target-frames must be >= 1')
 
     # Register any folders passed via --sim-folder before running analysis.
     folder_keys = [register_sim_folder(f, units=args.units)
@@ -743,7 +788,11 @@ def main():
     else:
         active_sets = ['fl', 'md', 'core', 'mka']
 
-    run_accessibility(active_sets, args.nrays)
+    global FIG_PATH
+    FIG_PATH = str(_get_fig_dir('03_accessibility', sims=active_sets))
+
+    run_accessibility(active_sets, args.nrays, stride=args.stride,
+                      target_frames=args.target_frames)
 
 
 if __name__ == '__main__':

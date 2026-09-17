@@ -102,6 +102,18 @@ Examples are in `examples/`. Each has a `prepare.py` that generates simulation i
 
 Two-phase pipeline for studying PARP14 (1801 residues) domain deletion variants:
 
+> **Start here for the science.** `examples/PARP14_MDP/docs/QUESTIONS.md` is the
+> question-oriented index: each scientific question the simulations ask, whether
+> it is answered, and the answer with its caveats. One file per question under
+> `docs/questions/`. The sections below describe the *infrastructure*; the docs
+> describe the *findings*.
+>
+> **Compute constraint that shapes everything:** this workstation
+> (`pollux.fraserlab.com`) has **no GPU** (`nvidia-smi` fails; OpenMM sees only
+> Reference/CPU) and no SLURM. All PARP14 runs to date used `platform: CPU` at a
+> measured ~5.76e5 bead-steps/s. Multi-chain/slab work and AF3 inference are
+> GPU-only and target the SLURM GPU server that shares this filesystem.
+
 **Phase 1 — Structure Generation** (`parp14/`):
 - AlphaFold3 predictions for all 2^11 - 1 = 2,047 domain combinations (5 seeds × 5 samples = 25 models each)
 - 774 completed, 1,288 remaining (inputs in `alphafold_inputs_missing/`, run via `run_af3_missing.sh`)
@@ -146,6 +158,17 @@ Two-phase pipeline for studying PARP14 (1801 residues) domain deletion variants:
 - `figure_sasa_faces.py` — RSA (relative SASA, Chothia Gly-X-Gly normalized per Wu 2017) heatmap + per-domain active-site-face vs back-face annotation. Outputs: `figures/rsa_heatmap_FL.png`, `figures/rsa_per_domain_matrix_FL.png`, PyMOL session, per-residue CSV.
 - `figure_md_distances.py` — Inter-domain COM-COM (or min CA-CA) distance violin plots across all 25 replicates pooled. Default pairs: MD1L1-MD2/MD3/ART, MD2-MD3, MD3-ART. 1.0 nm contact cutoff line.
 - `cluster_states.py` — K-means clustering of frames using inter-domain distances (optional Rg), with silhouette/elbow sweep, PCA scatter, per-state distance profile heatmap, replicate-by-state distribution heatmap, and extraction of centroid-representative PDB structures per state. Requires `scikit-learn`.
+
+**Phase 4 — Prediction layer** (`examples/PARP14_MDP/sim_analysis/`):
+- `backfill_accessibility.sh` — fills `data/accessibility_stats.npz` for every set with trajectories (~25 min). Runs sets **sequentially on purpose**: `analyze_accessibility.py` merges into that npz, so the backfill is incremental and crash-safe, but parallel invocations would race on its read-modify-write.
+- `analyze_accessibility.py` — solid-angle accessibility. Subsample with `--target-frames N` (per-trajectory stride, preferred) or fixed `--stride N`. The sets span 3–4k-frame originals and 100k-frame extensions, so one fixed stride cannot serve both.
+- `predict_enzyme_dominance.py` — writer(ART)-vs-eraser(MD1) steric dominance `D = (SAA_ART − SAA_MD1)/(SAA_ART + SAA_MD1)` with bootstrap CIs, plus the ±ART matched-pair steric-coupling analysis. See `docs/questions/Q4_writer_vs_eraser.md`.
+- `predict_puncta_propensity.py` — feature table for all 2047 domain combinations, keyed for joining to the pooled diffuse/punctate sort-seq screen; `--fit` regresses features on measured enrichment with 5-fold CV. **κ costs ~2.5 s/sequence** — use `--workers` or `--no-kappa`.
+
+**Phase 5 — Multi-chain / phase separation** (`examples/PARP14_MDP/prepare_slab.py`):
+- Slab direct-coexistence inputs for a valence-spanning construct panel, two arms (`homotypic`, `rna`). GPU-only — see the compute note at the top of this section. `--benchmark` first to calibrate, then `--report --gpu-rate <measured>`.
+- **No ADPr-substrate arm is buildable as a config change**: `PTMProtein` has no example/test, sets `c_termini` to the last PTM bead (`calvados/components.py:737`), and never reads from PDB so it is incompatible with `restraint: True` — which every multi-domain PARP14 construct needs. No ADP-ribose bead parameters exist. Viable route is an unrestrained substrate peptide.
+- Local fix applied to the upstream package: `calvados/analysis.py` `fit_profile` had its "NOT CONVERGED" check *after* the `return`, so a failed interface fit never warned and c_sat could come back silently wrong.
 
 **PARP14 Domain Architecture (11 grouped units for combinatorial library):**
 

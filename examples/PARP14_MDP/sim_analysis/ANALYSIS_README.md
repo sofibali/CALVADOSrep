@@ -50,7 +50,43 @@ Runs `analyze_all.py` (8 modules) + `analyze_lys_contacts.py`, writing arrays to
 | `analyze_all.py` | master; 8 modules — `--conf-prop --dmap --cmap --fnc --energy --wcn --active-sites --accessibility` (run a subset by flag, all by default). `--workers N`, `--include-fragments`, `--force` to recompute. | `python analyze_all.py --sim-folder ../fl_go --workers 24` |
 | `analyze_lys_contacts.py` | lysine <-> acidic / lysine <-> lysine contact maps + domain-sum heatmaps (plain + `_v2` inter-domain-only color scale). | `python analyze_lys_contacts.py --sim-folder ../fl_go` |
 | `analyze_active_sites.py` | standalone, more detailed than `analyze_all.py --active-sites`: contact number, inter-site distances, radial position, RMSF, domain contacts, one combined ensemble figure. `--seed/--sample/--ensemble/--skip-frames`. | `python analyze_active_sites.py --sim-folder ../fl_go` |
-| `analyze_accessibility.py` | standalone, same underlying method as `analyze_all.py --accessibility` (writes the same `data/accessibility_stats.npz`) but with its own SAA/cone/summary figures and `--nrays`. | `python analyze_accessibility.py --sim-folder ../fl_go --nrays 200` |
+| `analyze_accessibility.py` | standalone, same underlying method as `analyze_all.py --accessibility` (writes the same `data/accessibility_stats.npz`) but with its own SAA/cone/summary figures and `--nrays`. Subsample with `--target-frames N` (per-trajectory stride, preferred) or a fixed `--stride N`. | `python analyze_accessibility.py --sim-folder ../fl_go --target-frames 2000` |
+
+### Frame sampling (`--target-frames` vs `--stride`)
+
+The sets span two very different trajectory populations:
+
+| Population | Frames | Replicates | What it samples |
+|---|---|---|---|
+| `fl`, `fl_optimized`, `noart`, `core`, `norrm` | 3–4.2k | 25, from distinct AF3 seed×sample starts | **structural** diversity |
+| `*_full`, `*_go` extensions | 100k (2 µs @ 20 ps) | 5, similar starts | **conformational** time |
+
+One fixed `--stride` cannot serve both — `--stride 50` gives the 2 µs runs a
+sensible 1 frame/ns but leaves a 3514-frame run with only ~69 frames. Prefer
+**`--target-frames 2000`**, which picks the stride per trajectory. Analyzing
+every frame of the long runs costs ~50× more for no extra independent sampling
+(domain reorientation decorrelates on tens of ns; measured replicate spread is
+±0.001 SAA).
+
+Backfill every set that has trajectories on disk:
+```bash
+./backfill_accessibility.sh            # TARGET_FRAMES=2000, sequential, ~25 min
+```
+It runs one invocation per set on purpose: `analyze_accessibility.py` **merges**
+into `data/accessibility_stats.npz`, so the backfill is incremental and
+crash-safe, but parallel invocations would race on that file's
+read-modify-write.
+
+### Prediction layer (reads cached `data/`)
+| Script | What it computes | Example |
+|--------|------------------|---------|
+| `predict_enzyme_dominance.py` | writer(ART)-vs-eraser(MD1) steric dominance `D = (SAA_ART − SAA_MD1)/(SAA_ART + SAA_MD1)` per construct, with bootstrap CIs, plus the ±ART matched-pair steric-coupling analysis. Needs the accessibility backfill first. | `python predict_enzyme_dominance.py --metric saa` |
+| `predict_puncta_propensity.py` | feature table for all 2047 domain combinations (valences, charge patterning, sticker content) keyed for joining to the pooled diffuse/punctate sort-seq screen; `--fit` regresses features on the measured enrichment with 5-fold CV. | `python predict_puncta_propensity.py --prior --workers 48` |
+
+Both score **steric/sequence opportunity**, not rates — CALVADOS is
+coarse-grained with no NAD⁺, ADP-ribose, or chemistry. Treat `predict_enzyme_dominance.py`
+output as a hypothesis-generating ranking until calibrated against an
+experimental activity readout.
 
 **Figures that talk to trajectories directly (sim_registry, `--set`/`--sim-folder`):**
 | Script | What it computes | Example (fl_go) |
@@ -91,13 +127,55 @@ different `--domains` run at the same `--features` on the same set.
 predictions, not MD trajectories).
 
 ## Outputs
+
 - `data/<set>_<analysis>.npy|.npz` — per-set arrays (modules skip if present; `--force` to redo).
 - `data/*_per_residue.csv` — per-residue tables (RSA, SASA, contacts).
-- `figures/` — PNG + SVG, dated subdirectories per analysis category.
-- `../figures/05_clustering/<date>/<set>_<features>[-d<hash>]_<reduce>/` — TICA landscape,
-  ITS, silhouette, PCCA plots.
-- `../representative_frames/<date>/<set>_<features>_<reduce>/state_*.pdb` — TICA
-  representative-frame structures.
+- **`figures/by_sim/<sim>/<category>/[<subname>/]<file>.png|.svg`** — figures for a
+  single `--set`/`--sim-folder` run land here, grouped by sim rather than by date
+  (overwritten in place on re-run — these are regenerable analysis products, not a
+  lab notebook needing history, same as the `data/*.npz` cache). This is the
+  default for every script in the tables above when given ONE sim.
+- `figures/comparisons/<category>/<sims_joined>/[<subname>/]<file>` — figures
+  spanning MULTIPLE sims in one call (a `--set a b c` comparison run, or
+  `compare_sims.py`'s output).
+- `figures/<category>/<YYYY-MM-DD>/` — legacy dated layout, still used by the
+  handful of scripts not sim-scoped (AF3 structure comparisons — see the
+  "not directly `--sim-folder`-aware" row above).
+- `representative_frames/<date>/<set>_<features>_<reduce>/state_*.pdb` — TICA
+  representative-frame structures (unaffected by the by-sim figures change).
+
+## Browsing one simulation: `build_sim_dashboard.py`
+
+Everything above scatters a sim's figures across several `<category>/` folders
+under `figures/by_sim/<sim>/`. This builds one page that puts them all in one
+place, with the sim's actual run parameters (box, steps, restraint type, k_go,
+ionic strength, etc. — read from that sim's own `config.yaml`/`components.yaml`,
+not assumed defaults) as a header table on top.
+
+```bash
+python build_sim_dashboard.py --sim fl_go
+```
+Produces `figures/by_sim/fl_go/dashboard.html` (open in a browser — each figure
+links to its own PNG/SVG for download) and `dashboard_montage.png` (one static
+image tiling every figure, for sharing without a browser). Re-run anytime after
+generating more figures for that sim to refresh both.
+
+## Comparing simulations: `compare_sims.py`
+
+The flag-driven counterpart: one metric, several sims, one fresh plot straight
+from the cached `data/*.npz` arrays (no re-reading trajectories).
+
+```bash
+python compare_sims.py --metric rg --sims fl_go fl_optimized md
+python compare_sims.py --metric MD1L1_MD3 --sims fl_go fl_optimized --distance-metric com
+python compare_sims.py --metric list      # show available metrics
+```
+`--metric rg`/`ree` reads `data/conf_prop.npz` (safe across separate per-sim runs).
+`--metric <DOMAIN_DOMAIN>` reads `data/md_distances_<metric>.npz` from
+`figure_md_distances.py` — that cache is overwritten per invocation with only the
+sets from that one call, so if a sim is missing, re-run `figure_md_distances.py`
+with all the sims you want to compare together in one `--set`/`--sim-folder` call
+first. Output: `figures/comparisons/<metric>/<sims_joined>/<metric>.png`.
 
 ## Adding a new construct
 1. Run the sim (`prepare_*` -> `run.py`), producing trajectories anywhere under
@@ -106,3 +184,4 @@ predictions, not MD trajectories).
    `checkpoint.pdb`.
 2. (Recommended) drop a `metadata.json` with its `units`.
 3. `bash run_analysis.sh --sim-folder PATH` — no code edits.
+4. `python build_sim_dashboard.py --sim <name>` to browse everything generated for it.
