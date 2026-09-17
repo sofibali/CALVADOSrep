@@ -303,6 +303,19 @@ def get_construct_domain_ranges(set_key, requested_domains):
 def _map_fl_to_construct(units, requested_domains):
     """Build FL→construct residue map and return construct-local ranges for
     requested domains that have any overlap with the construct."""
+    # Full-length (all 11 units, e.g. a --sim-folder-registered full-length
+    # sim like fl_go that isn't literally named 'fl'/'fl_optimized' -- those
+    # are special-cased earlier in get_construct_domain_ranges): identity
+    # map. Without this, the block-merge below (correct for genuine
+    # sub-constructs that really do delete inter-unit linkers) incorrectly
+    # collapses the real, un-excised inter-unit gaps in a full-length
+    # sequence -- e.g. the 13-residue MD2-MD3 linker, residues 1194-1206,
+    # not part of either unit's own FL boundaries -- shifting every
+    # downstream domain (MD3, KHb-KH8, WWE, ART) by the gap size.
+    if set(units) == set(DOMAIN_UNITS.keys()):
+        fl_to_c = lambda fl: fl if 1 <= fl <= 1801 else None
+        return {d: (fl_to_c(s), fl_to_c(e))
+                for d, (s, e) in DOMAINS_FL.items() if d in requested_domains}
     # Compute continuous FL blocks
     ranges = sorted([DOMAIN_UNITS[u] for u in units if u in DOMAIN_UNITS])
     if not ranges:
@@ -2635,7 +2648,11 @@ def main():
     _sys.path.insert(0, str(CWD))
     from _fig_layout import get_fig_dir as _get_fig_dir
     global FIG_PATH
-    FIG_PATH = _get_fig_dir('05_clustering', subname=run_tag)
+    # sims=[set_key] -> figures/by_sim/<set_key>/05_clustering/<feat>_<reduce>/;
+    # the sim name no longer needs to be repeated in subname since the by-sim
+    # folder already disambiguates it.
+    FIG_PATH = _get_fig_dir('05_clustering', subname=f'{feat_tag_full}_{args.reduce}',
+                            sims=[set_key])
     print(f"  Output dir: {FIG_PATH}")
 
     # ── Step 1: extract features ──

@@ -185,6 +185,53 @@ ART:
     - 1727
     - 1781
 
+WWE:
+  # WWE domain - iso-ADP-ribose binding (PAR-reader function)
+  description: "WWE domain (iso-ADP-ribose binding)"
+  domain_range: [1534, 1602]
+
+  # Derived by structural alignment (PyMOL cealign, RMSD 1.83 A over 64
+  # residues) of PARP14's WWE domain onto RNF146's WWE domain bound to
+  # isoADPR (PDB 3V3L, Wang et al. 2012 Genes Dev, PMID 22267412).
+  # catalytic_residues = PARP14 residues within ~1.9 A (post-alignment) of
+  # the RNF146 residue contacting isoADPR at the corresponding structural
+  # position -- 3 aromatics + 1 charged, matching the expected WWE
+  # ADPR-recognition pattern. Confirmed reproducible across both isoADPR-
+  # bound copies in the 3V3L asymmetric unit (identical RNF146 contacts).
+  catalytic_residues:
+    - 1539  # Tyr1539 <- RNF146 Tyr107 (0.45 A)
+    - 1548  # Phe1548 <- RNF146 Tyr116 (1.04 A)
+    - 1570  # Lys1570 <- RNF146 Ile139 (1.83 A) -- the charged residue
+    - 1576  # Tyr1576 <- RNF146 Tyr144 (0.86 A)
+
+  pocket_residues:
+    - 1538
+    - 1539  # catalytic
+    - 1540
+    - 1541
+    - 1542
+    - 1543
+    - 1545
+    - 1546  # His1546 <- RNF146's domain-defining Trp114 (1.20 A) -- PARP14
+            # substitutes His here, a weaker/divergent 4th candidate
+    - 1547
+    - 1548  # catalytic
+    - 1549
+    - 1569
+    - 1570  # catalytic
+    - 1571
+    - 1575
+    - 1576  # catalytic
+    - 1577
+    - 1584
+    - 1585
+    - 1586
+    - 1590
+    - 1591
+    - 1592
+    - 1593
+    - 1594
+
 # Additional annotations for reference
 annotations:
   MD1_notes: |
@@ -201,6 +248,13 @@ annotations:
   MD3_notes: |
     Shows highest affinity for ADP-ribose.
     No shown function in cells or spefic binding partners.
+  WWE_notes: |
+    Binds iso-ADP-ribose (a PAR degradation product), functioning as a PAR reader.
+    Residue numbers derived by structural alignment against RNF146 (PDB 3V3L),
+    not a PARP14-specific ligand-bound structure -- no such structure exists yet
+    (1X4R is apo; 3GOY only has a small-molecule inhibitor bound in ART).
+    RNF146 lacks 2 of its 4 conserved iso-ADPR-contacting residues in PARP14's
+    WWE domain (Wang et al. 2012), so treat this as a working hypothesis.
   ART_notes: |
     ART domain transfers ADP-ribose from NAD+ to targets.
     H-Y-E catalytic motif is essential for activity.

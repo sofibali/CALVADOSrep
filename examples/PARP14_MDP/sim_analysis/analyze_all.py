@@ -98,6 +98,10 @@ _sys.path.insert(0, CWD)
 import os as _os_boot, sys as _sys_boot  # __ROOTBOOT__ (script lives in a subfolder; root=parent)
 _sys_boot.path.insert(0, _os_boot.path.dirname(_os_boot.path.dirname(_os_boot.path.abspath(__file__))))
 from _fig_layout import get_fig_dir as _get_fig_dir
+# Placeholder; reassigned in main() once active_sets is resolved, so figures
+# land under figures/by_sim/<sim>/02_main_analysis/ (single sim) or
+# figures/comparisons/02_main_analysis/<sims>/ (multiple sets) instead of a
+# dated folder mixing every set analyzed on a given day.
 FIG_PATH = str(_get_fig_dir('02_main_analysis'))
 
 RESIDUES_FILE = os.path.join(CWD, 'input', 'residues_CALVADOS3.csv')
@@ -127,6 +131,39 @@ SETS = {
     'md':    {'sysname': 'parp14_macrodomains', 'label': 'MD1-MD3 (790-1388)',    'color': '#ff7f0e'},
     'md3art':{'sysname': 'parp14_md3art',      'label': 'MD3-ART (1207-1801)',   'color': '#17becf'},
     'fl_optimized': {'sysname': 'parp14', 'label': 'FL (optimized restraints)', 'color': '#aec7e8'},
+    'md_full': {'sysname': 'parp14_md1md3_full', 'label': 'MD1-MD3 contiguous (790-1388, 599 res)', 'color': '#e377c2'},
+    'mka_full': {'sysname': 'parp14_mka_full', 'label': 'MD1-ART contiguous (790-1801, 1012 res)', 'color': '#bcbd22'},
+    'core_full_go': {'sysname': 'parp14_core_full_go',
+                     'label': 'KH7a-ART contiguous + Go-model KH7a-KHb restraints (738-1801, 1064 res)',
+                     'color': '#8c6d31'},
+    'kh1_art_full': {'sysname': 'parp14_kh1_art_full',
+                     'label': 'KH1-6-ART contiguous + Go-model KH7a-KHb restraints (315-1801, 1487 res)',
+                     'color': '#ff9896'},
+    'kh1_wwe_full': {'sysname': 'parp14_kh1_wwe_full',
+                     'label': 'KH1-6-WWE contiguous + Go-model KH7a-KHb restraints (315-1602, 1288 res, no ART)',
+                     'color': '#c5b0d5'},
+    'md2_art_full': {'sysname': 'parp14_md2_art_full',
+                     'label': 'MD2-ART contiguous (1004-1801, 798 res)', 'color': '#c49c94'},
+    'md2_wwe_full': {'sysname': 'parp14_md2_wwe_full',
+                     'label': 'MD2-WWE contiguous (1004-1602, 599 res, no ART)', 'color': '#f7b6d2'},
+    'md3_art_full': {'sysname': 'parp14_md3_art_full',
+                     'label': 'MD3-ART contiguous (1207-1801, 595 res)', 'color': '#c7c7c7'},
+    'md3_wwe_full': {'sysname': 'parp14_md3_wwe_full',
+                     'label': 'MD3-WWE contiguous (1207-1602, 396 res, no ART)', 'color': '#dbdb8d'},
+    'core_wwe_full_go': {'sysname': 'parp14_core_wwe_full_go',
+                     'label': 'KH7a-WWE contiguous + Go-model KH7a-KHb restraints (738-1602, 865 res, no ART)',
+                     'color': '#9edae5'},
+    'mka_wwe_full': {'sysname': 'parp14_mka_wwe_full',
+                     'label': 'MD1L1-WWE contiguous (790-1602, 813 res, no ART)', 'color': '#393b79'},
+    'fl_wwe_full_go': {'sysname': 'parp14_fl_wwe_full_go',
+                     'label': 'FL-WWE contiguous + Go-model KH7a-KHb restraints (1-1602, 1602 res, no ART)',
+                     'color': '#637939'},
+    'md1_md2': {'sysname': 'parp14_md1_md2',
+               'label': 'MD1L1-MD2 contiguous, 2-domain isolation test (790-1193, 404 res)',
+               'color': '#17becf'},
+    'md2_md3': {'sysname': 'parp14_md2_md3',
+               'label': 'MD2-MD3 contiguous, 2-domain isolation test (1004-1388, 385 res)',
+               'color': '#bcbd22'},
 }
 
 CONSTRUCT_DOMAINS = {
@@ -142,6 +179,21 @@ CONSTRUCT_DOMAINS = {
                                  [531,583],[599,660],[676,727],[738,789],[800,968],
                                  [1015,1183],[1217,1378],[1389,1461],[1462,1533],
                                  [1549,1587],[1613,1791]]},
+    'md_full':  {'parp14_md1md3_full': [[2, 189], [214, 401], [427, 598]]},
+    'mka_full': {'parp14_mka_full':    [[2, 189], [214, 401], [427, 598], [734, 812], [816, 1012]]},
+    'core_full_go': {'parp14_core_full_go': [[54, 241], [266, 453], [479, 650], [786, 864], [868, 1064]]},
+    'kh1_art_full': {'parp14_kh1_art_full': [[477, 664], [689, 876], [902, 1073], [1209, 1287], [1291, 1487]]},
+    'kh1_wwe_full': {'parp14_kh1_wwe_full': [[477, 664], [689, 876], [902, 1073], [1209, 1287]]},
+    'md2_art_full': {'parp14_md2_art_full': [[1, 187], [213, 384], [520, 598], [602, 798]]},
+    'md2_wwe_full': {'parp14_md2_wwe_full': [[1, 187], [213, 384], [520, 598]]},
+    'md3_art_full': {'parp14_md3_art_full': [[10, 181], [317, 395], [399, 595]]},
+    'md3_wwe_full': {'parp14_md3_wwe_full': [[10, 181], [317, 395]]},
+    'core_wwe_full_go': {'parp14_core_wwe_full_go': [[54, 241], [266, 453], [479, 650], [786, 864]]},
+    'mka_wwe_full': {'parp14_mka_wwe_full': [[2, 189], [214, 401], [427, 598], [734, 812]]},
+    'fl_wwe_full_go': {'parp14_fl_wwe_full_go': [[6, 88], [150, 223], [227, 301], [791, 978],
+                                                  [1003, 1190], [1216, 1387], [1523, 1601]]},
+    'md1_md2': {'parp14_md1_md2': [[2, 189], [214, 401]]},
+    'md2_md3': {'parp14_md2_md3': [[1, 187], [213, 384]]},
 }
 
 # Energy-analysis domain boundaries: trimmed by 3 residues at zero/small-gap
@@ -177,10 +229,27 @@ ACTIVE_SITES_FL = {
     'ART': {'catalytic': [1684, 1705, 1706, 1722],
             'pocket': [1681,1682,1683,1684,1685,1688,1701,1704,1705,1706,1707,1708,
                        1709,1714,1715,1716,1721,1722,1726,1727,1781]},
+    # iso-ADP-ribose binding site, derived by structural alignment (PyMOL cealign,
+    # RMSD 1.83 A over 64 residues) of PARP14's WWE domain (FL 1534-1602, from
+    # input/parp14.pdb) onto RNF146's WWE domain bound to isoADPR (PDB 3V3L,
+    # Wang et al. 2012 Genes Dev, PMID 22267412) -- catalytic = the PARP14
+    # residues within ~1.9 A (post-alignment) of the RNF146 residue contacting
+    # isoADPR at the corresponding structural position: Tyr1539 (<-RNF146 Tyr107,
+    # 0.45 A), Phe1548 (<-Tyr116, 1.04 A), Tyr1576 (<-Tyr144, 0.86 A) -- 3
+    # aromatics -- and Lys1570 (<-Ile139, 1.83 A) as the charged residue,
+    # matching the expected "2 aromatic + charged" ADPR-recognition pattern
+    # (a 4th, weaker candidate His1546 <-Trp114 at 1.20 A -- PARP14 substitutes
+    # His for RNF146's domain-defining Trp here -- is in the pocket list only).
+    # Confirmed reproducible: both isoADPR-bound copies in the 3V3L asymmetric
+    # unit gave identical RNF146 contact residues.
+    'WWE': {'catalytic': [1539, 1548, 1570, 1576],
+            'pocket': [1538,1539,1540,1541,1542,1543,1545,1546,1547,1548,1549,
+                       1569,1570,1571,1575,1576,1577,1584,1585,1586,
+                       1590,1591,1592,1593,1594]},
 }
 
-SITE_NAMES = ['MD1', 'MD2', 'MD3', 'ART']
-SITE_COLORS = {'MD1': '#e6194b', 'MD2': '#3cb44b', 'MD3': '#4363d8', 'ART': '#f58231'}
+SITE_NAMES = ['MD1', 'MD2', 'MD3', 'WWE', 'ART']
+SITE_COLORS = {'MD1': '#e6194b', 'MD2': '#3cb44b', 'MD3': '#4363d8', 'WWE': '#911eb4', 'ART': '#f58231'}
 
 DOMAIN_UNITS = {
     'rrm1': (1, 145), 'rrm2': (146, 224), 'rrm3': (225, 314),
@@ -188,6 +257,17 @@ DOMAIN_UNITS = {
     'md1l1': (790, 1004), 'md2': (1004, 1193), 'md3': (1207, 1388),
     'khb-kh8': (1389, 1533), 'wwe': (1534, 1602), 'art': (1603, 1801),
 }
+
+# Sets that are genuinely contiguous FL sub-ranges (no linker excised), unlike
+# the deletion-constructs above -- see build_fl_to_construct_map().
+CONTIGUOUS_FL_RANGE = {'md_full': (790, 1388), 'mka_full': (790, 1801),
+                       'core_full_go': (738, 1801),
+                       'kh1_art_full': (315, 1801), 'kh1_wwe_full': (315, 1602),
+                       'md2_art_full': (1004, 1801), 'md2_wwe_full': (1004, 1602),
+                       'md3_art_full': (1207, 1801), 'md3_wwe_full': (1207, 1602),
+                       'core_wwe_full_go': (738, 1602), 'mka_wwe_full': (790, 1602),
+                       'fl_wwe_full_go': (1, 1602),
+                       'md1_md2': (790, 1193), 'md2_md3': (1004, 1388)}
 
 CONSTRUCT_UNITS = {
     'fl':    list(DOMAIN_UNITS.keys()),
@@ -198,18 +278,32 @@ CONSTRUCT_UNITS = {
     'noart': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
     'md3art':['md3', 'khb-kh8', 'wwe', 'art'],
     'fl_optimized': list(DOMAIN_UNITS.keys()),  # same units as FL (full sequence)
+    'md_full':  ['md1l1', 'md2', 'md3'],
+    'mka_full': ['md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+    'core_full_go': ['kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+    'kh1_art_full': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+    'kh1_wwe_full': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+    'md2_art_full': ['md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+    'md2_wwe_full': ['md2', 'md3', 'khb-kh8', 'wwe'],
+    'md3_art_full': ['md3', 'khb-kh8', 'wwe', 'art'],
+    'md3_wwe_full': ['md3', 'khb-kh8', 'wwe'],
+    'core_wwe_full_go': ['kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+    'mka_wwe_full': ['md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+    'fl_wwe_full_go': ['rrm1', 'rrm2', 'rrm3', 'kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+    'md1_md2': ['md1l1', 'md2'],
+    'md2_md3': ['md2', 'md3'],
 }
 
-CONSTRUCT_SITES = {
-    'fl':    ['MD1', 'MD2', 'MD3', 'ART'],
-    'md':    ['MD1', 'MD2', 'MD3'],
-    'core':  ['MD1', 'MD2', 'MD3', 'ART'],
-    'mka':   ['MD1', 'MD2', 'MD3', 'ART'],
-    'norrm': ['MD1', 'MD2', 'MD3', 'ART'],
-    'noart': ['MD1', 'MD2', 'MD3'],
-    'md3art':['MD3', 'ART'],
-    'fl_optimized': ['MD1', 'MD2', 'MD3', 'ART'],
-}
+# Maps each FL domain unit -> the active site it carries. Auto-derives
+# CONSTRUCT_SITES below from CONSTRUCT_UNITS instead of a hand-maintained
+# per-set list -- the hardcoded version was a repeat of the exact
+# stale-duplicate-dict bug class already fixed elsewhere in this file (a new
+# set or a new site is trivially forgotten in one of many manually-edited
+# entries otherwise; sim_registry.py already uses this same derived approach).
+UNIT_TO_SITE = {'md1l1': 'MD1', 'md2': 'MD2', 'md3': 'MD3', 'wwe': 'WWE', 'art': 'ART'}
+
+CONSTRUCT_SITES = {k: [UNIT_TO_SITE[u] for u in v if u in UNIT_TO_SITE]
+                   for k, v in CONSTRUCT_UNITS.items()}
 
 
 # ============================================================
@@ -422,6 +516,31 @@ def compute_fl_blocks(unit_names):
 
 
 def build_fl_to_construct_map(unit_names):
+    # Full-length (all 11 units, e.g. 'fl_optimized' or any full-length sim
+    # registered via --sim-folder): nothing was excised, so this MUST be the
+    # identity map. Without this check, the block-merge logic below (correct
+    # for genuine sub-constructs like 'md'/'core' that really do delete
+    # inter-unit linkers) incorrectly collapses the real, un-excised
+    # inter-unit gaps within a full-length sequence -- e.g. the 13-residue
+    # MD2-MD3 linker (residues 1194-1206, not part of either unit's own FL
+    # boundaries) -- shifting every downstream unit (MD3, KHb-KH8, WWE, ART)
+    # by the gap size. Only the literal 'fl' set_key was special-cased at
+    # the call sites below; 'fl_optimized' (and any --sim-folder-registered
+    # full-length sim) has all 11 units in CONSTRUCT_UNITS and was NOT
+    # special-cased, so it silently hit this bug too.
+    if set(unit_names) == set(DOMAIN_UNITS.keys()):
+        return lambda fl_resid: fl_resid if 1 <= fl_resid <= 1801 else None
+    # Sets in CONTIGUOUS_FL_RANGE are genuinely CONTIGUOUS full-length
+    # sub-ranges (nothing excised, unlike md/mka/core/etc which really do
+    # delete inter-unit linkers) -- e.g. md_full retains the MD2-MD3 linker
+    # (1194-1206), so the block-merge logic below would incorrectly collapse
+    # that real gap. Matched by unit-list identity since set_key itself isn't
+    # passed into this function.
+    for ckey, (fl_start, fl_end) in CONTIGUOUS_FL_RANGE.items():
+        if list(unit_names) == CONSTRUCT_UNITS.get(ckey):
+            offset = 1 - fl_start
+            return lambda fl_resid, fl_start=fl_start, fl_end=fl_end, offset=offset: (
+                fl_resid + offset if fl_start <= fl_resid <= fl_end else None)
     fl_blocks = compute_fl_blocks(unit_names)
     segments = []
     construct_pos = 1
@@ -1036,42 +1155,115 @@ def _plot_conf_prop(active_sets, all_data):
         fig.savefig(os.path.join(FIG_PATH, f'rg_convergence.{ext}'), dpi=150, bbox_inches='tight')
     plt.close()
 
-    # Secondary version: block-averaging standard error (Flyvbjerg & Petersen
-    # 1989). The panel above is a cumulative running mean, which always looks
-    # "converged" at long times regardless of autocorrelation -- it doesn't
-    # actually test anything. Block SE should plateau once block size exceeds
-    # the Rg autocorrelation time; a plateau is the real convergence signal,
-    # and its height is the correct (correlation-corrected) standard error.
-    fig, axes = plt.subplots(1, n_sets, figsize=(5*n_sets, 4), squeeze=False)
+    # Secondary version: block-averaging (Flyvbjerg & Petersen 1989). The
+    # panel above is a cumulative running mean, which always looks "converged"
+    # at long times regardless of autocorrelation -- it doesn't actually test
+    # anything. Block SE should plateau once block size exceeds the Rg
+    # autocorrelation time; a plateau is the real convergence signal, and its
+    # height is the correct (correlation-corrected) standard error.
+    #
+    # Blocks are POOLED ACROSS REPLICATES at every block size (one curve, not
+    # one per replicate + a curve-of-means): each replicate independently
+    # contributes floor(min_frames/b) non-overlapping blocks of size b, and
+    # all replicates' block means are pooled before computing SE/mean. This
+    # adds real statistical power at every block size and lets the sweep
+    # extend to block size = full replicate length, where each replicate
+    # contributes exactly one block (its own full-trajectory mean) -- pooling
+    # then gives n_rep independent blocks, independent because different
+    # replicates used different random seeds, not because of any assumption
+    # about intra-trajectory decorrelation.
+    #
+    # Two panels per set:
+    #   top    - pooled SE of Rg vs block size (the classic F&P plot).
+    #   bottom - pooled MEAN Rg vs block size. The mean shouldn't depend on
+    #            block-size choice at all (same data, just grouped
+    #            differently) -- this is a sanity check that block size only
+    #            changes the error estimate, never the estimated value.
+    #
+    # The reported value is read from the PLATEAU REGION (shaded), not a
+    # single point: the largest block size still backed by >= MIN_POOLED_BLOCKS
+    # pooled blocks anchors the reference SE, then the region is extended to
+    # smaller block sizes while SE stays within PLATEAU_REL_TOL of that
+    # reference. Averaging (block-count-weighted) over that whole region is
+    # far less noisy than reading off any single point -- including the
+    # full-length (n_rep-block) point, which is statistically the cleanest
+    # (zero decorrelation assumption) but also the noisiest, since it's
+    # always limited to exactly n_rep blocks no matter how much pooling helps
+    # everywhere else.
+    MIN_POOLED_BLOCKS = 30
+    PLATEAU_REL_TOL = 0.10
+
+    fig, axes = plt.subplots(2, n_sets, figsize=(5*n_sets, 7), squeeze=False, sharex='col')
     for idx, set_key in enumerate(active_sets):
-        ax = axes[0, idx]; info = SETS[set_key]
+        ax_se, ax_mean = axes[0, idx], axes[1, idx]
+        info = SETS[set_key]
         rg_list = all_data[set_key]['rg']
-        if not rg_list:
-            ax.set_title(info['label']); continue
+        n_rep = len(rg_list)
+        if n_rep < 2:
+            ax_se.set_title(info['label']); continue
         min_frames = min(len(rg) for rg in rg_list)
-        max_pow = int(np.floor(np.log2(max(min_frames // 2, 1))))
-        block_sizes = 2 ** np.arange(0, max_pow + 1)
-        block_ns = block_sizes * 0.01
-        curves = []
-        for rg in rg_list:
-            x = np.asarray(rg[:min_frames])
-            se = np.full(len(block_sizes), np.nan)
-            for bi, b in enumerate(block_sizes):
-                nb = min_frames // b
-                if nb < 2:
-                    continue
-                block_means = x[:nb*b].reshape(nb, b).mean(axis=1)
-                se[bi] = np.std(block_means, ddof=1) / np.sqrt(nb)
-            curves.append(se)
-        curves = np.array(curves)
-        for c in curves:
-            ax.plot(block_ns, c, lw=0.5, alpha=0.3, color=info['color'])
-        ax.plot(block_ns, np.nanmean(curves, axis=0), lw=2, color='black', label='Mean')
-        ax.set_xscale('log')
-        ax.set_xlabel('Block size (ns)'); ax.set_ylabel('Block SE of Rg (nm)')
-        ax.set_title(info['label']); ax.legend(fontsize=8)
-    fig.suptitle('Rg Convergence — Block-Averaging Standard Error (Flyvbjerg & Petersen)',
-                 fontsize=13, y=1.02)
+        rg_arr = np.array([np.asarray(rg[:min_frames]) for rg in rg_list])
+
+        max_pow = int(np.floor(np.log2(max(min_frames, 1))))
+        block_sizes = list(2 ** np.arange(0, max_pow + 1))
+        if block_sizes[-1] != min_frames:
+            block_sizes.append(min_frames)  # guarantee the full-length (1 block/replicate) point
+        block_ns = np.array(block_sizes) * 0.01
+
+        se = np.full(len(block_sizes), np.nan)
+        mean_est = np.full(len(block_sizes), np.nan)
+        pooled_nb = np.zeros(len(block_sizes), dtype=int)
+        for bi, b in enumerate(block_sizes):
+            nb_per_rep = min_frames // b
+            if nb_per_rep < 1:
+                continue
+            # (n_rep, nb_per_rep, b) -> mean over b -> pool the (n_rep * nb_per_rep) block means
+            blocks = rg_arr[:, :nb_per_rep * b].reshape(n_rep, nb_per_rep, b)
+            pooled_means = blocks.mean(axis=2).ravel()
+            pooled_nb[bi] = len(pooled_means)
+            mean_est[bi] = pooled_means.mean()
+            if len(pooled_means) >= 2:
+                se[bi] = np.std(pooled_means, ddof=1) / np.sqrt(len(pooled_means))
+
+        # Plateau: anchor at the largest block size with enough pooled blocks
+        # to trust, then extend toward smaller block sizes while SE stays
+        # within tolerance of that anchor.
+        start_idx = ref_idx = None
+        valid = np.where(pooled_nb >= MIN_POOLED_BLOCKS)[0]
+        if len(valid) > 0:
+            ref_idx = int(valid[-1])
+            ref_se = se[ref_idx]
+            start_idx = ref_idx
+            for i in valid[::-1]:
+                if np.isfinite(se[i]) and abs(se[i] - ref_se) / ref_se <= PLATEAU_REL_TOL:
+                    start_idx = int(i)
+                else:
+                    break
+
+        ax_se.plot(block_ns, se, lw=2, color=info['color'], marker='o', ms=3)
+        ax_se.set_xscale('log')
+        ax_se.set_ylabel('Pooled block SE of Rg (nm)')
+        ax_se.set_title(info['label'])
+
+        ax_mean.plot(block_ns, mean_est, lw=2, color=info['color'], marker='o', ms=3)
+        ax_mean.set_xscale('log')
+        ax_mean.set_xlabel('Block size (ns)'); ax_mean.set_ylabel('Pooled mean Rg (nm)')
+
+        if start_idx is not None:
+            w = pooled_nb[start_idx:ref_idx + 1].astype(float)
+            plateau_se = float(np.average(se[start_idx:ref_idx + 1], weights=w))
+            plateau_mean = float(np.average(mean_est[start_idx:ref_idx + 1], weights=w))
+            lo, hi = block_ns[start_idx], block_ns[ref_idx]
+            for ax in (ax_se, ax_mean):
+                ax.axvspan(lo, hi, color='red', alpha=0.12, zorder=0)
+            ax_se.axhline(plateau_se, color='red', ls='--', lw=1.2, alpha=0.8,
+                          label=f'Rg = {plateau_mean:.3f} +/- {plateau_se:.3f} nm\n'
+                                f'(plateau {lo:.0f}-{hi:.0f} ns)')
+            ax_se.legend(fontsize=8, loc='lower right')
+            ax_mean.axhline(plateau_mean, color='red', ls='--', lw=1.2, alpha=0.8)
+    fig.suptitle('Rg Convergence — Block-Averaging, Pooled Across Replicates\n'
+                 '(top: SE vs block size; bottom: mean Rg vs block size; shaded = plateau region)',
+                 fontsize=12, y=1.02)
     fig.tight_layout()
     for ext in ['png', 'svg']:
         fig.savefig(os.path.join(FIG_PATH, f'rg_convergence_block.{ext}'), dpi=150, bbox_inches='tight')
@@ -2145,7 +2337,6 @@ def main():
         N_WORKERS = args.workers
 
     os.makedirs(DATA_PATH, exist_ok=True)
-    os.makedirs(FIG_PATH, exist_ok=True)
 
     any_flag = (args.conf_prop or args.dmap or args.cmap or args.fnc or
                 args.energy or args.wcn or args.active_sites or args.accessibility)
@@ -2175,6 +2366,13 @@ def main():
     else:
         # Nothing specified: default = all named/registered sets
         active_sets = list(SETS.keys())
+
+    # Now that active_sets is resolved: a single sim's figures go under
+    # figures/by_sim/<sim>/02_main_analysis/; multiple sets (a comparison
+    # run) go under figures/comparisons/02_main_analysis/<sims>/.
+    global FIG_PATH
+    FIG_PATH = str(_get_fig_dir('02_main_analysis', sims=active_sets))
+    os.makedirs(FIG_PATH, exist_ok=True)
 
     print("=" * 70)
     print("PARP14 Trajectory Analysis (parallelized)")

@@ -168,6 +168,12 @@ def compute_fl_blocks(unit_names):
 
 
 def build_fl_to_construct_map(unit_names):
+    # Full-length (all 11 units): identity map -- see analyze_all.py's
+    # build_fl_to_construct_map for the full rationale (protects against
+    # this script ever being extended to a full-length sim not literally
+    # named 'fl', which is already special-cased at the call sites below).
+    if set(unit_names) == set(DOMAIN_UNITS.keys()):
+        return lambda fl_resid: fl_resid if 1 <= fl_resid <= 1801 else None
     fl_blocks = compute_fl_blocks(unit_names)
     segments = []
     construct_pos = 1

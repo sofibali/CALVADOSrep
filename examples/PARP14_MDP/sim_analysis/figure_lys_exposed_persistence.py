@@ -144,8 +144,21 @@ def _resolve_topology_pdb(sim_dir):
 def construct_to_fl_map(set_key):
     """Return dict {construct_resid: FL_resid}."""
     units = DOMAIN_UNITS.get(set_key)
-    if units is None:  # fl/fl_optimized → identity
+    # None (fl/fl_optimized, never separately registered) or all 11 units
+    # (any --sim-folder-registered full-length sim, e.g. fl_go) -> identity.
+    # Without the second check, the block-merge below (correct for genuine
+    # sub-constructs that really do delete inter-unit linkers) incorrectly
+    # collapses real, un-excised inter-unit gaps in a full-length sequence
+    # (e.g. the 13-residue MD2-MD3 linker), shifting every downstream unit.
+    if units is None or set(units) == set(UNIT_FL.keys()):
         return {r: r for r in range(1, 1802)}
+    # md_full/mka_full: not all 11 units, but still a genuine contiguous FL
+    # sub-range (deliberately built to keep every linker within its span) --
+    # same gap as above, just for a sub-range instead of the whole sequence.
+    # See sim_registry.CONTIGUOUS_FL_RANGE.
+    if set_key in reg.CONTIGUOUS_FL_RANGE:
+        fl_start, fl_end = reg.CONTIGUOUS_FL_RANGE[set_key]
+        return {(fl_r - fl_start + 1): fl_r for fl_r in range(fl_start, fl_end + 1)}
     ranges = sorted([UNIT_FL[u] for u in units if u in UNIT_FL])
     merged = [list(ranges[0])]
     for s, e in ranges[1:]:
@@ -374,7 +387,7 @@ def main():
         'noart':        'No-ART (1275)',
     }
 
-    out_dir = get_fig_dir('07_lysine_contacts')
+    out_dir = get_fig_dir('07_lysine_contacts', sims=sets)
     print(f"Output: {out_dir}")
 
     # Load exposed residues from AF2 FL SASA data

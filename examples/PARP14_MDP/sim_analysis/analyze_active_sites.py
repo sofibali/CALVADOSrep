@@ -45,6 +45,13 @@ CWD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(CWD, 'data')
 os.makedirs(DATA_PATH, exist_ok=True)
 
+import sys as _sys
+_sys.path.insert(0, CWD)
+from _fig_layout import get_fig_dir as _get_fig_dir
+# Placeholder; reassigned once the target set_key is known (figures were
+# incorrectly landing in data/ before -- see savefig calls below).
+FIG_PATH = str(_get_fig_dir('02_main_analysis'))
+
 SITE_NAMES = reg.SITE_NAMES
 SITE_COLORS = reg.SITE_COLORS
 
@@ -303,7 +310,7 @@ def analyze_simulation(pdb_path, dcd_path, set_key, label, data_prefix,
     for pair, d in inter_site_dists.items():
         save_dict[f'dist_{pair}'] = d
 
-    np.savez(os.path.join(DATA_PATH, f'{data_prefix}_active_sites.npz'), **save_dict)
+    np.savez(os.path.join(FIG_PATH, f'{data_prefix}_active_sites.npz'), **save_dict)
     print(f"  Saved: {data_prefix}_active_sites.npz")
 
     # ============================================================
@@ -342,7 +349,7 @@ def analyze_simulation(pdb_path, dcd_path, set_key, label, data_prefix,
         legend_elements.append(Patch(facecolor=SITE_COLORS[sname], label=f'{sname} catalytic'))
     ax.legend(handles=legend_elements, fontsize=9, loc='upper right')
     fig.tight_layout()
-    fig.savefig(os.path.join(DATA_PATH, f'{data_prefix}_active_site_rmsf.png'),
+    fig.savefig(os.path.join(FIG_PATH, f'{data_prefix}_active_site_rmsf.png'),
                 dpi=150, bbox_inches='tight')
     plt.close()
     print(f"  Saved: {data_prefix}_active_site_rmsf.png")
@@ -371,7 +378,7 @@ def analyze_simulation(pdb_path, dcd_path, set_key, label, data_prefix,
     fig.suptitle(f'Active Site Exposure (contact number) — {label}\n'
                  'Lower = more exposed, Higher = more buried', fontsize=13, y=1.02)
     fig.tight_layout()
-    fig.savefig(os.path.join(DATA_PATH, f'{data_prefix}_active_site_exposure.png'),
+    fig.savefig(os.path.join(FIG_PATH, f'{data_prefix}_active_site_exposure.png'),
                 dpi=150, bbox_inches='tight')
     plt.close()
     print(f"  Saved: {data_prefix}_active_site_exposure.png")
@@ -399,7 +406,7 @@ def analyze_simulation(pdb_path, dcd_path, set_key, label, data_prefix,
                 ax.set_xlabel('Frame')
         fig.suptitle(f'Inter-Active-Site Distances — {label}', fontsize=13, y=1.01)
         fig.tight_layout()
-        fig.savefig(os.path.join(DATA_PATH, f'{data_prefix}_intersite_distances.png'),
+        fig.savefig(os.path.join(FIG_PATH, f'{data_prefix}_intersite_distances.png'),
                     dpi=150, bbox_inches='tight')
         plt.close()
         print(f"  Saved: {data_prefix}_intersite_distances.png")
@@ -426,7 +433,7 @@ def analyze_simulation(pdb_path, dcd_path, set_key, label, data_prefix,
                  '>1 = beyond Rg (surface), <1 = within Rg (core)', fontsize=12)
     ax.legend(fontsize=9)
     fig.tight_layout()
-    fig.savefig(os.path.join(DATA_PATH, f'{data_prefix}_active_site_radial.png'),
+    fig.savefig(os.path.join(FIG_PATH, f'{data_prefix}_active_site_radial.png'),
                 dpi=150, bbox_inches='tight')
     plt.close()
     print(f"  Saved: {data_prefix}_active_site_radial.png")
@@ -456,7 +463,7 @@ def analyze_simulation(pdb_path, dcd_path, set_key, label, data_prefix,
                             color='white' if v > 0.5 else 'black')
         ax.set_title(f'Active Site Domain Contacts — {label}', fontsize=13)
         fig.tight_layout()
-        fig.savefig(os.path.join(DATA_PATH, f'{data_prefix}_active_site_domain_contacts.png'),
+        fig.savefig(os.path.join(FIG_PATH, f'{data_prefix}_active_site_domain_contacts.png'),
                     dpi=150, bbox_inches='tight')
         plt.close()
         print(f"  Saved: {data_prefix}_active_site_domain_contacts.png")
@@ -585,10 +592,10 @@ def analyze_ensemble(set_key, seeds=reg.SEEDS, samples=reg.SAMPLES, skip_frames=
 
     fig.suptitle(f'{label} — Ensemble ({n_analyzed} replicates)', fontsize=14, y=1.02)
     fig.tight_layout()
-    out = os.path.join(DATA_PATH, f'{set_key}_ensemble_active_sites.png')
+    out = os.path.join(FIG_PATH, f'{set_key}_ensemble_active_sites.png')
     fig.savefig(out, dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"\n  Saved: {os.path.basename(out)}")
+    print(f"\n  Saved: {out}")
 
     # Print ensemble summary
     print(f"\n{'='*60}")
@@ -651,6 +658,9 @@ def main():
 
     set_key = resolve_set_key(args)
     label = reg.SETS[set_key]['label']
+
+    global FIG_PATH
+    FIG_PATH = str(_get_fig_dir('02_main_analysis', sims=[set_key]))
 
     if args.seed is not None and args.sample is not None:
         # Single replicate — full per-replicate plots

@@ -84,13 +84,30 @@ ACTIVE_SITES_FL = {
             'pocket': [1681, 1682, 1683, 1684, 1685, 1688, 1701, 1704, 1705, 1706,
                        1707, 1708, 1709, 1714, 1715, 1716, 1721, 1722, 1726, 1727,
                        1781]},
+    # iso-ADP-ribose binding site, derived by structural alignment (PyMOL cealign,
+    # RMSD 1.83 A over 64 residues) of PARP14's WWE domain (FL 1534-1602, from
+    # input/parp14.pdb) onto RNF146's WWE domain bound to isoADPR (PDB 3V3L,
+    # Wang et al. 2012 Genes Dev, PMID 22267412) -- catalytic = the PARP14
+    # residues within ~1.9 A (post-alignment) of the RNF146 residue contacting
+    # isoADPR at the corresponding structural position: Tyr1539 (<-RNF146 Tyr107,
+    # 0.45 A), Phe1548 (<-Tyr116, 1.04 A), Tyr1576 (<-Tyr144, 0.86 A) -- 3
+    # aromatics -- and Lys1570 (<-Ile139, 1.83 A) as the charged residue,
+    # matching the expected "2 aromatic + charged" ADPR-recognition pattern
+    # (a 4th, weaker candidate His1546 <-Trp114 at 1.20 A -- PARP14 substitutes
+    # His for RNF146's domain-defining Trp here -- is in the pocket list only).
+    # Confirmed reproducible: both isoADPR-bound copies in the 3V3L asymmetric
+    # unit gave identical RNF146 contact residues.
+    'WWE': {'catalytic': [1539, 1548, 1570, 1576],
+            'pocket': [1538, 1539, 1540, 1541, 1542, 1543, 1545, 1546, 1547, 1548, 1549,
+                       1569, 1570, 1571, 1575, 1576, 1577, 1584, 1585, 1586,
+                       1590, 1591, 1592, 1593, 1594]},
 }
 
-SITE_NAMES = ['MD1', 'MD2', 'MD3', 'ART']
-SITE_COLORS = {'MD1': '#e6194b', 'MD2': '#3cb44b', 'MD3': '#4363d8', 'ART': '#f58231'}
+SITE_NAMES = ['MD1', 'MD2', 'MD3', 'WWE', 'ART']
+SITE_COLORS = {'MD1': '#e6194b', 'MD2': '#3cb44b', 'MD3': '#4363d8', 'WWE': '#911eb4', 'ART': '#f58231'}
 
 # Maps each FL domain unit -> the active site it carries (for sub-construct detection).
-UNIT_TO_SITE = {'md1l1': 'MD1', 'md2': 'MD2', 'md3': 'MD3', 'art': 'ART'}
+UNIT_TO_SITE = {'md1l1': 'MD1', 'md2': 'MD2', 'md3': 'MD3', 'wwe': 'WWE', 'art': 'ART'}
 
 # Energy-analysis domain boundaries (FL numbering): trimmed by 3 residues at
 # zero/small-gap borders to prevent steric-clash artifacts between adjacent domains.
@@ -148,10 +165,104 @@ SETS = {
         'units': list(DOMAIN_UNITS.keys()),
     },
     'fl_go': {
-        'sysname': 'parp14', 'label': 'FL (Go-model restraints, 2us extensions)', 'color': '#7f7f7f',
+        'sysname': 'parp14', 'label': 'FL (Go-model restraints, 2us extensions)', 'color': '#CC79A7',
         'units': list(DOMAIN_UNITS.keys()),
     },
+    'md_full': {
+        'sysname': 'parp14_md1md3_full', 'label': 'MD1-MD3 contiguous (790-1388, 599 res)',
+        'color': '#c8831c',
+        'units': ['md1l1', 'md2', 'md3'],
+    },
+    'mka_full': {
+        'sysname': 'parp14_mka_full', 'label': 'MD1-ART contiguous (790-1801, 1012 res)',
+        'color': '#2845bd',
+        'units': ['md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+    },
+    'core_full_go': {
+        'sysname': 'parp14_core_full_go',
+        'label': 'KH7a-ART contiguous + Go-model KH7a-KHb restraints (738-1801, 1064 res)',
+        'color': '#E69F00',
+        'units': ['kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+    },
+    'kh1_art_full': {
+        'sysname': 'parp14_kh1_art_full',
+        'label': 'KH1-6-ART contiguous + Go-model KH7a-KHb restraints (315-1801, 1487 res)',
+        'color': '#56B4E9',
+        'units': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+    },
+    'kh1_wwe_full': {
+        'sysname': 'parp14_kh1_wwe_full',
+        'label': 'KH1-6-WWE contiguous + Go-model KH7a-KHb restraints (315-1602, 1288 res, no ART)',
+        'color': '#009E73',
+        'units': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+    },
+    'md2_art_full': {
+        'sysname': 'parp14_md2_art_full',
+        'label': 'MD2-ART contiguous (1004-1801, 798 res)',
+        'color': '#eb79eb',
+        'units': ['md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+    },
+    'md2_wwe_full': {
+        'sysname': 'parp14_md2_wwe_full',
+        'label': 'MD2-WWE contiguous (1004-1602, 599 res, no ART)',
+        'color': '#a82366',
+        'units': ['md2', 'md3', 'khb-kh8', 'wwe'],
+    },
+    'md3_art_full': {
+        'sysname': 'parp14_md3_art_full',
+        'label': 'MD3-ART contiguous (1207-1801, 595 res)',
+        'color': '#1cc895',
+        'units': ['md3', 'khb-kh8', 'wwe', 'art'],
+    },
+    'md3_wwe_full': {
+        'sysname': 'parp14_md3_wwe_full',
+        'label': 'MD3-WWE contiguous (1207-1602, 396 res, no ART)',
+        'color': '#2387a8',
+        'units': ['md3', 'khb-kh8', 'wwe'],
+    },
+    'core_wwe_full_go': {
+        'sysname': 'parp14_core_wwe_full_go',
+        'label': 'KH7a-WWE contiguous + Go-model KH7a-KHb restraints (738-1602, 865 res, no ART)',
+        'color': '#0072B2',
+        'units': ['kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+    },
+    'mka_wwe_full': {
+        'sysname': 'parp14_mka_wwe_full',
+        'label': 'MD1L1-WWE contiguous (790-1602, 813 res, no ART)',
+        'color': '#8a62e8',
+        'units': ['md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+    },
+    'fl_wwe_full_go': {
+        'sysname': 'parp14_fl_wwe_full_go',
+        'label': 'FL-WWE contiguous + Go-model KH7a-KHb restraints (1-1602, 1602 res, no ART)',
+        'color': '#D55E00',
+        'units': ['rrm1', 'rrm2', 'rrm3', 'kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+    },
+    'md1_md2': {
+        'sysname': 'parp14_md1_md2',
+        'label': 'MD1L1-MD2 contiguous, 2-domain isolation test (790-1193, 404 res)',
+        'color': '#c8831c',
+        'units': ['md1l1', 'md2'],
+    },
+    'md2_md3': {
+        'sysname': 'parp14_md2_md3',
+        'label': 'MD2-MD3 contiguous, 2-domain isolation test (1004-1388, 385 res)',
+        'color': '#2845bd',
+        'units': ['md2', 'md3'],
+    },
 }
+
+# Colors above for the 13 "contiguous full-length family" sets + fl_go (the
+# original 25-rep FL Go-restraint run, reused as this family's FL reference)
+# come from sim_analysis/parp14_mdp_colors.py's CONSTRUCT_GO/CONSTRUCT_NOGO --
+# validated colorblind-safe (OKLab CVD Delta E, --pairs all) within each of two
+# groups that are never plotted in the same figure: Go-restraint sets
+# (core_full_go, kh1_art_full, kh1_wwe_full, core_wwe_full_go, fl_wwe_full_go,
+# fl_go) and non-Go sets (md_full, mka_full, md2_art_full, md2_wwe_full,
+# md3_art_full, md3_wwe_full, mka_wwe_full). The old tab20-derived hexes here
+# failed that validation outright (off the lightness band, chroma floor, and
+# CVD separation checks all at once). md1_md2/md2_md3 reuse two of the
+# non-Go-group hexes since they're always their own separate small figure.
 
 # Restraint-domain boundaries (CONSTRUCT numbering) for the named sets. Used by the
 # FNC module, which reads restraint domains straight from how the sim was built.
@@ -175,6 +286,25 @@ CONSTRUCT_DOMAINS = {
                          [531, 583], [599, 660], [676, 727], [738, 789], [800, 968],
                          [1015, 1183], [1217, 1378], [1389, 1461], [1462, 1533],
                          [1549, 1587], [1613, 1791]]},
+    # From prepare_md_full.py / prepare_mka_full.py's own printed FL->local mapping
+    # (single contiguous offset, local = FL - 789 -- see CONTIGUOUS_FL_RANGE above).
+    'md_full': {'parp14_md1md3_full': [[2, 189], [214, 401], [427, 598]]},
+    'mka_full': {'parp14_mka_full': [[2, 189], [214, 401], [427, 598], [734, 812], [816, 1012]]},
+    # From prepare_core_full_go.py's own printed FL->local mapping (local = FL - 737).
+    'core_full_go': {'parp14_core_full_go': [[54, 241], [266, 453], [479, 650], [786, 864], [868, 1064]]},
+    # From prepare_extra_full_constructs.py's own printed FL->local mappings.
+    'kh1_art_full': {'parp14_kh1_art_full': [[477, 664], [689, 876], [902, 1073], [1209, 1287], [1291, 1487]]},
+    'kh1_wwe_full': {'parp14_kh1_wwe_full': [[477, 664], [689, 876], [902, 1073], [1209, 1287]]},
+    'md2_art_full': {'parp14_md2_art_full': [[1, 187], [213, 384], [520, 598], [602, 798]]},
+    'md2_wwe_full': {'parp14_md2_wwe_full': [[1, 187], [213, 384], [520, 598]]},
+    'md3_art_full': {'parp14_md3_art_full': [[10, 181], [317, 395], [399, 595]]},
+    'md3_wwe_full': {'parp14_md3_wwe_full': [[10, 181], [317, 395]]},
+    'core_wwe_full_go': {'parp14_core_wwe_full_go': [[54, 241], [266, 453], [479, 650], [786, 864]]},
+    'mka_wwe_full': {'parp14_mka_wwe_full': [[2, 189], [214, 401], [427, 598], [734, 812]]},
+    'fl_wwe_full_go': {'parp14_fl_wwe_full_go': [[6, 88], [150, 223], [227, 301], [791, 978],
+                                                  [1003, 1190], [1216, 1387], [1523, 1601]]},
+    'md1_md2': {'parp14_md1_md2': [[2, 189], [214, 401]]},
+    'md2_md3': {'parp14_md2_md3': [[1, 187], [213, 384]]},
 }
 
 # Holds absolute directories for folders registered via register_external_folder().
@@ -204,6 +334,35 @@ def _flat_replicate_dirs(folder, sysname):
 # FL -> construct residue mapping
 # ============================================================
 
+# Sets that are a genuinely CONTIGUOUS slice of the FL sequence (no residues
+# actually excised), keyed by set_key -> (fl_start, fl_end). This can't be
+# inferred from `units` alone: a construct's unit list only says which
+# DOMAIN_UNITS boundaries it covers, not whether the real simulated structure
+# also kept the inter-unit linkers DOMAIN_UNITS doesn't assign to any unit
+# (e.g. the 1194-1206 MD2/MD3 linker). 'fl'/'fl_optimized'/'fl_go' happen to
+# cover ALL units so build_fl_to_construct_map()'s own all-units check catches
+# them; md_full/mka_full are genuine sub-ranges (3 and 6 units) that were
+# deliberately built to keep every linker within their span, so they need an
+# explicit override here or compute_fl_blocks' gap-merging would wrongly
+# compress out that same 1194-1206 linker for them too.
+CONTIGUOUS_FL_RANGE = {
+    'md_full': (790, 1388),
+    'mka_full': (790, 1801),
+    'core_full_go': (738, 1801),
+    'kh1_art_full': (315, 1801),
+    'kh1_wwe_full': (315, 1602),
+    'md2_art_full': (1004, 1801),
+    'md2_wwe_full': (1004, 1602),
+    'md3_art_full': (1207, 1801),
+    'md3_wwe_full': (1207, 1602),
+    'core_wwe_full_go': (738, 1602),
+    'mka_wwe_full': (790, 1602),
+    'fl_wwe_full_go': (1, 1602),
+    'md1_md2': (790, 1193),
+    'md2_md3': (1004, 1388),
+}
+
+
 def compute_fl_blocks(unit_names):
     """Merge the FL residue ranges of the given units into contiguous blocks."""
     ranges = sorted([DOMAIN_UNITS[n] for n in unit_names])
@@ -216,9 +375,36 @@ def compute_fl_blocks(unit_names):
     return [(s, e) for s, e in merged]
 
 
-def build_fl_to_construct_map(unit_names):
+def build_fl_to_construct_map(unit_names, set_key=None):
     """Return a function mapping an FL residue number to construct numbering
-    (1-based, contiguous) for a construct containing `unit_names`."""
+    (1-based, contiguous) for a construct containing `unit_names`.
+
+    If unit_names covers ALL 11 known domain units, the construct is
+    full-length -- nothing was actually excised, so this must be the
+    identity map. Without this check, compute_fl_blocks' gap-merging
+    heuristic (designed for genuine sub-constructs that really do delete
+    inter-unit linkers, e.g. 'md'/'core'/'norrm') incorrectly treats the
+    real, un-excised inter-unit linkers within a full-length sequence (e.g.
+    the 13-residue MD2-MD3 linker, residues 1194-1206, which isn't part of
+    either the md2 or md3 unit's own boundaries) as deleted, shifting every
+    downstream unit's mapped range by the gap size. This bit any
+    --sim-folder-registered full-length sim (e.g. fl_go) even though the
+    named 'fl'/'fl_optimized' sets were already correctly special-cased
+    elsewhere to skip this mapping entirely.
+
+    `set_key` lets a construct that ISN'T full-length (so the all-units check
+    above doesn't fire) still declare itself contiguous via CONTIGUOUS_FL_RANGE
+    (e.g. md_full/mka_full: 3 or 6 units, but deliberately built to keep every
+    linker within their span -- the same gap-compression bug, just for a
+    genuine sub-range instead of the whole sequence).
+    """
+    if set(unit_names) == set(DOMAIN_UNITS.keys()):
+        return lambda fl_resid: fl_resid if 1 <= fl_resid <= 1801 else None
+    if set_key in CONTIGUOUS_FL_RANGE:
+        fl_start, fl_end = CONTIGUOUS_FL_RANGE[set_key]
+        offset = 1 - fl_start
+        return lambda fl_resid: (fl_resid + offset
+                                  if fl_start <= fl_resid <= fl_end else None)
     fl_blocks = compute_fl_blocks(unit_names)
     segments = []
     construct_pos = 1
@@ -231,6 +417,38 @@ def build_fl_to_construct_map(unit_names):
         for fl_s, fl_e, off in segments:
             if fl_s <= fl_resid <= fl_e:
                 return fl_resid + off
+        return None
+    return map_resid
+
+
+def build_construct_to_fl_map(unit_names, set_key=None):
+    """Inverse of build_fl_to_construct_map: construct-local residue number ->
+    FL residue number. Needed by anything that overlays construct-local data
+    (e.g. a per-replicate contact map) onto a shared FL-numbered reference
+    grid/domain-boundary set -- without this, local resi 1 of a sub-construct
+    like 'md' (which is really FL 790, MD1L1) gets plotted at FL position 1
+    (RRM1) instead, squeezing the whole construct into one corner of the grid.
+    """
+    if set(unit_names) == set(DOMAIN_UNITS.keys()):
+        return lambda local_resid: local_resid if 1 <= local_resid <= 1801 else None
+    if set_key in CONTIGUOUS_FL_RANGE:
+        fl_start, fl_end = CONTIGUOUS_FL_RANGE[set_key]
+        offset = 1 - fl_start
+        return lambda local_resid: (local_resid - offset
+                                     if fl_start + offset <= local_resid <= fl_end + offset
+                                     else None)
+    fl_blocks = compute_fl_blocks(unit_names)
+    segments = []
+    construct_pos = 1
+    for fl_start, fl_end in fl_blocks:
+        offset = construct_pos - fl_start
+        segments.append((fl_start + offset, fl_end + offset, offset))
+        construct_pos += (fl_end - fl_start + 1)
+
+    def map_resid(local_resid):
+        for local_s, local_e, off in segments:
+            if local_s <= local_resid <= local_e:
+                return local_resid - off
         return None
     return map_resid
 
@@ -257,7 +475,7 @@ def get_active_sites_for_set(set_key):
         # real sub-construct like 'noart'. That assumption is false here and
         # silently shifted every MD3/ART residue number by -13.
         return ACTIVE_SITES_FL
-    fl_to_c = build_fl_to_construct_map(get_units(set_key))
+    fl_to_c = build_fl_to_construct_map(get_units(set_key), set_key=set_key)
     sites = {}
     for sname in get_construct_sites(set_key):
         data = ACTIVE_SITES_FL[sname]
@@ -272,7 +490,7 @@ def get_construct_domains_for_set(set_key):
     """FL_DOMAINS remapped into the set's construct numbering (energy boundaries)."""
     if set_key in ('fl', 'fl_optimized', 'fl_go'):
         return FL_DOMAINS
-    fl_to_c = build_fl_to_construct_map(get_units(set_key))
+    fl_to_c = build_fl_to_construct_map(get_units(set_key), set_key=set_key)
     mapped = {}
     for dname, (fl_s, fl_e) in FL_DOMAINS.items():
         c_s = fl_to_c(fl_s)
