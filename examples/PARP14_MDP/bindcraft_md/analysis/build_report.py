@@ -144,6 +144,49 @@ def failnorm_svg():
         y+=rowh*3+gap
     o.append("</svg>"); return "".join(o)
 
+
+def replay_svg():
+    r=fig["_replay"]; W,H,pl,pb,pt=620,230,34,34,12
+    pw,ph=W-pl-8,H-pb-pt; n=len(r["bins"]); bw=pw/n
+    maxc=max(max(r["off"]),max(r["on"]))
+    o=[f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="replay i_pAE before and after" class="chart">']
+    for f in (0,.5,1):
+        yy=pt+ph*(1-f)
+        o.append(f'<line x1="{pl}" y1="{yy:.1f}" x2="{W-8}" y2="{yy:.1f}" class="grid"/>')
+        o.append(f'<text x="{pl-6}" y="{yy+3:.1f}" class="svg-tick" text-anchor="end">{int(maxc*f)}</text>')
+    xt=pl+0.35*pw
+    o.append(f'<line x1="{xt:.1f}" y1="{pt}" x2="{xt:.1f}" y2="{pt+ph}" class="ref"/>')
+    o.append(f'<text x="{xt+4:.1f}" y="{pt+10}" class="svg-tick">threshold 0.35</text>')
+    for key,col,op in (("on","var(--win)",0.95),("off","var(--md2)",0.75)):
+        for i,c in enumerate(r[key]):
+            if not c: continue
+            bh=(c/maxc)*ph; x=pl+i*bw
+            lbl="with guess" if key=="on" else "without"
+            o.append(f'<rect x="{x+0.5:.1f}" y="{pt+ph-bh:.1f}" width="{bw-1:.1f}" height="{bh:.1f}" fill="{col}" opacity="{op}"><title>{lbl}: {c} predictions at i_pAE {r["bins"][i]:.2f}</title></rect>')
+    for xv in (0,.2,.4,.6,.8,1.0):
+        o.append(f'<text x="{pl+xv*pw:.1f}" y="{H-14}" class="svg-tick" text-anchor="middle">{xv:.1f}</text>')
+    o.append(f'<text x="{pl+pw/2:.1f}" y="{H-2}" class="svg-tick" text-anchor="middle">interface PAE (i_pAE) — lower is better</text>')
+    o.append("</svg>"); return "".join(o)
+
+def armA_svg():
+    A=fig["_armA"]
+    rows=[("MPNN sequences rejected by i_pAE", 99.4, 100*A["fail"]["i_pAE"]/A["seqs"], "lower better"),
+          ("Sequences reaching Rosetta scoring", 100*10/5400, 100*A["scored"]/A["seqs"], "higher better")]
+    W,rowh,gap,labelw=620,20,30,236
+    H=len(rows)*(rowh*2+gap)
+    o=[f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="baseline vs arm A" class="chart">']
+    y=0
+    for lab,base,arm,hint in rows:
+        o.append(f'<text x="0" y="{y+rowh*0.72}" class="svg-lab">{lab}</text>')
+        o.append(f'<text x="0" y="{y+rowh*1.72}" class="svg-sub">{hint}</text>')
+        for i,(v,col,nm) in enumerate([(base,"var(--md1)","baseline"),(arm,"var(--win)","with guess")]):
+            bwid=max(v,0.4)/100*(W-labelw-70); yy=y+i*rowh
+            o.append(f'<rect x="{labelw}" y="{yy+2}" width="{W-labelw-70}" height="{rowh-5}" class="track"/>')
+            o.append(f'<rect x="{labelw}" y="{yy+2}" width="{bwid:.1f}" height="{rowh-5}" fill="{col}"><title>{nm}: {v:.1f}%</title></rect>')
+            o.append(f'<text x="{W}" y="{yy+rowh*0.72}" class="svg-num" text-anchor="end">{v:.1f}%</text>')
+        y+=rowh*2+gap
+    o.append("</svg>"); return "".join(o)
+
 def hs_chips(t):
     h=[]
     for g in ("MD1","MD2"):
@@ -185,24 +228,24 @@ for k in ORDER:
 def trow(label,f,cls=""):
     return "<tr><td>"+label+"</td>"+"".join(f'<td class="n {cls if f(TARGETS[k]) in ("0","—") and cls else ""}">{f(TARGETS[k])}</td>' for k in ORDER)+"</tr>"
 
-html=f"""<title>Three Ways To Miss A Pocket</title>
+html=f"""<title>Three Misses And A Fix</title>
 <style>
 :root {{
   --paper:#f5f7fa; --panel:#ffffff; --ink:#111418; --ink2:#4a5463; --muted:#8a93a3;
   --line:rgba(17,20,24,.12); --grid:rgba(17,20,24,.09);
   --md1:#2a78d6; --md2:#eb6834; --sim:#1baf7a; --loss:#96a0b0; --quad:rgba(42,120,214,.09);
-  --flag:#b8442a; --flagbg:#fdeee8;
+  --flag:#b8442a; --flagbg:#fdeee8; --win:#4a3aa7; --winbg:#eceafa;
 }}
 @media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{
   --paper:#0f1216; --panel:#171b21; --ink:#eef2f7; --ink2:#aab4c2; --muted:#7f8a99;
   --line:rgba(255,255,255,.14); --grid:rgba(255,255,255,.10);
   --md1:#5b9bec; --md2:#f5854f; --sim:#2cc98d; --loss:#5d6773; --quad:rgba(91,155,236,.13);
-  --flag:#ff9a76; --flagbg:#2e1a13; }} }}
+  --flag:#ff9a76; --flagbg:#2e1a13; --win:#9085e9; --winbg:#221d3d; }} }}
 :root[data-theme="dark"] {{
   --paper:#0f1216; --panel:#171b21; --ink:#eef2f7; --ink2:#aab4c2; --muted:#7f8a99;
   --line:rgba(255,255,255,.14); --grid:rgba(255,255,255,.10);
   --md1:#5b9bec; --md2:#f5854f; --sim:#2cc98d; --loss:#5d6773; --quad:rgba(91,155,236,.13);
-  --flag:#ff9a76; --flagbg:#2e1a13; }}
+  --flag:#ff9a76; --flagbg:#2e1a13; --win:#9085e9; --winbg:#221d3d; }}
 *{{box-sizing:border-box}}
 html,body{{margin:0;background:var(--paper);color:var(--ink);
   font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}}
@@ -256,6 +299,12 @@ dd{{margin:0;font-size:.86rem}}
 .panel{{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:22px}}
 .flag{{background:var(--flagbg);border:1px solid color-mix(in srgb,var(--flag) 35%,transparent);border-left:3px solid var(--flag);border-radius:4px;padding:1rem 1.15rem;margin:1.3rem 0 0}}
 .flag b{{color:var(--flag)}}
+.win{{background:var(--winbg);border:1px solid color-mix(in srgb,var(--win) 35%,transparent);
+  border-left:3px solid var(--win);border-radius:4px;padding:1rem 1.15rem;margin:1.3rem 0 0}}
+.win b{{color:var(--win)}}
+.win .lab{{font-family:ui-monospace,Menlo,monospace;font-size:.65rem;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--win);display:block;margin-bottom:.4rem}}
+td.good{{color:var(--win);font-weight:600}}
 .flag .lab{{font-family:ui-monospace,Menlo,monospace;font-size:.65rem;letter-spacing:.11em;text-transform:uppercase;color:var(--flag);display:block;margin-bottom:.4rem}}
 code{{font-size:.86em;background:var(--grid);padding:.1em .35em;border-radius:3px}}
 .tblwrap{{overflow-x:auto;margin-top:1rem}}
@@ -270,10 +319,11 @@ footer{{margin-top:3.4rem;padding-top:1.2rem;border-top:1px solid var(--line);fo
 
 <div class="wrap">
 <p class="eyebrow">PARP14 · BindCraft diagnostic</p>
-<h1>Three ways to miss a pocket</h1>
-<p class="dek">Three binder campaigns, ~33 GPU-days, <b>zero accepted designs</b>. They do not fail for the
-same reason, and none fails where I first assumed. This traces every attempt from hallucination to final
-filter using the trajectory coordinates themselves — and finds one filter that kills almost everything.</p>
+<h1>Three misses and a fix</h1>
+<p class="dek">Three PARP14 binder campaigns spent ~33 GPU-days and produced <b>zero</b> accepted designs.
+Tracing every attempt from hallucination to final filter found one gate responsible for almost all of it —
+and changing a single setting turned the same target into <b>9 accepted designs in 17 hours</b>.
+The failure analysis is kept below in full, because it is what located the fix.</p>
 
 <h2>The three runs</h2>
 <p class="sub">Identical pipeline, identical filters. Two of them (<code>md1_block_af3</code> /
@@ -374,8 +424,74 @@ what to change next.</p>
   interface, not geometry — so loosening hotspots would not help.</p>
 </div>
 
+<h2>The fix: one setting</h2>
+<p class="sub">If the failures had been near-misses, loosening the threshold would have been defensible. They were
+not. So the question became whether AF2 could recover the binding mode at all given a little help. BindCraft has a
+flag for exactly this — <code>predict_initial_guess</code> — which hands the validation model the binder's own
+trajectory coordinates instead of asking it to fold and dock from sequence alone.</p>
+<div class="panel">
+  <div class="legend">
+    <span><i class="sw" style="background:var(--md2)"></i>without guess (reproduces the failed runs)</span>
+    <span><i class="sw" style="background:var(--win)"></i>with predict_initial_guess</span>
+  </div>
+  {replay_svg()}
+  <p class="cap">A <b>paired</b> replay over already-generated trajectories: identical backbone, identical MPNN
+  sequence, identical model — only the validation protocol differs (n=396 pairs). Median i_pAE moves
+  <b>0.877 → 0.508</b>; 96.5% of pairs improve; <b>118 rescued, 0 lost</b>. Reusing banked trajectories meant this
+  took hours rather than the days a fresh campaign would have needed.</p>
+  <div class="flag">
+    <span class="lab">The honest caveat</span>
+    This does test a weaker criterion — "is this sequence consistent with this pose?" rather than "does this
+    sequence find this pose?". But it is <b>not</b> a rubber stamp: 70% of predictions still fail, the median still
+    sits above the threshold, and the spread stays wide. It discriminates; it just stops demanding de-novo docking,
+    which at 0.2% was not a workable pipeline.
+  </div>
+</div>
+
+<h2>It worked</h2>
+<p class="sub">Same target, same 15 hotspots, same filters, same Rosetta gates. One flag changed.</p>
+<div class="panel">
+  <div class="legend">
+    <span><i class="sw" style="background:var(--md1)"></i>md1_block_af3 baseline</span>
+    <span><i class="sw" style="background:var(--win)"></i>with predict_initial_guess</span>
+  </div>
+  {armA_svg()}
+  <div class="tblwrap">
+  <table>
+  <thead><tr><th></th><th>baseline</th><th>with guess</th></tr></thead>
+  <tbody>
+  <tr><td>Runtime</td><td class="n">14 days</td><td class="n">17 hours</td></tr>
+  <tr><td>Trajectory attempts</td><td class="n">617</td><td class="n">21</td></tr>
+  <tr><td>Designs reaching Rosetta</td><td class="n">10</td><td class="n">51</td></tr>
+  <tr><td><b>Accepted designs</b></td><td class="n zero">0</td><td class="n good">9</td></tr>
+  <tr><td>Distinct source trajectories</td><td class="n">1 of 270</td><td class="n good">5 of 12</td></tr>
+  </tbody>
+  </table>
+  </div>
+  <div class="win">
+    <span class="lab">Why these are real</span>
+    The Rosetta filters were never touched — only the AF2 gate changed. The accepted designs clear the exact
+    biophysical checks that killed all 10 baseline designs: <b>1.0–4.0 buried unsatisfied H-bonds</b> against a
+    limit of 4 (baseline sat at 5–9 and every one died there), with roughly twice the interface H-bonds and better
+    dG. And <b>Binder_RMSD 0.83–1.63 Å</b> — the binder predicted <em>alone</em> matches its pose in the complex,
+    a check computed with no initial guess at all, so the flag cannot inflate it.
+    Nine designs came from <b>five different trajectories</b>, so this is a broadly higher hit rate rather than
+    one lucky backbone.
+  </div>
+  <p class="cap" style="margin-top:1rem">The wall also moved rather than vanishing: i_pAE now rejects 58% of
+  sequences instead of 99.4%, and the leading rejection reason is Rosetta shape complementarity (32) followed by
+  unsatisfied H-bonds (20). That is a normal design funnel.</p>
+</div>
+
+<h2>What is still unknown</h2>
+<p class="sub">This is one target. The nine remaining targets — all five clamp states, both MD3 blockers and both
+MD2 blockers — are queued with the same flag, running one at a time on a single GPU. The clamp is the real test:
+its geometry was already correct (94% of relaxed trajectories contacted both domains) and it died at exactly this
+gate, so it is the cleanest case for whether the fix generalises beyond a single pocket.</p>
+
+
 <footer>
-All three runs are now stopped. Built from <code>Trajectory/</code> PDB coordinates,
+The three baseline runs are stopped; the predict_initial_guess queue is in progress. Built from <code>Trajectory/</code> PDB coordinates,
 <code>trajectory_stats.csv</code>, <code>mpnn_design_stats.csv</code> and <code>failure_csv.csv</code> under
 <code>bindcraft_md/designs/</code>. Distances are minimum heavy-atom separation between the binder chain and
 the union of that domain's hotspot residues. MPNN sequence counts are relaxed trajectories × <code>num_seqs=20</code>.
