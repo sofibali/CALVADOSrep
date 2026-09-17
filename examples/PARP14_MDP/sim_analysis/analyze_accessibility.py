@@ -370,7 +370,7 @@ def analyze_site_frame(site_com, pocket_resids, all_pos, all_resids,
 # Main analysis
 # ============================================================
 
-def run_accessibility(active_sets, n_rays, stride=1, target_frames=None):
+def run_accessibility(active_sets, n_rays, stride=1, target_frames=None, tag=''):
     print("\n" + "=" * 70)
     print("ACTIVE SITE STERIC ACCESSIBILITY ANALYSIS")
     print("=" * 70)
@@ -521,9 +521,9 @@ def run_accessibility(active_sets, n_rays, stride=1, target_frames=None):
     for set_key, res in results.items():
         for sname in res['available_sites']:
             if res['saa'][sname]:
-                save_dict[f'{set_key}_{sname}_saa'] = np.array(res['saa'][sname])
-                save_dict[f'{set_key}_{sname}_cone'] = np.array(res['cone'][sname])
-                save_dict[f'{set_key}_{sname}_density'] = np.array(res['density'][sname])
+                save_dict[f'{set_key}{tag}_{sname}_saa'] = np.array(res['saa'][sname])
+                save_dict[f'{set_key}{tag}_{sname}_cone'] = np.array(res['cone'][sname])
+                save_dict[f'{set_key}{tag}_{sname}_density'] = np.array(res['density'][sname])
     np.savez(npz_path, **save_dict)
     print(f"  Saved: accessibility_stats.npz "
           f"({len({k.rsplit('_', 2)[0] for k in save_dict})} sets total)")
@@ -719,6 +719,9 @@ def discover_fragments():
 
 
 def main():
+    # Hoisted: MAX_DIST/PROBE_RADIUS are read below as argparse defaults and
+    # rebound after parsing, and Python requires the declaration first.
+    global MAX_DIST, PROBE_RADIUS, FIG_PATH
     parser = ArgumentParser(description='Active site steric accessibility analysis')
     parser.add_argument('--set', nargs='+', default=None,
                         help="Sets to analyze (e.g. fl, fl_optimized, "
@@ -737,6 +740,19 @@ def main():
                              'has no metadata.json.')
     parser.add_argument('--nrays', type=int, default=N_RAYS,
                         help=f'Number of probe rays (default: {N_RAYS})')
+    parser.add_argument('--max-dist', type=float, default=MAX_DIST, metavar='NM',
+                        help=f'How far along each ray to test for obstruction '
+                             f'(default {MAX_DIST} nm). This sets what counts as '
+                             f'"blocking": it is the size of the approaching '
+                             f'species you care about. Sweep it to check whether '
+                             f'a conclusion depends on the choice.')
+    parser.add_argument('--probe-radius', type=float, default=PROBE_RADIUS,
+                        metavar='NM',
+                        help=f'Radius of the cylinder swept along each ray '
+                             f'(default {PROBE_RADIUS} nm).')
+    parser.add_argument('--tag', default='', metavar='STR',
+                        help='Suffix appended to the cache keys, so a parameter '
+                             'sweep does not overwrite the production numbers.')
     parser.add_argument('--stride', type=int, default=1,
                         help='Analyze every Nth post-equilibration frame '
                              '(default: 1 = every frame). The 2 us runs hold '
@@ -788,11 +804,12 @@ def main():
     else:
         active_sets = ['fl', 'md', 'core', 'mka']
 
-    global FIG_PATH
     FIG_PATH = str(_get_fig_dir('03_accessibility', sims=active_sets))
 
+    MAX_DIST = args.max_dist
+    PROBE_RADIUS = args.probe_radius
     run_accessibility(active_sets, args.nrays, stride=args.stride,
-                      target_frames=args.target_frames)
+                      target_frames=args.target_frames, tag=args.tag)
 
 
 if __name__ == '__main__':
