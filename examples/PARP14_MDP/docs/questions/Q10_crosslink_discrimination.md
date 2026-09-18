@@ -149,13 +149,18 @@ writer-eraser distance itself** — feasible only in `core` and `norrm`.
 Correlating each site's inter-domain crosslink count against its solid-angle
 accessibility from [[Q3]]/[[Q4]]:
 
-| site | n | r (XL vs SAA) | partial r, controlling length | verdict |
-|---|---|---|---|---|
-| ART | 9 | **−0.891** | −0.911 | survives |
-| MD2 | 17 | **−0.745** | −0.867 | survives |
-| WWE | 16 | **−0.703** | −0.728 | survives |
-| MD1 | 14 | **−0.614** | −0.753 | survives |
-| MD3 | 18 | −0.564 | −0.722 | survives |
+| site | n | r (XL vs SAA) | verdict |
+|---|---|---|---|
+| ART | 9 | **−0.911** | strong |
+| MD2 | 17 | **−0.837** | strong |
+| WWE | 16 | **−0.709** | strong |
+| MD1 | 14 | **−0.706** | strong |
+| MD3 | 18 | **−0.685** | strong |
+
+Computed with SAA at the 3 nm probe, matching the crosslink ceiling. Every site
+is stronger than at the earlier 5 nm probe (MD3 moved from −0.564 "weak" to
+−0.685 "strong") — making the two measures use the same reachability criterion
+improves their agreement, which is itself a small consistency check.
 
 The correlation is **negative**, which is the physically sensible direction: a
 site carrying many inter-domain crosslinks is packed against its neighbours, and

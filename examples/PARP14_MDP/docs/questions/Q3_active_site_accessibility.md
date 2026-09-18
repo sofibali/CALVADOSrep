@@ -24,7 +24,7 @@ Solid-angle accessibility (SAA), `sim_analysis/analyze_accessibility.py`:
 
 - from each pocket's centre of mass, cast **200 rays** on a Fibonacci sphere
 - a ray is **blocked** if any non-pocket bead lies within **0.5 nm** of its path
-  out to **5 nm**
+  out to **3 nm**
 - SAA = unblocked fraction. 0 = fully occluded, 1 = fully open
 - beads within **±10 residues** of the pocket are excluded, so a domain does not
   count as occluding itself
@@ -33,13 +33,36 @@ Sampling: `--target-frames 2000`, which picks the stride per trajectory. The
 sets span 3–4 k-frame originals and 100 k-frame extensions, so a single fixed
 stride cannot serve both.
 
+### The 3 nm probe length is a SELECTED cutoff
+
+It is chosen, not derived — set to match the DSS CA–CA crosslink ceiling used in
+[[Q6]], so "reachable" means the same distance in both analyses. A sweep over
+1–10 nm (`sweep_maxdist.sh`) shows the choice does not drive anything:
+
+| probe | MD1 | MD2 | ART | MD3 | WWE | ordering |
+|---|---|---|---|---|---|---|
+| 1 nm | 0.737 | 0.828 | 0.912 | **1.000** | **1.000** | saturated, unusable |
+| 2 nm | 0.452 | 0.594 | 0.606 | 0.733 | 0.952 | ✓ |
+| **3 nm** | **0.405** | **0.497** | **0.569** | **0.640** | **0.854** | ✓ |
+| 5 nm | 0.369 | 0.446 | 0.549 | 0.580 | 0.781 | ✓ |
+| 10 nm | 0.345 | 0.416 | 0.532 | 0.541 | 0.745 | ✓ |
+
+(`fl` values.) Three things follow: below 2 nm the metric is **degenerate**
+(MD3 and WWE both hit 1.000); the gradient collapses from −0.285 to −0.0025 SAA
+per nm, so it is asymptotic and local; and **the ordering is identical at every
+distance from 2 nm up**. No conclusion here depends on the choice.
+
+Matching the crosslink ceiling also has an empirical payoff — the correlation
+between crosslink count and exposure in [[Q10]] is stronger at 3 nm than at 5 nm
+for all five sites.
+
 ## The answer
 
 **A strictly invariant ordering, with 0 / 19 violations:**
 
 ```
 MD1  <  MD2  <  ART  <  MD3  <  WWE
-0.355   0.448   0.507   0.576   0.765      (mean SAA)
+0.384   0.485   0.529   0.623   0.823      (mean SAA, 3 nm probe)
 ```
 
 Whichever domains are deleted, the sites keep this rank order. The ordering is a
@@ -48,10 +71,10 @@ property of the fold, not of any particular truncation.
 Two consequences:
 
 1. **MD1 (the eraser) is always the most buried catalytic site.** See [[Q4]].
-2. **WWE is always the most exposed** (mean 0.765, up to 0.891) — consistent
+2. **WWE is always the most exposed** (mean 0.823, up to 0.924) — consistent
    with its role as a PAR reader that must engage a polymer in trans.
 
-Absolute values shift a lot with truncation (MD1 spans 0.231–0.453 across
+Absolute values shift a lot with truncation (MD1 spans 0.261–0.453 across
 constructs); only the *ordering* is invariant. The ranges overlap between sites —
 the invariant is the **within-construct** ordering, not a global separation.
 

@@ -1,0 +1,13 @@
+construct: md2_md3
+arm: homotypic
+sysname: parp14_md2_md3
+nres: 385
+nchain: 100
+n_rna: 0
+box:
+- 20.0
+- 20.0
+- 260
+steps: 1000000
+beads: 38500
+note: GPU throughput calibration

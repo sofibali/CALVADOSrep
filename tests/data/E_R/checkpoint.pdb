@@ -1,0 +1,9 @@
+REMARK   1 CREATED WITH OPENMM 8.2, 2026-09-16
+CRYST1   80.000   80.000   80.000  90.00  90.00  90.00 P 1           1 
+MODEL        1
+ATOM      1  CA  GLU A   1      66.625  39.951  77.074  1.00  0.00           C  
+TER       2      GLU A   1
+ATOM      3  CA  ARG B   1      41.410  43.602  62.764  1.00  0.00           C  
+TER       4      ARG B   1
+ENDMDL
+END

@@ -1,8 +1,8 @@
 # Q8 — Can we design binders that block a macrodomain pocket, or clamp two macrodomains together?
 
-**Status:** OPEN — campaign ongoing. First pass returned 0 accepted designs;
-a parameter sweep is in progress to determine whether that is target difficulty
-or filter strictness.
+**Status:** ONGOING — the sweep has produced accepted designs. The
+`predict_initial_guess` protocol is what unlocked it; read the caveat on what
+that metric improvement does and does not mean.
 
 ---
 
@@ -79,45 +79,93 @@ set used to see what *would* pass. Key interface thresholds there:
 
 ---
 
-## First-pass result (to be confirmed or overturned by the sweep)
+## Result — see `bindcraft_md/GPU_SERVER_SETUP.md` (primary source)
 
-Three targets have substantial output — `md1_block_af3` (5128 files),
-`clamp_md1md2_state3` (4690), `md1_block_sim` (3348). Current state:
+That file is the authoritative write-up and is more rigorous than the summary
+below: it contains a **paired replay** (`analysis/replay_mpnn.py`, 396 pairs —
+identical backbone, sequence and model, only the validation protocol differs)
+that isolates the flag properly. Read it first. Summary:
 
-- every `designs/*/final_design_stats.csv` is **header-only**
-- **zero** PDBs under any `designs/*/Accepted/` (the entries that look like
-  results are empty BindCraft scaffold dirs: `Animation`, `Pickle`, `Plots`,
-  `Ranked`)
+### The baseline campaigns all returned zero
 
-Where they died (`failure_csv.csv`) — rejection concentrates at the
-**interface-confidence** filters, not at clash or sequence stages:
-
-| target | Trajectory_Clashes | pAE | i_pAE | i_pLDDT |
+| target | ran | attempts | scored | accepted |
 |---|---|---|---|---|
-| `md1_block_af3` | 46 | 1283 | 5243 | 5370 |
-| `clamp_md1md2_state3` | 110 | 1642 | 4319 | 4400 |
+| `md1_block_af3` | 14 days | 617 | 10 | **0** |
+| `clamp_md1md2_state3` | 12 days | 605 | 0 | **0** |
+| `md1_block_sim` | 7 days | 474 | 0 | **0** |
 
-`i_pAE` and `i_pLDDT` dominate — AlphaFold is not confident about the
-*interface* of the designed complexes. That is the signature of a hard target
-rather than a misconfigured run, which is exactly what the sweep is set up to
-discriminate.
+### The wall was `i_pAE` at AF2 re-prediction, and it was not marginal
 
-Sweep runs so far are incomplete: `logs/sweep_af3_diag.log` ends in a
-`KeyboardInterrupt` during `binder_hallucination`; `logs/sweep_chain.log` holds
-one line, "waiting for replay PID 4003519 to finish".
+Median i_pAE **0.878** against a 0.35 threshold; **95.5% of failures exceed
+0.70**. Meanwhile pLDDT passes 69% — the binders *fold* fine, they do not
+*dock*. With `mpnn_fix_interface: True`, MPNN preserves interface residues
+verbatim and AF2 still cannot recover the binding mode.
+
+→ **Relaxing the i_pAE threshold would not have been defensible.** These are not
+near-misses. That rules out "the filters are too strict", which was one of the
+two hypotheses the sweep was built to test.
+
+### `predict_initial_guess` is the fix
+
+Paired replay, same trajectories, only the validation protocol differing:
+
+| | guess OFF | guess ON |
+|---|---|---|
+| i_pAE median | 0.877 | **0.508** |
+| pass all three AF2 gates | 1/396 | **119/396** |
+
+118 rescued, 0 lost, 96.5% of pairs improved. Full-pipeline confirmation on the
+same target with the same filters: runtime **14 days → 17 hours**, attempts
+617 → 21, accepted **0 → 9**, from 5 distinct trajectories rather than one lucky
+backbone.
+
+### Why this is not just a rubber stamp
+
+The obvious worry is that seeding AF2 with binder atom positions
+("introduce bias", per BindCraft's README) simply makes the metric easier. Three
+things argue against dismissing the result on that basis, all from the primary
+source:
+
+- **It still discriminates.** 70% of sequences still fail and the median i_pAE
+  stays above threshold. The wall moved (99.4% → 58% rejection) rather than
+  vanished.
+- **Independent metrics improved too.** The accepted designs clear Rosetta gates
+  that killed every baseline design: 1.0–4.0 buried unsatisfied H-bonds (limit 4;
+  baseline sat at 5–9), ~2× the interface H-bonds, dG −40 to −70.
+- **`Binder_RMSD` 0.83–1.63 Å was computed with no initial guess**, so that one
+  cannot be inflated by the flag.
+
+The leading rejection is now Rosetta shape complementarity, not AF2 confidence.
+
+*(An earlier version of this file warned that i_pAE/i_pTM from these runs were
+unvalidated. That was too strong — the guess-off Binder_RMSD and the Rosetta
+gates are exactly the independent check it asked for.)*
 
 ## What would close this question
 
-- Does any arm of the sweep produce accepted designs under `diagnostic_filters`?
-  If yes → the production filters are too strict for this target class. If no →
-  the targets themselves are not designable by this protocol.
-- Does the `_af3` vs `_sim` split matter? That tells you whether starting
-  conformation is the bottleneck.
-- Do clamps behave differently from blocks? Clamps ask for a larger, composite
-  interface and may fail for a different reason.
+Per `GPU_SERVER_SETUP.md`, `sweep/run_queue.sh` is **in flight** — all 9
+remaining targets with the flag, serial on one GPU, stopping at 8 accepted or
+`max_trajectories=50`. Progress: `logs/queue_master.log`.
+
+Open after that:
+
+1. **Does the fix generalise past MD1?** The clamp is the cleanest test — its
+   geometry was already right (94% of relaxed trajectories contact both domains)
+   and it died at exactly this gate. First evidence is positive:
+   `guess_clamp_md1md2_state3` has 2 accepted.
+2. **Receptor conformer matters and is unresolved.** Same pocket and hotspots,
+   AF3 vs CALVADOS-backmapped: clash rate 10% → 35%, usable relaxed yield
+   58% → 30%. The backmapped surface is materially harder to design against.
+3. **`md2_block_*` OOMs on a 46 GB L40S** (586-res target → 683-res complex →
+   31.4 GiB single alloc). Either crop the target — all 23 MD2 hotspots lie in
+   216–404, so MD3 is dead weight — or run with `TF_FORCE_UNIFIED_MEMORY=1
+   XLA_PYTHON_CLIENT_MEM_FRACTION=4.0`.
+4. **Shape complementarity is the new bottleneck**, having replaced AF2
+   confidence.
 
 ## Note on stale docs
 
+These are now badly out of date and should be corrected in place:
 `bindcraft_md/README.md:87-88` still says "BindCraft is **NOT** yet installed"
 and `GPU_SERVER_SETUP.md` (2026-08-14) says "`designs/` and `logs/` are empty —
 nothing has been run yet". Both predate the runs above. The `sweep/` directory is

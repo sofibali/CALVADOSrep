@@ -17,14 +17,14 @@ Last reviewed: **2026-09-16**.
 |---|---|---|---|
 | [1](questions/Q1_domain_restraints.md) | Which domain boundaries reproduce the experimental structures? | ✅ answered, adopted | Trim depth barely matters — so use the shortest boundaries matching experiment, plus Go restraints for the KHs. |
 | [2](questions/Q2_conformational_states.md) | Does the macrodomain module occupy discrete states? | ✅ answered — **negative** | No. Timescales never plateau; it is a diffusive chain, not a state machine. |
-| [3](questions/Q3_active_site_accessibility.md) | Are the catalytic sites sterically reachable? | ✅ answered | Invariant ordering, 0/19 violations: **MD1 < MD2 < ART < MD3 < WWE**. |
+| [3](questions/Q3_active_site_accessibility.md) | Are the catalytic sites sterically reachable? | ✅ answered | Invariant ordering, 0/19 violations: **MD1 < MD2 < ART < MD3 < WWE** — and independent of the probe length. |
 | [4](questions/Q4_writer_vs_eraser.md) | Is the writer or the eraser favoured? | ✅ answered (steric only) | Writer-leaning everywhere. The KH region selectively buries the eraser. |
 | [5](questions/Q5_inter_domain_contacts.md) | Do the domains touch each other? | ✅ answered | Largely not — inter-domain contact is 20–40× rarer than intra-domain. |
 | [6](questions/Q6_lysine_contacts.md) | Which lysine pairs can form a DSS crosslink? | ✅ answered (fl) | 135/150 reachable; SASD removed 15 buried pairs the distance test called confident. |
-| [7](questions/Q7_surface_faces.md) | Which residues are exposed, and on which face? | ✅ answered | Three-face split on restrained residues. ART and MD3 present back faces; the rim is depleted in all 24 domain×construct combinations. |
-| [8](questions/Q8_binder_design.md) | Can we block or clamp the macrodomains? | 🔄 ongoing | 11 targets + a 3-arm diagnostic sweep. First pass: 0 accepted, failing at interface confidence. |
+| [7](questions/Q7_surface_faces.md) | Which residues are exposed, and on which face? | ✅ answered | ART and MD3 present back faces; rim depleted 24/24. **KH7a sits on MD1's catalytic face** — shown by two ±KH7a matched pairs. |
+| [8](questions/Q8_binder_design.md) | Can we block or clamp the macrodomains? | 🔄 ongoing | Yes, with `predict_initial_guess`: 14 days/0 accepted → 17 h/9 accepted. Validated by guess-off Binder_RMSD + Rosetta gates. |
 | [9](questions/Q9_self_association_puncta.md) | Which constructs form puncta with RNA / ADPr? | 🔜 prepared | Slab sims built and validated; needs GPU + the sort-seq data. |
-| [10](questions/Q10_crosslink_discrimination.md) | Which constructs should we crosslink to map eraser/reader/writer exposure? | ✅ answered | Yes. 9 discriminating domain pairs; XL count predicts exposure (r −0.56 to −0.89, size-independent). Panel: kh1_art_full + core + fl. |
+| [10](questions/Q10_crosslink_discrimination.md) | Which constructs should we crosslink to map eraser/reader/writer exposure? | ✅ answered | Yes. 9 discriminating domain pairs; XL count predicts exposure (r −0.69 to −0.91, size-independent). Panel: kh1_art_full + core + fl. |
 
 ---
 

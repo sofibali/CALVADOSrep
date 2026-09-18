@@ -1,0 +1,13 @@
+construct: fl_wwe_full_go
+arm: rna
+sysname: parp14_fl_wwe_full_go
+nres: 1602
+nchain: 31
+n_rna: 9
+box:
+- 40.0
+- 40.0
+- 520
+steps: 200000000
+beads: 50382
+note: -ART  of matched pair C

@@ -1,0 +1,13 @@
+construct: fl
+arm: homotypic
+sysname: parp14
+nres: 1801
+nchain: 30
+n_rna: 0
+box:
+- 40.0
+- 40.0
+- 520
+steps: 200000000
+beads: 54030
+note: +ART  of matched pair C, full length

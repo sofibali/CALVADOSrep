@@ -1,0 +1,13 @@
+construct: kh1_art_full
+arm: rna
+sysname: parp14_kh1_art_full
+nres: 1487
+nchain: 34
+n_rna: 10
+box:
+- 40.0
+- 40.0
+- 520
+steps: 200000000
+beads: 51358
+note: +ART  of matched pair B

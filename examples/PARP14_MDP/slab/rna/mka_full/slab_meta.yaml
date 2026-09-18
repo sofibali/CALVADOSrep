@@ -1,0 +1,13 @@
+construct: mka_full
+arm: rna
+sysname: parp14_mka_full
+nres: 1012
+nchain: 49
+n_rna: 15
+box:
+- 30.0
+- 30.0
+- 390
+steps: 200000000
+beads: 50788
+note: +ART  of matched pair A

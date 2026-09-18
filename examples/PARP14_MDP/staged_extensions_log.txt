@@ -1,0 +1,511 @@
+[15:24:53] Launching 175 replicate extensions across 7 sets, 32 concurrent (~128 threads)
+[15:25:05]   FAILED fl/seed-1_sample-4: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-1_sample-4/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-2_sample-1: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-2_sample-1/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-4_sample-4: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-4_sample-4/input/parp14.pdb'
+[15:25:05]   FAILED md/seed-2_sample-1: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:05]   FAILED fl/seed-5_sample-2: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-5_sample-2/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-3_sample-3: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-3_sample-3/input/parp14.pdb'
+[15:25:05]   FAILED md/seed-1_sample-4: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:05]   FAILED fl/seed-4_sample-1: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-4_sample-1/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-5_sample-1: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-5_sample-1/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-3_sample-1: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-3_sample-1/input/parp14.pdb'
+[15:25:05]   progress: 10/175 done (10 failed)
+[15:25:05]   FAILED fl/seed-5_sample-0: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-5_sample-0/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-1_sample-2: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-1_sample-2/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-4_sample-2: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-4_sample-2/input/parp14.pdb'
+[15:25:05]   FAILED md/seed-1_sample-3: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:05]   FAILED fl/seed-3_sample-2: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-3_sample-2/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-1_sample-3: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-1_sample-3/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-3_sample-4: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-3_sample-4/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-5_sample-3: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-5_sample-3/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-5_sample-4: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-5_sample-4/input/parp14.pdb'
+[15:25:05]   FAILED md/seed-1_sample-2: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:05]   progress: 20/175 done (20 failed)
+[15:25:05]   FAILED fl/seed-1_sample-0: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-1_sample-0/input/parp14.pdb'
+[15:25:05]   FAILED md/seed-1_sample-0: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:05]   FAILED fl/seed-2_sample-0: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-2_sample-0/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-4_sample-0: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-4_sample-0/input/parp14.pdb'
+[15:25:05]   FAILED md/seed-2_sample-0: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:05]   FAILED fl/seed-4_sample-3: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-4_sample-3/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-1_sample-1: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-1_sample-1/input/parp14.pdb'
+[15:25:05]   FAILED fl/seed-2_sample-4: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-2_sample-4/input/parp14.pdb'
+[15:25:05]   FAILED md/seed-1_sample-1: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:05]   FAILED fl/seed-3_sample-0: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-3_sample-0/input/parp14.pdb'
+[15:25:05]   progress: 30/175 done (30 failed)
+[15:25:06]   FAILED fl/seed-2_sample-3: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-2_sample-3/input/parp14.pdb'
+[15:25:06]   FAILED fl/seed-2_sample-2: CALVADOS/lib/python3.10/site-packages/MDAnalysis/lib/picklable_file_io.py", line 266, in __init__
+    super().__init__(name, mode)
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/bz2.py", line 81, in __init__
+    self._fp = _builtin_open(filename, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/fl_seed-2_sample-2/input/parp14.pdb'
+[15:25:15]   FAILED md/seed-2_sample-2: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:15]   FAILED md/seed-2_sample-3: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:15]   FAILED md/seed-3_sample-0: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:15]   FAILED md/seed-4_sample-1: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:15]   FAILED md/seed-2_sample-4: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:16]   FAILED md/seed-3_sample-3: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:16]   FAILED md/seed-3_sample-1: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:16]   FAILED md/seed-5_sample-0: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:16]   progress: 40/175 done (40 failed)
+[15:25:16]   FAILED core/seed-2_sample-0: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:16]   FAILED md/seed-3_sample-4: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:16]   FAILED md/seed-3_sample-2: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:16]   FAILED core/seed-2_sample-1: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:16]   FAILED core/seed-3_sample-2: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:16]   FAILED core/seed-2_sample-3: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:16]   FAILED md/seed-4_sample-2: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:17]   FAILED md/seed-5_sample-1: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:17]   FAILED core/seed-1_sample-4: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:17]   FAILED md/seed-4_sample-4: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:17]   progress: 50/175 done (50 failed)
+[15:25:17]   FAILED md/seed-5_sample-2: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:17]   FAILED md/seed-4_sample-3: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:17]   FAILED core/seed-1_sample-1: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:17]   FAILED md/seed-4_sample-0: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:17]   FAILED core/seed-1_sample-0: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:17]   FAILED md/seed-5_sample-3: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:17]   FAILED core/seed-3_sample-1: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:17]   FAILED core/seed-3_sample-0: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:17]   FAILED core/seed-1_sample-2: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:17]   FAILED core/seed-3_sample-3: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:17]   progress: 60/175 done (60 failed)
+[15:25:17]   FAILED core/seed-2_sample-4: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:17]   FAILED core/seed-1_sample-3: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:17]   FAILED core/seed-2_sample-2: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:18]   FAILED md/seed-5_sample-4: nvs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_md/residues_CALVADOS3.csv'
+[15:25:25]   FAILED core/seed-4_sample-0: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:26]   FAILED core/seed-4_sample-4: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:26]   FAILED core/seed-4_sample-2: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:27]   FAILED core/seed-4_sample-1: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:27]   FAILED core/seed-3_sample-4: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:27]   FAILED core/seed-5_sample-0: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:27]   progress: 70/175 done (70 failed)
+[15:25:27]   FAILED core/seed-5_sample-1: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:27]   FAILED core/seed-5_sample-2: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:27]   FAILED core/seed-4_sample-3: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:27]   FAILED core/seed-5_sample-3: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:27]   FAILED core/seed-5_sample-4: s/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_core/residues_CALVADOS3.csv'
+[15:25:27]   FAILED mka/seed-1_sample-4: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:28]   FAILED mka/seed-2_sample-0: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:28]   FAILED mka/seed-1_sample-2: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:28]   FAILED mka/seed-1_sample-3: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-3_sample-1: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   progress: 80/175 done (80 failed)
+[15:25:29]   FAILED mka/seed-1_sample-1: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-1_sample-0: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-2_sample-2: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-4_sample-0: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-2_sample-4: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-3_sample-4: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-2_sample-1: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-3_sample-2: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-5_sample-0: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-2_sample-3: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   progress: 90/175 done (90 failed)
+[15:25:29]   FAILED mka/seed-4_sample-4: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-4_sample-1: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-4_sample-2: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:29]   FAILED mka/seed-3_sample-0: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:30]   FAILED mka/seed-4_sample-3: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:30]   FAILED mka/seed-3_sample-3: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:36]   FAILED mka/seed-5_sample-1: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:37]   FAILED mka/seed-5_sample-2: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:37]   FAILED mka/seed-5_sample-3: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:38]   FAILED mka/seed-5_sample-4: vs/CALVADOS/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1705, in _make_engine
+    self.handles = get_handle(
+  File "/home/sbali/miniconda3/envs/CALVADOS/lib/python3.10/site-packages/pandas/io/common.py", line 863, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sbali/CALVADOS/examples/PARP14_MDP/input_mka/residues_CALVADOS3.csv'
+[15:25:38]   progress: 100/175 done (100 failed)

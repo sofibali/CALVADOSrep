@@ -106,7 +106,15 @@ def _resolve_sim_paths(set_key, sysname, seed, sample):
 
 # Accessibility parameters
 PROBE_RADIUS = 0.5    # nm — CG bead radius; tests if approach path is sterically clear
-MAX_DIST = 5.0        # nm — how far to check for obstruction
+# How far along each ray obstruction is tested. A SELECTED cutoff, not a derived
+# one -- chosen at 3.0 nm to match the DSS CA-CA crosslink ceiling used in
+# analyze_lys_contacts.py, so "reachable" means the same distance in both
+# analyses. A sweep over 1-10 nm (sweep_maxdist.sh) shows the site ordering
+# MD1 < MD2 < ART < MD3 < WWE is identical at every distance from 2 nm up, and
+# that SAA is within a few percent of its asymptote by ~5 nm, so no conclusion
+# here depends on the choice. Below 2 nm the metric saturates (MD3 and WWE both
+# hit 1.000) and is unusable.
+MAX_DIST = 3.0        # nm — see above; matches the DSS crosslink ceiling
 N_RAYS = 200          # rays per site per frame (Fibonacci sphere)
 SEQ_SEP = 10          # ignore beads within ±10 residues of pocket (own fold)
 
@@ -511,7 +519,10 @@ def run_accessibility(active_sets, n_rays, stride=1, target_frames=None, tag='')
     # computed by earlier invocations, so an incremental backfill (one set per
     # run -- the only tractable way to cover 200+ replicates) destroyed its own
     # results and left the npz holding just the set that happened to run last.
-    npz_path = os.path.join(DATA_PATH, 'accessibility_stats.npz')
+    npz_path = os.path.join(
+        DATA_PATH,
+        'accessibility_stats.npz' if not tag
+        else f'accessibility_sweep{tag}.npz')
     save_dict = {}
     if os.path.isfile(npz_path):
         with np.load(npz_path, allow_pickle=True) as _old:
@@ -521,9 +532,9 @@ def run_accessibility(active_sets, n_rays, stride=1, target_frames=None, tag='')
     for set_key, res in results.items():
         for sname in res['available_sites']:
             if res['saa'][sname]:
-                save_dict[f'{set_key}{tag}_{sname}_saa'] = np.array(res['saa'][sname])
-                save_dict[f'{set_key}{tag}_{sname}_cone'] = np.array(res['cone'][sname])
-                save_dict[f'{set_key}{tag}_{sname}_density'] = np.array(res['density'][sname])
+                save_dict[f'{set_key}_{sname}_saa'] = np.array(res['saa'][sname])
+                save_dict[f'{set_key}_{sname}_cone'] = np.array(res['cone'][sname])
+                save_dict[f'{set_key}_{sname}_density'] = np.array(res['density'][sname])
     np.savez(npz_path, **save_dict)
     print(f"  Saved: accessibility_stats.npz "
           f"({len({k.rsplit('_', 2)[0] for k in save_dict})} sets total)")
@@ -751,8 +762,10 @@ def main():
                         help=f'Radius of the cylinder swept along each ray '
                              f'(default {PROBE_RADIUS} nm).')
     parser.add_argument('--tag', default='', metavar='STR',
-                        help='Suffix appended to the cache keys, so a parameter '
-                             'sweep does not overwrite the production numbers.')
+                        help='Write to data/accessibility_sweep<TAG>.npz instead '
+                             'of the production cache. Use for parameter sweeps: '
+                             'tagged KEYS in the shared file would be read '
+                             'downstream as extra constructs.')
     parser.add_argument('--stride', type=int, default=1,
                         help='Analyze every Nth post-equilibration frame '
                              '(default: 1 = every frame). The 2 us runs hold '

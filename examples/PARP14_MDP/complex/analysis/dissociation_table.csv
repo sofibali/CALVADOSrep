@@ -1,0 +1,2 @@
+system,variant,pair,n_rep,bound_frac_mean,bound_frac_range,survival_ns_median,survival_ns_range,reps_bound_throughout,final_min_dist_nm
+p9_dtx3l,binding,parp9-dtx3l,4,0.048,0.02-0.07,96.0,72-100,0,9.1

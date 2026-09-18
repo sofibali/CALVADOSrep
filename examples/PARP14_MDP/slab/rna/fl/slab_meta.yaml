@@ -1,0 +1,13 @@
+construct: fl
+arm: rna
+sysname: parp14
+nres: 1801
+nchain: 30
+n_rna: 9
+box:
+- 40.0
+- 40.0
+- 520
+steps: 200000000
+beads: 54750
+note: +ART  of matched pair C, full length

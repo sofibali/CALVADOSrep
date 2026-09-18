@@ -1,0 +1,9 @@
+REMARK   1 CREATED WITH OPENMM 8.2, 2026-09-16
+CRYST1   80.000   80.000   80.000  90.00  90.00  90.00 P 1           1 
+MODEL        1
+ATOM      1  CA  TYR A   1       8.621  33.655  46.597  1.00  0.00           C  
+TER       2      TYR A   1
+ATOM      3  CA  TRP B   1      57.025  17.150  54.146  1.00  0.00           C  
+TER       4      TRP B   1
+ENDMDL
+END

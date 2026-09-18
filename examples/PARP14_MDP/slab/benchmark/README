@@ -1,0 +1,12 @@
+# GPU benchmark for the PARP14 slab campaign.
+#
+# pollux has no GPU, so the panel cost in prepare_slab.py --report is an
+# ESTIMATE extrapolated from CPU throughput. Run this once on the GPU server to
+# replace it with a measurement:
+#
+#     sbatch --array=0-0 submit_slab.slurm slab/benchmark
+#
+# It runs the smallest construct for a short fixed number of steps. Divide
+# steps*beads by the wall time in the log to get bead-steps/s, then re-run
+#     python prepare_slab.py --report --gpu-rate <bead_steps_per_s>
+# to cost the real panel.

@@ -1,0 +1,85 @@
+# Active / ligand-binding site definitions for PARP9 and DTX3L.
+#
+# Derived 2026-09-17 for the binding campaign, in the same format as
+# parp14/input/active_sites.yaml. Numbering is UniProt canonical, which is also
+# the numbering used by these simulations: the PARP9 chain is 854 aa (Q8IXQ6)
+# and the DTX3L chain is 740 aa (Q8TDB6), both exact matches.
+#
+# Sites marked `source: structure` were computed here as every residue with any
+# atom within 4.0 A of the bound ligand in the cited PDB entry. Sites marked
+# `source: homology` were transferred by structural superposition. Sites marked
+# `source: mutagenesis` have no ligand-bound structure and rest on published
+# point mutants only -- treat those as weaker.
+
+parp9:
+  MD1:
+    description: "Macrodomain 1 - ADP-ribose reader"
+    domain_range: [107, 296]          # UniProt Macro 1; restraint block [107, 296]
+    source: structure
+    evidence: "PDB 9QYE, ADP-ribose (AR6), 1.44 A; contacts <=4.0 A"
+    catalytic_residues: [146, 147, 148, 125, 280]
+    # G147E reduces poly(ADP-ribose) binding ~50% (UniProt mutagenesis) and sits
+    # in this pocket, which is an independent check on the structural assignment.
+    pocket_residues: [125, 126, 127, 138, 140, 144, 146, 147, 148, 149, 150,
+                      238, 240, 241, 242, 243, 244, 279, 280, 281, 284]
+
+  MD2:
+    description: "Macrodomain 2 - ADP-ribose / NAD+ reader"
+    domain_range: [306, 487]          # UniProt Macro 2; restraint block [311, 493]
+    source: structure
+    evidence: "PDB 9QYF ADP-ribose (APR) 1.30 A and 9QYH NAD 2.50 A; union of contacts <=4.0 A"
+    catalytic_residues: [345, 346, 347, 325, 396, 472]
+    # G346E reduces poly(ADP-ribose) binding ~50% (UniProt mutagenesis); in pocket.
+    pocket_residues: [324, 325, 326, 327, 337, 338, 339, 345, 346, 347, 348, 351,
+                      396, 402, 428, 429, 430, 431, 432, 433, 434, 435, 436,
+                      467, 469, 472, 475]
+
+  ART:
+    description: "PARP-like domain - CATALYTICALLY DEGENERATE, no ligand structure"
+    domain_range: [628, 850]          # UniProt PARP catalytic; restraint block [644, 823]
+    source: mutagenesis
+    evidence: >
+      No ADP-ribose/NAD+-bound structure exists for this domain. Aligning it to
+      PARP14's ART (31% identity) puts V707, C728 and D729 at the positions of
+      PARP14's H1682/Y1714 catalytic triad, so the H-Y-[E/I] motif is NOT
+      retained -- PARP9 is a pseudo-ART. Consistent with Chatrin et al. 2020,
+      which showed DTX3L's own RING-DTC catalyses ADP-ribosylation of ubiquitin
+      independently of PARP9. The residues below are the only positions with
+      direct functional evidence, from UniProt mutagenesis: deletion of 719-722
+      abolishes ADP-ribosylation and DTX3L binding, F738K severely reduces
+      ubiquitin ADP-ribosylation. This is a weak, indirect site definition.
+    catalytic_residues: [719, 720, 721, 722, 738]
+    pocket_residues: [719, 720, 721, 722, 738]
+
+dtx3l:
+  RING:
+    description: "RING E3 ligase catalytic centre (Zn-coordinating)"
+    domain_range: [561, 600]          # UniProt RING-type zinc finger; restraint block [556, 607]
+    source: mutagenesis
+    evidence: >
+      No DTX3L RING structure is deposited (only 3PG6 = DTC, and 8R79 = D2).
+      C561A, C596A and C599A each abolish catalytic activity (UniProt
+      mutagenesis). These are zinc ligands marking the RING core rather than a
+      ligand pocket, so the axis they define points at the structural centre of
+      the domain, not at the E2-binding surface.
+    catalytic_residues: [561, 596, 599]
+    pocket_residues: [561, 596, 599]
+
+  DTC:
+    description: "Deltex C-terminal domain - NAD+ binding site"
+    domain_range: [601, 740]          # restraint block [608, 737]
+    source: homology
+    evidence: >
+      DTX3L's own DTC structure (3PG6) is apo. Site transferred from DTX1-RD
+      bound to NAD+ (PDB 6Y5P, Chatrin et al. 2020, doi:10.1126/sciadv.abc0418)
+      by structural superposition of 3PG6 chain A onto 6Y5P chain A: 125 core CA
+      pairs, 0.82 A RMSD, 50% sequence identity over the aligned DTC. Independent
+      sequence alignment gives the same assignment for every conserved residue.
+      DTX1 -> DTX3L correspondences: R534->R660 and S566->S692 (pyrophosphate),
+      W577->W703 (adenine stacking), N578->N704, H581->H707 and H582->H708
+      (adenosine ribose), T584->T710 (adenine N1), H593->Y719 (stacking,
+      conservative His->Tyr substitution). H581A/H593A in DTX1 abolish
+      ADP-ribosylation of ubiquitin while leaving E3 ligase activity intact.
+    catalytic_residues: [703, 707, 708, 710, 719]
+    pocket_residues: [657, 660, 691, 692, 693, 694, 695, 701, 702, 703, 704,
+                      707, 708, 710, 719]

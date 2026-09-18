@@ -1,0 +1,13 @@
+construct: md2_md3
+arm: rna
+sysname: parp14_md2_md3
+nres: 385
+nchain: 100
+n_rna: 30
+box:
+- 20.0
+- 20.0
+- 260
+steps: 200000000
+beads: 40900
+note: RNA-null baseline, no eraser, no writer

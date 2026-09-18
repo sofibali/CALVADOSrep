@@ -1,0 +1,30 @@
+REMARK   1 CREATED WITH OPENMM 8.2, 2026-09-16
+CRYST1   80.000   80.000   80.000  90.00  90.00  90.00 P 1           1 
+MODEL        1
+HETATM    1  rP    r A   1      84.558  -5.224   0.435  1.00  0.00           P  
+HETATM    2  rN    r A   1      84.213  -3.569   5.571  1.00  0.00           N  
+HETATM    3  rP    r A   2      86.403   0.354  -0.166  1.00  0.00           P  
+HETATM    4  rN    r A   2      84.983   0.782   5.024  1.00  0.00           N  
+HETATM    5  rP    r A   3      85.090   6.087   0.111  1.00  0.00           P  
+HETATM    6  rN    r A   3      83.573   5.036   5.184  1.00  0.00           N  
+HETATM    7  rP    r A   4      79.836   8.772   0.096  1.00  0.00           P  
+HETATM    8  rN    r A   4      79.470   6.825   5.097  1.00  0.00           N  
+HETATM    9  rP    r A   5      74.185   7.164  -0.283  1.00  0.00           P  
+HETATM   10  rN    r A   5      75.014   6.235   4.944  1.00  0.00           N  
+HETATM   11  rP    r A   6      69.565   3.583   0.368  1.00  0.00           P  
+HETATM   12  rN    r A   6      71.260   3.830   5.480  1.00  0.00           N  
+TER      13        r A   6
+ENDMDL
+CONECT    1    2    3
+CONECT    2    1
+CONECT    3    1    4    5
+CONECT    4    3
+CONECT    5    3    6    7
+CONECT    6    5
+CONECT    7    5    8    9
+CONECT    8    7
+CONECT    9    7   10   11
+CONECT   10    9
+CONECT   11    9   12
+CONECT   12   11
+END

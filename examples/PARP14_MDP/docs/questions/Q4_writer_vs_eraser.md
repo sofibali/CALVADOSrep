@@ -44,18 +44,18 @@ Two designed comparisons make it causal rather than correlative:
 
 ### 1. Every construct is writer-leaning
 
-D = **+0.127 to +0.232**, all bootstrap CIs excluding zero. Nothing is
-eraser-leaning. `mka_full` +0.127 → `fl` +0.196 → `kh1_art_full` +0.232.
+D = **+0.122 to +0.207**, all bootstrap CIs excluding zero. Nothing is
+eraser-leaning. `mka_full` +0.122 → `fl` +0.168 → `norrm` +0.207.
 
 ### 2. The KH region is what buries the eraser
 
 | construct | adds | MD1 (eraser) | ART (writer) |
 |---|---|---|---|
-| `mka_full` | — (MD1–ART only) | 0.427 | 0.551 |
-| `core_full_go` | + KH7a | 0.362 | 0.546 |
-| `kh1_art_full` | + KH1–KH6 | **0.333** | 0.533 |
+| `mka_full` | — (MD1–ART only) | 0.445 | 0.569 |
+| `core_full_go` | + KH7a | 0.398 | 0.566 |
+| `kh1_art_full` | + KH1–KH6 | **0.380** | 0.558 |
 
-**MD1 falls 22 %, ART moves 3 %.** The occlusion is selective, not general
+**MD1 falls 15 %, ART moves 2 %.** The occlusion is selective, not general
 burial — the KH region packs against the hydrolase site specifically.
 
 ### 3. ART only reaches its neighbour
@@ -64,12 +64,12 @@ Matched ±ART pairs, change in each site's SAA when ART is present:
 
 | site | pairs | mean Δ SAA |
 |---|---|---|
-| **WWE** | 6 | **−0.0928** |
-| MD1 | 4 | −0.0133 |
-| MD2 | 5 | −0.0099 |
-| MD3 | 6 | −0.0060 |
+| **WWE** | 6 | **−0.0686** |
+| MD1 | 4 | −0.0124 |
+| MD2 | 5 | −0.0086 |
+| MD3 | 6 | −0.0039 |
 
-ART occludes WWE **7–15× more** than any macrodomain — consistent with WWE
+ART occludes WWE **6–18× more** than any macrodomain — consistent with WWE
 (1534–1602) being contiguous with ART (1603–1801) and folding against it
 (cf. PDB 3GOY, which contains WWE+ART).
 

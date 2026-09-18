@@ -165,28 +165,68 @@ flexible edge residues; on restrained residues only, `fl` and `mka_full` prefer
 the back face. The earlier "MD2 packs through its pocket face" reading should be
 treated as unsupported.
 
-### A hypothesis that was tested and refuted
+### MD1's context dependence — resolved, via a hypothesis that was refuted and then reinstated
 
-MD1L1's face preference tracked KH7a presence exactly — active-preferred in all
-four constructs containing KH7a (`fl`, `core`, `norrm`, `kh1_art_full`) and
-back-preferred in both without it (`mka_full`, `md_full`). Combined with [[Q4]],
-where adding KH7a dropped MD1 accessibility 0.427 → 0.362, that looked like a
-mechanism: KH7a sitting on MD1's catalytic face.
+Worth recording the arc, because the first answer was wrong for an instructive
+reason.
 
-**It does not hold.** A per-partner breakdown of MD1 active-face contacts in
-`core` gives:
+**The observation.** MD1 prefers its *active* face in `fl` / `core` / `norrm` /
+`kh1_art_full` and its *back* face in `mka_full` / `md_full` — a split that
+tracked KH7a presence exactly (4/4 vs 2/2). With [[Q4]] showing that adding KH7a
+drops MD1 accessibility, that looked like a mechanism.
 
-| partner | share of MD1 active-face contacts |
-|---|---|
-| MD3 | 33.0% |
-| ART | 25.1% |
-| WWE | 17.2% |
-| **KH7a** | **11.6%** |
-| KHb-KH8 | 8.9% |
+**First test said no.** A per-partner breakdown on `core` gave KH7a only
+**11.6%** of MD1's active-face contacts, behind MD3 (33%), ART (25%) and WWE
+(17%). Recorded as refuted.
 
-KH7a is a minor contributor. The 4-vs-2 split was coincidence across a
-six-construct sample, not causation — the contacts come mostly from C-terminal
-domains folding back onto MD1. **MD1L1's context dependence remains unexplained.**
+**That was a single-construct anecdote, and `core` is the worst construct to
+test it on.** Running the breakdown across all six:
+
+| construct | KH7a share of MD1 active-face contacts | preference |
+|---|---|---|
+| `fl` | **54%** | active |
+| `kh1_art_full` | **36%** | active |
+| `core` | 16% | active |
+| `norrm` | 16% | active |
+| `mka_full` | 0% (KH7a absent) | back |
+| `md_full` | 0% (KH7a absent) | back |
+
+`core` and `norrm` happen to be the two constructs where MD3 and ART crowd MD1
+enough to mask KH7a. Averaged over all six: KH7a supplies **30.5%** of
+active-face contacts in the active-preferring constructs and **0%** in the
+back-preferring ones.
+
+**But that comparison was confounded** — the back-preferring constructs do not
+*contain* KH7a, so "0%" is trivially true, and they also have far fewer partners
+able to reach MD1 at all (3.5 vs 7.5). Collective packing would fit equally well.
+
+**The controlled test.** Two construct pairs differ by KH7a and nothing else:
+
+| pair | construct | KH7a | preference | active-face contacts/frame |
+|---|---|---|---|---|
+| both **+ART** | `core` | ✓ | **active** | **105.1** |
+| | `mka_full` | – | back | 4.7 |
+| both **−ART** | `core_wwe_full_go` | ✓ | **active** | **16.2** |
+| | `mka_wwe_full` | – | back | 4.2 |
+
+Both pairs agree, with ART controlled in each. Removing KH7a collapses MD1's
+active-face contact load **22×** and **4×** respectively, and flips the
+preference. In `core_wwe_full_go` KH7a is the top partner at 46%.
+
+**KH7a is the cause.** This closes the loop with [[Q4]], where adding KH7a
+dropped MD1 accessibility 0.445 → 0.398: KH7a sits on the hydrolase's catalytic
+face. That is a concrete structural mechanism for the eraser being the most
+buried catalytic site in every construct ([[Q3]]).
+
+**One alternative not excluded.** KH7a (738–789) is the immediate N-terminal
+neighbour of MD1L1 (790–1004), so some contact is expected from chain
+connectivity alone. If MD1's pocket happens to face N-terminally, adjacency
+would produce active-face contact without any specific interaction. The
+controlled pairs establish that KH7a *causes* the preference; they do not
+establish that it is a specific interface rather than a proximity effect.
+Distinguishing those needs either a construct where KH7a is present but
+sequence-displaced, or a direct check of the pocket's orientation relative to
+the domain's N-terminus.
 
 ## Figures
 
@@ -211,8 +251,8 @@ python figure_face_contacts.py              # contacts + the four bar figures
 
 ## Still open
 
-- **Why is MD1L1 context-dependent?** The KH7a explanation is refuted; the real
-  determinant is unknown.
+- Whether KH7a's effect is a **specific interface or a proximity effect** — it is
+  the immediate N-terminal neighbour, so adjacency is a live alternative.
 - The face assignment is still from a **single AF2 conformer** ([[Q2]] found the
   molecule is diffusive), so inter-domain burial in the RSA numbers is one
   arrangement's worth. The contact analysis above is ensemble-based and does not

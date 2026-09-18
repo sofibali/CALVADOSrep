@@ -1,0 +1,2 @@
+set,pair,n_rep,ns_sampled,bound_frac,bound_frac_ci95,n_episodes,tau_mean_ns,tau_median_ns,tau_max_ns,ep_over_10ns,verdict
+p9_dtx3l,parp9-dtx3l,4,460,0.0478,0.0194,22,1.0,1.0,2.5,0,transient encounter -> done

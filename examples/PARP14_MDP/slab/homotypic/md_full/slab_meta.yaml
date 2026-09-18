@@ -1,0 +1,13 @@
+construct: md_full
+arm: homotypic
+sysname: parp14_md1md3_full
+nres: 599
+nchain: 83
+n_rna: 0
+box:
+- 25.0
+- 25.0
+- 325
+steps: 200000000
+beads: 49717
+note: RNA-null + eraser

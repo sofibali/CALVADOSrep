@@ -1,0 +1,48 @@
+sysname: p9_dtx3l
+topol: grid
+fixed_lambda: 0
+eps_lj: 0.2
+cutoff_lj: 2.0
+cutoff_yu: 4.0
+steps: 50000000
+wfreq: 5000
+platform: CUDA
+threads: 4
+runtime: 0
+restart: pdb
+frestart: input/system.pdb
+verbose: true
+slab_eq: false
+bilayer_eq: false
+pressure_coupling: false
+box_eq: false
+pressure:
+- 0
+- 0
+- 0
+boxscaling_xyz:
+- true
+- true
+- true
+k_eq: 0.02
+steps_eq: 1000
+ext_force: false
+ext_force_expr: step(d2-18)*d2; d2=periodicdistance(x, y, z, 0, 0, z)^2
+friction_coeff: 0.01
+slab_width: 100
+slab_outer: 40
+random_number_seed: 19000
+report_potential_energy: false
+logfreq: 1000000
+gpu_id: 0
+custom_restraints: true
+custom_restraint_type: harmonic
+fcustom_restraints: input/custom_restraints.txt
+box:
+- 40.0
+- 40.0
+- 40.0
+temp: 293
+ionic: 0.19
+pH: 7.0
+dt: 0.01

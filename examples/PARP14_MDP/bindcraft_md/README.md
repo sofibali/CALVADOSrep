@@ -84,14 +84,28 @@ Full per-target list: `targets_summary.csv`. Settings JSONs: `settings/`.
 
 ## Running
 
-> **Prerequisite — BindCraft is NOT yet installed.** The repo is cloned at
-> `~/Projects/BindCraft`, but the `BindCraft` conda env has no ColabDesign / JAX /
-> PyRosetta and the AF2 weights (`params/`) are missing. Install first:
-> ```bash
-> cd ~/Projects/BindCraft && bash install_bindcraft.sh   # GPU node; downloads ~4 GB AF2 weights
-> ```
-> Then confirm `BC_ENV` in `bindcraft_job.slurm` points at the created env
-> (here: `~/.conda/envs/BindCraft`).
+> **Status (2026-09-17): BindCraft is installed and the campaign has run.**
+> The repo is at `~/BindCraft` (not `~/Projects/BindCraft`, which does not
+> exist), and `bindcraft_job.slurm` points at
+> `BC_ENV=/home/sbali/miniconda3/envs/BindCraft`.
+>
+> **Results so far — the default protocol produces nothing.** `md1_block_af3`,
+> `md1_block_sim`, `clamp_md1md2_state3`, `sweep_af3_diag` and
+> `sweep_af3_mpnnorig` all have **0 accepted designs**, failing at the
+> interface-confidence filters (`i_pAE`, `i_pLDDT`) rather than at clashes.
+>
+> **What works is `predict_initial_guess: True`:**
+> `sweep_af3_guess` → **18 accepted**, `guess_clamp_md1md2_state3` → **2**.
+> It is the only setting present in the winning arm and absent from every
+> failing one.
+>
+> ⚠ That flag "introduces bias by providing binder atom positions as a starting
+> point" (BindCraft README). The improved `i_pAE`/`i_pTM` are therefore **not
+> independent validation** — AF2 was given the answer. Re-predict without the
+> initial guess before treating any of these as real hits.
+>
+> Full write-up, including the config diff and the accepted-design metrics:
+> [`../docs/questions/Q8_binder_design.md`](../docs/questions/Q8_binder_design.md).
 
 Submit (GPU partition, one job per target):
 ```bash

@@ -70,12 +70,15 @@ ADPr-reader 0. Filling either needs new AF3 predictions.
 - **Experimental data**: sort-seq counts not yet available. Ingestion is already
   scaffolded — `--fit` accepts `punctate_reads`+`diffuse_reads` or a precomputed
   `enrichment`, joined on `barcode` / `combo_key` / `combo`.
-- **Compute**: slab work is **GPU-only**. Measured CPU throughput on pollux is
-  5.76e5 bead-steps/s, which puts one 100-chain slab at ~2 years. The runs target
-  the SLURM GPU server that shares this filesystem. Estimated ~4 GPU-days per
-  run, ~79 GPU-days for the full panel × both arms — at an **assumed** 50× GPU
-  speedup that must be replaced with `prepare_slab.py --benchmark` before
-  committing.
+- **Compute**: slab work is **GPU-only** — CPU throughput on pollux is 5.76e5
+  bead-steps/s, which puts one 100-chain slab at ~2 years. **Now measured on
+  lyra** (4× L40S, no SLURM), 2026-09-17: ~5,000 steps/s on an idle card, i.e.
+  **~11 h per run and ~9.5 GPU-days for the full panel × both arms** — not the
+  ~79 GPU-days previously estimated from an assumed 50× speedup (the real
+  speedup is ~350×). All 20 configs are verified to build and run on CUDA.
+  Contention is the binding constraint, not throughput: sharing a card with
+  another job costs 3.4–6×, so wall-clock ranges from ~2.5 days (4 idle GPUs) to
+  weeks. See `slab/README.md` for the launch policy and per-GPU split.
 
 ## Known limits of the model side
 
@@ -94,10 +97,12 @@ ADPr-reader 0. Filling either needs new AF3 predictions.
 ## Reproduce
 
 ```bash
-python prepare_slab.py --benchmark              # calibrate GPU first
-python prepare_slab.py --arm both --panel core
-# on the GPU server:
-sbatch --array=0-4 slab/submit_slab.slurm slab/homotypic
+python prepare_slab.py --arm both --panel full   # already done; inputs are on disk
+# on lyra (no SLURM -- submit_slab.slurm does not apply there):
+cd slab
+GPU=0 nohup ./run_slab_queue.sh        homotypic > logs/queue_homotypic.log 2>&1 &
+GPU=1 nohup ./run_slab_opportunistic.sh rna      > logs/opp_rna.log         2>&1 &
+python monitor_slab.py --watch
 
 cd sim_analysis
 python predict_puncta_propensity.py --prior --workers 48
@@ -107,4 +112,5 @@ python predict_puncta_propensity.py --fit <counts.csv>    # when data exists
 ## Outputs
 
 - `data/puncta_features.csv` — 2047 constructs × 39 features (built, validated)
-- `slab/{homotypic,rna}/` — prepared inputs; `slab/submit_slab.slurm`
+- `slab/{homotypic,rna}/` — prepared inputs; `run_slab_queue.sh` (lyra),
+  `submit_slab.slurm` (a SLURM cluster, if one is ever used)

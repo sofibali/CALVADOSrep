@@ -1,0 +1,13 @@
+construct: md3_wwe_full
+arm: homotypic
+sysname: parp14_md3_wwe_full
+nres: 396
+nchain: 100
+n_rna: 0
+box:
+- 20.0
+- 20.0
+- 260
+steps: 200000000
+beads: 39600
+note: low RNA valence, small

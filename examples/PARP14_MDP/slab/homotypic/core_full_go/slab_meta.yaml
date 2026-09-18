@@ -1,0 +1,13 @@
+construct: core_full_go
+arm: homotypic
+sysname: parp14_core_full_go
+nres: 1064
+nchain: 47
+n_rna: 0
+box:
+- 35.0
+- 35.0
+- 455
+steps: 200000000
+beads: 50008
+note: mid RNA valence

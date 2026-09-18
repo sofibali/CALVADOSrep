@@ -1,0 +1,13 @@
+construct: kh1_wwe_full
+arm: homotypic
+sysname: parp14_kh1_wwe_full
+nres: 1288
+nchain: 39
+n_rna: 0
+box:
+- 35.0
+- 35.0
+- 455
+steps: 200000000
+beads: 50232
+note: -ART  of matched pair B

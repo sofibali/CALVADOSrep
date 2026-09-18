@@ -1,0 +1,13 @@
+construct: mka_wwe_full
+arm: homotypic
+sysname: parp14_mka_wwe_full
+nres: 813
+nchain: 62
+n_rna: 0
+box:
+- 30.0
+- 30.0
+- 390
+steps: 200000000
+beads: 50406
+note: -ART  of matched pair A
