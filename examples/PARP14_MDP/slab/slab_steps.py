@@ -120,7 +120,25 @@ def main():
 
     fcfg = os.path.join(run_dir, 'config.yaml')
     cfg = yaml.safe_load(open(fcfg))
-    if int(float(cfg.get('steps', 0))) != leg:
+    changed = int(float(cfg.get('steps', 0))) != leg
+
+    # For a PREEMPTIBLE leg (--max-leg, i.e. the opportunistic runner), pin
+    # logfreq to the checkpoint interval. sim.py checkpoints after each of its
+    # 10 batches, so with logfreq == leg/10 the last line in {sysname}.log is
+    # written at exactly the step the checkpoint holds. trim_dcd.py relies on
+    # that to know which trajectory frames the checkpoint actually backs, and
+    # therefore which are re-simulated leftovers to drop.
+    #
+    # Not done for a full-target leg: there logfreq would become 2e7 and the
+    # run would log only 10 times in 2e8 steps, which is useless to monitor --
+    # and a run that never yields has nothing to trim anyway.
+    if max_leg is not None:
+        want_logfreq = max(1, leg // NBATCHES)
+        if int(float(cfg.get('logfreq', 0))) != want_logfreq:
+            cfg['logfreq'] = want_logfreq
+            changed = True
+
+    if changed:
         cfg['steps'] = leg
         # Write atomically. The opportunistic runner SIGKILLs stragglers and
         # these jobs get killed on logout; a kill partway through an in-place

@@ -185,6 +185,11 @@ re-run `prepare_slab.py` at a new location rather than copying.
   superseded by the 20 ns / 1 µs runs. Don't mix them into current comparisons.
 - **Older filenames spell the MD1 unit `md1l1`.** Resolved by an alias; not a
   sign of staleness.
-- **Trajectories written by the opportunistic slab runner can contain
-  overlapping frames** where a run was preempted between checkpoints. This does
-  not bias c_sat but does break frame-index-to-time. See `slab/README.md`.
+- **Trajectories written by the opportunistic slab runner could contain
+  overlapping frames** where a run was preempted between checkpoints: the DCD
+  held frames the checkpoint never backed, and the resumed leg re-simulated and
+  re-appended that window. Fixed 2026-09-21 — `slab/trim_dcd.py` now truncates
+  back to the checkpoint before every leg, and the one affected trajectory
+  (`slab/homotypic/core_full_go`, 350 frames where 340 were real) was repaired.
+  Verify any run with `python slab/trim_dcd.py <run_dir>`; a clean run reports
+  `frames == steps/wfreq`.

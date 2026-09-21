@@ -160,6 +160,13 @@ for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
     fi
     read before _ _ < <("$CAL_ENV/bin/python" "$SLAB/slab_steps.py" status "$d")
 
+    # A previous yield may have left frames in the DCD that the checkpoint does
+    # not back -- the resumed leg would re-simulate that window and append a
+    # second trajectory through it. Truncate back to the checkpoint first so
+    # this leg appends onto a clean boundary. No-op when there is nothing to
+    # drop, and O(1) regardless of trajectory size.
+    "$CAL_ENV/bin/python" "$SLAB/trim_dcd.py" "$d" --apply
+
     # Somebody may have landed while we were taking the lock.
     if [ -n "$(foreign_pids)" ]; then exec 9>&-; continue; fi
 

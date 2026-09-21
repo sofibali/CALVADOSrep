@@ -281,35 +281,46 @@ Set `LEG_STEPS` smaller to yield faster at slightly more restart overhead; each
 restart re-reads the PDB and rebuilds the restraint lists (~1 min for these
 systems), so legs much below ~5e6 steps start to waste real time.
 
-**Yielding leaves overlapping frames in the DCD — size `LEG_STEPS` for it.**
-`sim.py` reopens the trajectory with `DCDReporter(..., append=True)` on restart
-and does *not* rewind it to the checkpoint. Frames are written every `wfreq`
-(1e5 steps) but checkpoints only every `LEG_STEPS/10`, so a SIGTERM between
-checkpoints leaves frames on disk for steps the checkpoint never captured; the
-resumed leg re-simulates that window and appends a second, different trajectory
-through it.
+**Yielding leaves overlapping frames in the DCD — this is now repaired
+automatically.** `sim.py` reopens the trajectory with `DCDReporter(append=True)`
+on restart and does *not* rewind it to the checkpoint. Frames are written every
+`wfreq` (1e5 steps) but checkpoints only every `LEG_STEPS/10`, so a SIGTERM
+between checkpoints leaves frames on disk for steps the checkpoint never
+captured; the resumed leg re-simulates that window and appends a second,
+different trajectory through it.
 
-| `LEG_STEPS` | checkpoint every | dup frames per yield | of a 2000-frame run | restart overhead |
+`run_slab_opportunistic.sh` now runs **`trim_dcd.py --apply`** before every leg,
+which truncates the DCD back to the last checkpoint so the leg appends onto a
+clean boundary. It rewrites only the header's frame count and truncates the
+file, so it is O(1) no matter how big the trajectory is. `slab_steps.py` pins
+`logfreq` to the checkpoint interval on preemptible legs, which is what lets the
+trimmer know exactly which frames the checkpoint backs.
+
+Check or repair any run by hand:
+
+```bash
+python trim_dcd.py homotypic/core_full_go            # report
+python trim_dcd.py homotypic/core_full_go --apply    # truncate
+```
+
+Run it only between legs, never against a live run.
+
+| `LEG_STEPS` | checkpoint every | frames at risk per yield | of a 2000-frame run | restart overhead |
 |---|---|---|---|---|
 | 2e7 | 2e6 | 20 | 1.0% | ~1.5% |
-| **1e7 (recommended)** | 1e6 | 10 | 0.5% | **~3%** |
-| 2e6 (script default) | 2e5 | 2 | 0.1% | ~14% |
-| 1e6 | 1e5 | 1 | 0.05% | ~25% |
+| **1e7 (default)** | 1e6 | 10 | 0.5% | **~3%** |
+| 2e6 | 2e5 | 2 | 0.1% | ~14% |
 
-**Restart overhead is measured, not guessed:** on `core_full_go` (50k beads,
-200k restraints) a leg costs ~50 s of `build_system()` before any stepping, and
-the GPU does ~6,400 steps/s, so a 2e6-step leg spends 50 s of every 362 s on
-setup. `LEG_STEPS=1e7` is the sweet spot on a mostly-idle card — pick smaller
-only if the GPU is being reclaimed every few minutes.
+**Restart overhead is measured:** on `core_full_go` (50k beads, 200k restraints)
+a leg costs ~50 s of `build_system()` before any stepping, and the GPU does
+~6,400 steps/s. `LEG_STEPS=1e7` is the sweet spot on a mostly-idle card.
 
-This is **not** a bias in c_sat — the abandoned segment is still a valid
-equilibrium sample from the same ensemble, so the density profile is not
-skewed. What it does break is the frame-index-to-simulation-time mapping, and
-it mildly over-weights the repeated windows (inflating apparent correlation).
-Keep `LEG_STEPS` at 2e6 or below on a contended GPU, and if you need an exact
-time axis, take it from the reporter log's Step column rather than from frame
-index. Runs done entirely on GPU 0 with `run_slab_queue.sh` never yield and are
-unaffected.
+Left unrepaired, the overlap does **not** bias c_sat — the abandoned segment is
+still a valid equilibrium sample — but it breaks the frame-index-to-time mapping
+and double-weights the repeated window. This was real, not hypothetical: the
+first `core_full_go` trajectory had 350 frames where 340 were checkpoint-backed
+(2.86%), and was trimmed on 2026-09-21. Runs done entirely with
+`run_slab_queue.sh` never yield and are unaffected.
 
 **A yielded run is not stranded on that GPU.** Resuming needs only
 `restart.chk` and the construct directory, so the same construct can be picked
@@ -393,6 +404,7 @@ elsewhere will break it — re-run `prepare_slab.py` at the new location instead
 | `run_slab_queue.sh` | **the launcher for GPU 0.** Serial queue over one arm, one pinned GPU, detached, runs each construct start to finish. Refuses to start if the env has no CUDA platform. `ONLY=a,b` restricts it to a subset. |
 | `run_slab_opportunistic.sh` | **the launcher for GPUs 1–2.** Same queue, but in short checkpointed legs, and it only runs while the GPU is empty — it stops the moment another user's process appears and resumes when they are done. `LEG_STEPS`, `POLL`, `ONLY` tune it. |
 | `monitor_slab.py` | progress / ns/day / ETA per run, plus GPU load. Finds live runs in `/proc`, so it works regardless of how they were started and has no state file to go stale. `--watch` to refresh. |
+| `trim_dcd.py` | drops re-simulated frames left in a trajectory by a preemption, truncating it back to the last checkpoint. Called automatically before every opportunistic leg. |
 | `slab_steps.py` | production-step bookkeeping. `status` reports done/target/remaining; `prepare` rewrites `config.yaml`'s `steps` to the remainder so a re-run of the queue resumes to exactly 2e8 instead of overshooting. Called by the queue script. |
 | `submit_slab.slurm` | for an actual SLURM cluster. **Not usable on lyra**, and it still names the CUDA-less `envs/CALVADOS`. |
 
