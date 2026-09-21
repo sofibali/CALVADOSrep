@@ -67,10 +67,23 @@ def fl_to_local(fl):
     if 1207 <= fl <= 1388: return fl - 802
     return None
 
-CATALYTIC_FL = {"MD1": [831, 923, 962],
-                "MD2": [1035, 1046, 1134, 1171],
-                "MD3": [1248, 1259, 1330, 1371]}
-SASA_DOMAIN  = {"MD1": "MD1L1", "MD2": "MD2", "MD3": "MD3"}
+# Catalytic residues come from the single source of truth
+# (parp14/input/active_sites.yaml) via sim_registry. The literals that used to
+# be here -- MD1 [831,923,962], MD2 [1035,1046,1134,1171],
+# MD3 [1248,1259,1330,1371] -- were mislabelled (831 is a glycine in Q460N5,
+# not the "D831" they were called) and are corrected as of 2026-09-21; see
+# examples/PARP14_MDP/docs/NUMBERING_AUDIT.md.
+#
+# NOTE: the BindCraft campaigns run before that date were built from the OLD
+# values. The shift is 1-4 residues and every MD1 hotspot was solvent-exposed
+# either way, so those targets are still sane -- but regenerate the settings
+# before running anything new.
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+import sim_registry as _sitereg
+
+CATALYTIC_FL = {k: _sitereg.ACTIVE_SITES_FL[k]['catalytic'] for k in ("MD1", "MD2", "MD3")}
+SASA_DOMAIN  = {"MD1": "MD1", "MD2": "MD2", "MD3": "MD3"}
 
 def block_of(resid):
     for k, (lo, hi) in BLOCKS.items():

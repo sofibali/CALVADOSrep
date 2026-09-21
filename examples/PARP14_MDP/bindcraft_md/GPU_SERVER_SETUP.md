@@ -1,6 +1,6 @@
 # PARP14 BindCraft — status, findings, and how to restart
 
-**Last updated:** 2026-09-17, on `lyra.fraserlab.com` (4× NVIDIA L40S, 46 GB each, **no SLURM**).
+**Last updated:** 2026-09-21, on `lyra.fraserlab.com` (4× NVIDIA L40S, 46 GB each, **no SLURM**).
 Supersedes the 2026-08-14 handoff, which described the pre-install state.
 
 ## Install: DONE
@@ -94,12 +94,33 @@ instead of 99.4%, and the leading rejection is Rosetta shape complementarity.
 Run it via the stock preset `settings_advanced/default_4stage_multimer_hardtarget.json`
 (identical to default except `predict_initial_guess: true`).
 
-## In flight
+## Queue results so far
 
-`sweep/run_queue.sh` (detached, survives logout) -- all 9 remaining targets with the flag, serial on one
-GPU, each stopping at 8 accepted or `max_trajectories=50`. Order: 5 clamp states, md3_block x2,
-md2_block x2. Outputs in `designs/guess_<target>/`. Progress: `logs/queue_master.log`.
-`md2_block_*` run with `TF_FORCE_UNIFIED_MEMORY=1 XLA_PYTHON_CLIENT_MEM_FRACTION=4.0` (see Open questions).
+`sweep/run_queue.sh` (detached, survives logout) runs all 9 remaining targets with the flag, serial on one
+GPU, each stopping at 8 accepted or `max_trajectories=50`. Progress: `logs/queue_master.log` and
+`logs/queue_progress.log` (6-hourly, written by `sweep/progress_logger.sh`).
+
+| target | relaxed | scored | accepted | status |
+|---|---|---|---|---|
+| `clamp_md1md2_state3` | 50 | 197 | **5** | complete (hit 50-traj cap, 3.2 d) |
+| `clamp_md1md2_state1` | 9 | 0 | 0 | running, externally capped at 25 traj |
+| 7 more | | | | queued |
+
+**state3 -- the gate moved to interface chemistry.** i_pAE is beaten (197 designs reached Rosetta), but of
+those, 68% fail buried unsatisfied H-bonds (median 5.0 vs limit 4) and 68% fail shape complementarity
+(median 0.58 vs 0.60). dG and interface H-bond count fail 0% (medians -58.8 and 10.5) -- energetics are
+fine, polar burial is the limiter. This is the same metric that killed the original md1_block_af3 campaign,
+reappearing one stage later. A clamp has more polar surface to satisfy than a pocket plug, so it may be
+intrinsic to the concept. Accepted clamp designs verified to bridge BOTH domains (7 MD1 + 18 MD2 contacts).
+
+**state1 -- the flag cannot rescue a bad starting interface.** Its trajectories fold as well as state3's
+(pLDDT 0.80) but start with median i_pAE **0.540** vs state3's 0.345, and 9 relaxed trajectories produced
+0 scored designs. predict_initial_guess helps AF2 re-find a pose the sequence already supports; it cannot
+manufacture an interface that was never good. Consistent with the TICA clustering -- state3 was the dominant
+~80% basin, state1 a ~6% minor one -- but 9 trajectories is far too few to conclude designability tracks
+state population. Capped at 25 trajectories (`sweep/cap_state1.sh`) to bound the cost of finding out; the
+running process had already loaded max_trajectories=50, so the cap is applied externally by SIGINT, after
+which run_queue.sh advances on its own.
 
 ## Open questions
 

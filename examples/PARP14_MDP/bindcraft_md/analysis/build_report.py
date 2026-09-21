@@ -11,6 +11,13 @@ IMG = {
     "sim":   b64(os.path.join(D, "report_md1_block_sim_crop.png")),
     "clamp": b64(os.path.join(D, "report_clamp_md1md2_state3_crop.png")),
 }
+HITIMG={f"h{i}": b64(os.path.join(D, f"crop_hit_{i}.png")) for i in range(5)}
+HITIMG["clamp"]=b64(os.path.join(D,"crop_clamp.png"))
+HITIMG["variants"]=b64(os.path.join(D,"crop_variants.png"))
+SEQG=json.load(open(os.path.join(D,"hits_seqs.json")))
+import pandas as _pd
+_ACC=_pd.read_csv("/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/designs/sweep_af3_guess/final_design_stats.csv")
+_CACC=_pd.read_csv("/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/designs/guess_clamp_md1md2_state3/final_design_stats.csv")
 
 MD1HS = [33,37,39,41,42,43,44,46,47,134,135,136,138,172,173]
 
@@ -187,6 +194,94 @@ def armA_svg():
         y+=rowh*2+gap
     o.append("</svg>"); return "".join(o)
 
+
+
+def gates_svg():
+    g=fig["_queue"]["gates3"]
+    order=["n_InterfaceUnsatHbonds","ShapeComplementarity","Surface_Hydrophobicity",
+           "Binder_RMSD","n_InterfaceHbonds","dG"]
+    W,rowh,gap,labelw=620,22,12,238
+    H=len(order)*(rowh+gap)
+    o=[f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="Rosetta gate failure rates" class="chart">']
+    y=0
+    for k in order:
+        v=g[k]; pct=v["pct"]
+        bw=max(pct,0.5)/100*(W-labelw-64)
+        col="var(--flag)" if pct>50 else ("var(--md2)" if pct>10 else "var(--win)")
+        o.append(f'<text x="0" y="{y+rowh*0.72}" class="svg-lab">{k}</text>')
+        o.append(f'<rect x="{labelw}" y="{y+2}" width="{W-labelw-64}" height="{rowh-4}" class="track"/>')
+        o.append(f'<rect x="{labelw}" y="{y+2}" width="{bw:.1f}" height="{rowh-4}" fill="{col}"><title>{k}: {v["fail"]} of {v["n"]} fail (threshold {v["thr"]}, median {v["med"]})</title></rect>')
+        o.append(f'<text x="{W}" y="{y+rowh*0.72}" class="svg-num" text-anchor="end">{pct:.0f}%</text>')
+        y+=rowh+gap
+    o.append("</svg>"); return "".join(o)
+
+def hits_section():
+    import re as _re
+    order=["l80_s632138","l130_s735229","l128_s514541","l122_s135691","l104_s444809"]
+    cards=[]
+    for i,traj in enumerate(order):
+        sub=_ACC[_ACC["Design"].str.contains(traj)]
+        best=sub.sort_values("Average_i_pAE").iloc[0]
+        cards.append(f'''<figure class="hit">
+      <img src="{HITIMG[f"h{i}"]}" alt="binder from trajectory {traj} bound to MD1"/>
+      <figcaption><span class="hname" style="color:{["var(--md1)","var(--md2)","var(--sim)","#eda100","#e87ba4"][i]}">&#9632;</span>
+      <code>{traj}</code> · {int(best["Length"])} aa · {len(sub)} accepted<br>
+      i_pAE {best["Average_i_pAE"]:.2f} · SC {best["Average_ShapeComplementarity"]:.2f} · unsat {best["Average_n_InterfaceUnsatHbonds"]:.1f} · dG {best["Average_dG"]:.0f}</figcaption>
+    </figure>''')
+    # sequence alignment blocks
+    rows=[]
+    for g in SEQG:
+        seqs=[x["seq"] for x in g["seqs"]]
+        if len(seqs)>1:
+            diff=[a!=b for a,b in zip(seqs[0],seqs[1])]
+        else:
+            diff=[False]*len(seqs[0])
+        lines=[]
+        for x in g["seqs"]:
+            spans="".join(f'<span class="{"mm" if d else ""}">{c}</span>' for c,d in zip(x["seq"],diff))
+            lines.append(f'<div class="seqrow"><span class="seqid">{x["name"]}</span><span class="seq">{spans}</span></div>')
+        ident=f'{g["identity"]}% identical' if g["identity"] else "single accepted design"
+        rows.append(f'''<div class="seqblock">
+      <div class="seqhead"><code>{g["traj"]}</code><span>{g["label"]} · {g["len"]} aa · {ident}</span></div>
+      {"".join(lines)}</div>''')
+    cb=_CACC.sort_values("Average_i_pAE").iloc[0]
+    return f'''
+<h2>What the hits actually look like</h2>
+<p class="sub">Every accepted MD1 binder, one panel per source backbone, all in the same orientation. Target in
+grey, the 15 hotspot side chains in violet, the designed binder coloured.</p>
+<div class="hitgrid">{"".join(cards)}</div>
+<p class="cap">Five independent trajectories, five different folds and lengths (80–130 aa) — and all five land on
+the <b>same face</b>, packed against the hotspot patch. That convergence is the design working as intended:
+nothing constrained these backbones to agree, only the hotspot definition did.</p>
+
+<h3 style="margin-top:2.4rem">The clamp bridges both domains</h3>
+<div class="panel" style="margin-top:.8rem">
+  <img class="wide" src="{HITIMG["clamp"]}" alt="clamp binder bridging MD1 and MD2"/>
+  <p class="cap">Best clamp design (<code>l97_s990418</code>, 97 aa, i_pAE {cb["Average_i_pAE"]:.2f},
+  SC {cb["Average_ShapeComplementarity"]:.2f}, dG {cb["Average_dG"]:.0f}). MD1 in cool grey, MD2 in warm grey,
+  binder in orange; contact residues shown as sticks — <span class="k1">7 on MD1</span> and
+  <span style="color:var(--sim);font-weight:600">18 on MD2</span>. It lies across the cleft touching both,
+  which is the whole point of a clamp and the thing a passing filter score alone would not prove. That run has since finished with <b>5 accepted designs</b> from 50 trajectories.</p>
+</div>
+
+<h3 style="margin-top:2.4rem">Same backbone, different sequences</h3>
+<div class="panel" style="margin-top:.8rem">
+  <div class="twocol">
+    <img src="{HITIMG["variants"]}" alt="two accepted MPNN variants on one backbone"/>
+    <div>
+      <p style="margin-top:0">Where a backbone yields more than one accepted design, MPNN found genuinely
+      different sequences for it — <b>76–86% identical</b>, so 14–24% of positions differ — and both still fold
+      and dock. Structurally they are near-superimposable; the variation is chemical, not conformational.</p>
+      <p style="margin-bottom:0">That matters for ordering: each backbone gives several independent sequence
+      attempts at the same binding mode, rather than one fragile candidate.</p>
+    </div>
+  </div>
+  <div class="seqwrap">{"".join(rows)}</div>
+  <p class="cap">Accepted sequences grouped by source backbone. Highlighted positions differ between the two
+  accepted variants of that backbone.</p>
+</div>
+'''
+
 def hs_chips(t):
     h=[]
     for g in ("MD1","MD2"):
@@ -305,6 +400,23 @@ dd{{margin:0;font-size:.86rem}}
 .win .lab{{font-family:ui-monospace,Menlo,monospace;font-size:.65rem;letter-spacing:.11em;
   text-transform:uppercase;color:var(--win);display:block;margin-bottom:.4rem}}
 td.good{{color:var(--win);font-weight:600}}
+.hitgrid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:.4rem}}
+.hit{{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:5px;overflow:hidden}}
+.hit img{{display:block;width:100%;height:auto;background:#fff}}
+.hit figcaption{{font-size:.73rem;line-height:1.5;color:var(--ink2);padding:.5rem .6rem;border-top:1px solid var(--line)}}
+.hname{{margin-right:.35em}}
+img.wide{{display:block;width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:4px}}
+.twocol{{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:20px;align-items:start}}
+.twocol img{{width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:4px}}
+.seqwrap{{margin-top:1.3rem;display:flex;flex-direction:column;gap:.9rem}}
+.seqblock{{border:1px solid var(--line);border-radius:4px;padding:.6rem .7rem;overflow-x:auto}}
+.seqhead{{display:flex;gap:.7rem;align-items:baseline;font-size:.74rem;color:var(--muted);margin-bottom:.45rem}}
+.seqhead code{{color:var(--ink);background:none;padding:0}}
+.seqrow{{display:flex;gap:.6rem;align-items:baseline;white-space:nowrap}}
+.seqid{{font-family:ui-monospace,Menlo,monospace;font-size:.68rem;color:var(--muted);width:4.2em;flex:none}}
+.seq{{font-family:ui-monospace,Menlo,monospace;font-size:.7rem;letter-spacing:.02em;color:var(--ink2)}}
+.seq .mm{{background:color-mix(in srgb,var(--win) 26%,transparent);color:var(--ink);border-radius:2px}}
+@media (max-width:640px){{.twocol{{grid-template-columns:1fr}}}}
 .flag .lab{{font-family:ui-monospace,Menlo,monospace;font-size:.65rem;letter-spacing:.11em;text-transform:uppercase;color:var(--flag);display:block;margin-bottom:.4rem}}
 code{{font-size:.86em;background:var(--grid);padding:.1em .35em;border-radius:3px}}
 .tblwrap{{overflow-x:auto;margin-top:1rem}}
@@ -483,12 +595,65 @@ trajectory coordinates instead of asking it to fold and dock from sequence alone
   unsatisfied H-bonds (20). That is a normal design funnel.</p>
 </div>
 
-<h2>What is still unknown</h2>
-<p class="sub">This is one target. The nine remaining targets — all five clamp states, both MD3 blockers and both
-MD2 blockers — are queued with the same flag, running one at a time on a single GPU. The clamp is the real test:
-its geometry was already correct (94% of relaxed trajectories contacted both domains) and it died at exactly this
-gate, so it is the cleanest case for whether the fix generalises beyond a single pocket.</p>
+{hits_section()}
+<h2>The queue so far</h2>
+<p class="sub">All nine remaining targets are running with the flag, one at a time on a single GPU, each
+stopping at 8 accepted designs or 50 relaxed trajectories. Two have results.</p>
+<div class="tblwrap">
+<table>
+<thead><tr><th>Target</th><th>Relaxed</th><th>Scored</th><th>Accepted</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td><code>clamp_md1md2_state3</code></td><td class="n">50</td><td class="n">197</td><td class="n good">5</td><td>complete — hit the 50-trajectory cap</td></tr>
+<tr><td><code>clamp_md1md2_state1</code></td><td class="n">9</td><td class="n zero">0</td><td class="n zero">0</td><td>running</td></tr>
+<tr><td colspan="5" style="color:var(--muted)">7 more queued: clamp_md1md2_state5, clamp_md2md3_state3/5, md3_block ×2, md2_block ×2</td></tr>
+</tbody>
+</table>
+</div>
 
+<h3 style="margin-top:2.2rem">State 3: the gate moved to interface chemistry</h3>
+<div class="panel" style="margin-top:.8rem">
+  {gates_svg()}
+  <p class="cap">Share of the 197 scored designs failing each Rosetta gate. Energetics are not the problem —
+  <b>dG and interface H-bond count fail 0%</b> (medians −58.8 and 10.5). The limiters are
+  <b>buried unsatisfied H-bonds (68% fail, median 5.0 against a limit of 4)</b> and shape complementarity
+  (68%, median 0.58 against 0.60). Both miss by a hair.</p>
+  <div class="flag">
+    <span class="lab">The same wall, one stage later</span>
+    Unsatisfied polar burial is exactly what killed the original <code>md1_block_af3</code> campaign. Beating the
+    i_pAE gate moved designs far enough down the funnel for it to reappear. A clamp has more polar surface to
+    satisfy than a pocket plug, so a systematically higher unsat count may be intrinsic to the concept rather
+    than a fixable defect — 5 designs still cleared it.
+  </div>
+</div>
+
+<h3 style="margin-top:2.2rem">State 1: the flag cannot rescue a bad starting interface</h3>
+<div class="panel" style="margin-top:.8rem">
+  <div class="tblwrap">
+  <table>
+  <thead><tr><th>Median at trajectory stage</th><th>state 3</th><th>state 1</th></tr></thead>
+  <tbody>
+  <tr><td>i_pAE (threshold 0.35)</td><td class="n good">0.345</td><td class="n zero">0.540</td></tr>
+  <tr><td>i_pTM</td><td class="n">0.705</td><td class="n">0.790</td></tr>
+  <tr><td>pLDDT</td><td class="n">0.810</td><td class="n">0.800</td></tr>
+  <tr><td>Scored designs</td><td class="n">197</td><td class="n zero">0</td></tr>
+  </tbody>
+  </table>
+  </div>
+  <p class="cap">State 1's trajectories fold just as well (pLDDT 0.80) but start with a markedly worse interface
+  — i_pAE 0.540 against state 3's 0.345. <code>predict_initial_guess</code> helps AF2 re-find a pose the sequence
+  already supports; it cannot manufacture an interface that was never good.</p>
+  <div class="flag">
+    <span class="lab">Consistent with the TICA clustering</span>
+    State 3 was the <b>dominant basin (~80% of the population)</b>; state 1 a minor one (~6%). If clamp
+    designability tracks state population, that is worth knowing before spending GPU time on the remaining
+    states — but 9 trajectories is far too few to call, and the 50-trajectory cap bounds the cost of finding out.
+  </div>
+</div>
+
+<h2>What is still unknown</h2>
+<p class="sub">Whether the fix holds across the MD2 and MD3 pockets, and whether clamp quality really does track
+TICA state population. Seven targets remain. The two MD2 blockers need unified memory — their 586-residue
+construct exceeds a 46 GB card — so they run last and slowest.</p>
 
 <footer>
 The three baseline runs are stopped; the predict_initial_guess queue is in progress. Built from <code>Trajectory/</code> PDB coordinates,

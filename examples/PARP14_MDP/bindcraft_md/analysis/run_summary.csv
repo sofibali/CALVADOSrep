@@ -1,6 +1,7 @@
 run,relaxed,clashing,lowconf,scored,accepted,rejected
 clamp_md1md2_state3,220,110,96,0,0,0
-guess_clamp_md1md2_state3,1,2,0,0,0,0
+guess_clamp_md1md2_state1,9,6,11,0,0,0
+guess_clamp_md1md2_state3,50,22,22,197,5,192
 md1_block_af3,270,46,146,10,0,10
 md1_block_sim,91,105,108,0,0,0
 md2_block_sim,0,0,0,0,0,0
