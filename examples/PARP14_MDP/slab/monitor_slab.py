@@ -42,60 +42,98 @@ ARMS = ('homotypic', 'rna')
 DT_PS = 0.01  # integrator timestep, ps -- config.yaml is fixed at this
 
 
-def read_log(path):
-    """(last_step, last_speed_ns_day, last_elapsed_s, n_rows) from a reporter log."""
+def _parse_rows(path):
+    """
+    [(step, speed, elapsed), ...] from a StateDataReporter log.
+
+    Column positions are taken from the `#"Step"...` header rather than
+    assumed. With `report_potential_energy: true` the reporter emits potential
+    energy BEFORE speed, so fixed indices would silently return the energy as
+    the speed and the speed as the elapsed time -- every rate and ETA would be
+    nonsense with no error. The header is rewritten whenever append=False, so
+    the last one in the file describes the current columns.
+    """
     if not os.path.isfile(path):
-        return 0, 0.0, 0.0, 0
-    step = elapsed = 0.0
-    speed = 0.0
-    rows = 0
+        return []
+    idx = {'step': 0, 'speed': 1, 'elapsed': 2}
+    rows = []
     with open(path, errors='replace') as fh:
         for line in fh:
-            line = line.strip()
-            if not line or line.startswith('#'):
+            line = line.rstrip('\n')
+            if line.startswith('#'):
+                cols = [c.strip().strip('"').lower() for c in line.lstrip('#').split('\t')]
+                found = {}
+                for i, c in enumerate(cols):
+                    if c.startswith('step'):
+                        found['step'] = i
+                    elif c.startswith('speed'):
+                        found['speed'] = i
+                    elif c.startswith('elapsed'):
+                        found['elapsed'] = i
+                if len(found) == 3:
+                    idx = found
                 continue
             parts = line.split('\t')
-            if len(parts) < 3:
+            if len(parts) <= max(idx.values()):
                 continue
             try:
-                s, sp, el = float(parts[0]), float(parts[1]), float(parts[2])
+                rows.append((float(parts[idx['step']]),
+                             float(parts[idx['speed']]),
+                             float(parts[idx['elapsed']])))
             except ValueError:
                 continue
-            step, speed, elapsed, rows = max(step, s), sp, el, rows + 1
-    return int(step), speed, elapsed, rows
+    return rows
+
+
+def read_log(path):
+    """(last_step, last_speed_ns_day, last_elapsed_s, n_rows) from a reporter log."""
+    rows = _parse_rows(path)
+    if not rows:
+        return 0, 0.0, 0.0, 0
+    return int(max(r[0] for r in rows)), rows[-1][1], rows[-1][2], len(rows)
+
+
+def log_interval(path, window=5):
+    """Median wall-clock seconds between log lines, for the stall threshold."""
+    rows = _parse_rows(path)
+    if len(rows) < 2:
+        return None
+    deltas = [b[2] - a[2] for a, b in zip(rows[-(window + 1):], rows[-window:])
+              if b[2] > a[2]]
+    if not deltas:
+        return None
+    deltas.sort()
+    return deltas[len(deltas) // 2]
 
 
 def recent_rate(path, window=5):
     """
     ns/day over the last `window` log intervals.
 
-    The Speed column is a running average since the start of the leg, so it
-    lags badly when a GPU becomes contended mid-run. This differences the
-    raw Step/Elapsed columns instead, which tracks the current rate.
+    Two traps here:
+
+    * The Speed column is a running average since the start of the LEG, so it
+      lags badly when a GPU becomes contended mid-run.
+    * The Elapsed column restarts at ~0 on every leg, and an opportunistic run
+      is many short legs. Differencing the first and last row of a window that
+      straddles a leg boundary divides a real step count by a near-zero time
+      and reports a rate several times the true one.
+
+    So: accumulate interval by interval and drop any interval whose elapsed
+    time did not advance (i.e. a leg boundary).
     """
-    rows = []
-    if not os.path.isfile(path):
-        return 0.0
-    with open(path, errors='replace') as fh:
-        for line in fh:
-            line = line.strip()
-            if not line or line.startswith('#'):
-                continue
-            parts = line.split('\t')
-            if len(parts) < 3:
-                continue
-            try:
-                rows.append((float(parts[0]), float(parts[2])))
-            except ValueError:
-                continue
+    rows = [(r[0], r[2]) for r in _parse_rows(path)]
     if len(rows) < 2:
         return 0.0
-    sub = rows[-(window + 1):]
-    dstep = sub[-1][0] - sub[0][0]
-    dt = sub[-1][1] - sub[0][1]
-    if dt <= 0 or dstep <= 0:
+    dsteps = dt = 0.0
+    for (s0, t0), (s1, t1) in list(zip(rows, rows[1:]))[-window:]:
+        if t1 <= t0 or s1 <= s0:      # leg boundary, or no progress
+            continue
+        dsteps += s1 - s0
+        dt += t1 - t0
+    if dt <= 0 or dsteps <= 0:
         return 0.0
-    return (dstep * DT_PS * 1e-3) / dt * 86400.0  # ns/day
+    return (dsteps * DT_PS * 1e-3) / dt * 86400.0  # ns/day
 
 
 def gpu_table():
@@ -182,8 +220,16 @@ def collect(arms):
             elif alive and in_eq:
                 status = 'equilibrating'
             elif alive:
+                # The stall threshold must scale with how often this run
+                # actually logs. logfreq is 1e6 steps; on a contended card
+                # (~830 steps/s, per the README's own table) that is ~20 min
+                # between lines, so a fixed 900 s cutoff would label every
+                # healthy large construct 'stalled'. Use 3x the observed
+                # interval, with 900 s only as a floor.
                 mtime = os.path.getmtime(flog) if os.path.isfile(flog) else 0
-                status = 'running' if time.time() - mtime < 900 else 'stalled'
+                iv = log_interval(flog)
+                limit = max(900.0, 3.0 * iv) if iv else 900.0
+                status = 'running' if time.time() - mtime < limit else 'stalled'
             elif step > 0:
                 status = 'partial'
             else:

@@ -99,14 +99,39 @@ def main():
         sys.exit(3)
 
     leg = remaining if max_leg is None else min(remaining, max_leg)
-    leg = max(NBATCHES, (leg // NBATCHES) * NBATCHES)
+    # sim.py runs `nbatches` batches of `int(steps/nbatches)` steps, so a leg
+    # must be a whole multiple of NBATCHES or steps are silently dropped --
+    # and a leg BELOW NBATCHES gives batch=0, i.e. the run does nothing at all,
+    # `done` never advances, and the opportunistic runner relaunches forever.
+    #
+    # Neither rounding direction alone is safe: rounding up always would
+    # overshoot the target on the last leg, rounding down always strands a
+    # 1..NBATCHES-1 remainder that can never be consumed. So: round down while
+    # that leaves a runnable leg, and only for a final sub-batch remainder
+    # round up to NBATCHES, overshooting by <10 steps out of 2e8 rather than
+    # livelocking.
+    if leg >= NBATCHES:
+        leg = (leg // NBATCHES) * NBATCHES
+    else:
+        print(f'  [steps] {sysname}: {leg} step(s) left is below sim.py\'s '
+              f'{NBATCHES}-batch floor; running {NBATCHES} to finish '
+              f'(overshoots target by {NBATCHES - leg})')
+        leg = NBATCHES
 
     fcfg = os.path.join(run_dir, 'config.yaml')
     cfg = yaml.safe_load(open(fcfg))
     if int(float(cfg.get('steps', 0))) != leg:
         cfg['steps'] = leg
-        with open(fcfg, 'w') as fh:
+        # Write atomically. The opportunistic runner SIGKILLs stragglers and
+        # these jobs get killed on logout; a kill partway through an in-place
+        # `open(fcfg,'w')` would leave config.yaml empty or half-written and
+        # permanently brick the construct.
+        tmp = fcfg + '.tmp'
+        with open(tmp, 'w') as fh:
             yaml.safe_dump(cfg, fh)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(tmp, fcfg)
 
     tail = f' (checkpoint every {leg // NBATCHES:,})' if max_leg else ''
     if done:

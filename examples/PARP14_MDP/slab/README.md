@@ -1,21 +1,30 @@
 # PARP14 slab / assembly runs
 
-Everything here is prepared, validated, and **costed on real hardware**. No
-production run has been started yet.
+Everything here is prepared, validated, and **costed on real hardware**.
 
-Status as of 2026-09-17, on `lyra.fraserlab.com`:
+Status as of 2026-09-18:
 
 - all 20 configs build and reach `STARTING SIMULATION` on CUDA with the correct
   bead counts
-- throughput measured on an idle L40S — **~11 h per run, ~9.5 GPU-days for the
+- throughput measured on an idle L40S — **~11.4 h per run, ~9.5 GPU-days for the
   whole panel**, 8× cheaper than the assumption this file used to carry
-- the launcher, resume arithmetic and completion guard are tested end-to-end
+- the launchers, resume arithmetic, locking and completion guard are tested
+  end-to-end against real GPU contention
 - the env the old scripts pointed at **cannot run these at all** (no CUDA
   platform) — fixed, see *Things that will bite*
+- **the campaign was started on lyra and then stopped**; it is moving to
+  dedicated, slower GPUs, because sharing costs 3.4–6× and lyra's GPU 0 is under
+  a BindCraft sweep with ~2 weeks left. One construct
+  (`homotypic/core_full_go`) is equilibrated with 1e6 / 2e8 production steps
+  banked and will resume, not restart. Everything else is at 0.
 
 ```
 /home/sbali/CALVADOS/examples/PARP14_MDP/slab
 ```
+
+> **Moving to other GPUs / picking this up later:** read
+> [`SESSION_2026-09-18_lyra.md`](SESSION_2026-09-18_lyra.md) — what was measured,
+> what was built, what state the tree is in, and what to check on a new machine.
 
 > ### ⚠ lyra has no SLURM — use `run_slab_queue.sh`, not `submit_slab.slurm`
 >
@@ -271,6 +280,36 @@ arithmetic exact, so the construct still finishes on precisely 2e8 steps.
 Set `LEG_STEPS` smaller to yield faster at slightly more restart overhead; each
 restart re-reads the PDB and rebuilds the restraint lists (~1 min for these
 systems), so legs much below ~5e6 steps start to waste real time.
+
+**Yielding leaves overlapping frames in the DCD — size `LEG_STEPS` for it.**
+`sim.py` reopens the trajectory with `DCDReporter(..., append=True)` on restart
+and does *not* rewind it to the checkpoint. Frames are written every `wfreq`
+(1e5 steps) but checkpoints only every `LEG_STEPS/10`, so a SIGTERM between
+checkpoints leaves frames on disk for steps the checkpoint never captured; the
+resumed leg re-simulates that window and appends a second, different trajectory
+through it.
+
+| `LEG_STEPS` | checkpoint every | dup frames per yield | of a 2000-frame run | restart overhead |
+|---|---|---|---|---|
+| 2e7 | 2e6 | 20 | 1.0% | ~1.5% |
+| **1e7 (recommended)** | 1e6 | 10 | 0.5% | **~3%** |
+| 2e6 (script default) | 2e5 | 2 | 0.1% | ~14% |
+| 1e6 | 1e5 | 1 | 0.05% | ~25% |
+
+**Restart overhead is measured, not guessed:** on `core_full_go` (50k beads,
+200k restraints) a leg costs ~50 s of `build_system()` before any stepping, and
+the GPU does ~6,400 steps/s, so a 2e6-step leg spends 50 s of every 362 s on
+setup. `LEG_STEPS=1e7` is the sweet spot on a mostly-idle card — pick smaller
+only if the GPU is being reclaimed every few minutes.
+
+This is **not** a bias in c_sat — the abandoned segment is still a valid
+equilibrium sample from the same ensemble, so the density profile is not
+skewed. What it does break is the frame-index-to-simulation-time mapping, and
+it mildly over-weights the repeated windows (inflating apparent correlation).
+Keep `LEG_STEPS` at 2e6 or below on a contended GPU, and if you need an exact
+time axis, take it from the reporter log's Step column rather than from frame
+index. Runs done entirely on GPU 0 with `run_slab_queue.sh` never yield and are
+unaffected.
 
 **A yielded run is not stranded on that GPU.** Resuming needs only
 `restart.chk` and the construct directory, so the same construct can be picked

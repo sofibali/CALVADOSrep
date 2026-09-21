@@ -54,6 +54,7 @@ nvidia-smi --query-gpu=index,name,memory.total,memory.used --format=csv,noheader
 for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
   name=$(basename "$d")
   if [ -n "$ONLY" ] && [[ ",$ONLY," != *",$name,"* ]]; then continue; fi
+  [ -f "$d/slab_meta.yaml" ] || continue   # not a construct directory
   beads=$(grep -oP 'beads:\s*\K[0-9]+' "$d/slab_meta.yaml" 2>/dev/null)
   echo ""
   echo "[slab $(date '+%F %T')] START $name (${beads:-?} beads)"
@@ -80,7 +81,19 @@ for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
   else
     "$CAL_ENV/bin/python" "$SLAB/slab_steps.py" prepare "$d"
   fi
-  if [ $? -eq 3 ]; then exec 9>&-; continue; fi
+  prc=$?
+  # rc=3 means "already complete". ANY other non-zero means slab_steps could
+  # not patch `steps` (missing slab_meta.yaml, unparseable/truncated
+  # config.yaml, ...). Running anyway would use whatever `steps` is already in
+  # config.yaml -- for a finished construct that is the full 2e8, and since a
+  # checkpoint restart runs `steps` ADDITIONAL steps, it would silently land on
+  # 4e8. Skip instead.
+  if [ $prc -eq 3 ]; then exec 9>&-; continue; fi
+  if [ $prc -ne 0 ]; then
+    echo "  ^ slab_steps.py failed (rc=$prc) -- SKIPPING $name rather than risk overshooting"
+    exec 9>&-
+    continue
+  fi
   start=$(date +%s)
   # A 46 GB L40S handles ~50k CG beads comfortably; the OOM seen with BindCraft
   # was a 683-residue all-atom AF2 complex, a different regime. If a large

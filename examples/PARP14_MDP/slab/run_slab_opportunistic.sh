@@ -41,7 +41,7 @@ SLAB=$(cd "$(dirname "$0")" && pwd)
 CAL_ENV=/home/sbali/miniconda3/envs/calvados
 ARM=${1:?usage: [GPU=n] ./run_slab_opportunistic.sh <homotypic|rna|benchmark>}
 GPU=${GPU:-1}
-LEG_STEPS=${LEG_STEPS:-20000000}
+LEG_STEPS=${LEG_STEPS:-10000000}  # 1e7: ~3% restart overhead, 10 dup frames/yield. See README "Yielding leaves overlapping frames".
 POLL=${POLL:-30}
 mkdir -p "$SLAB/logs"
 
@@ -54,13 +54,18 @@ if ! "$CAL_ENV/bin/python" -c 'import openmm; openmm.Platform.getPlatformByName(
 fi
 
 # PIDs on $GPU that are not this script's descendants.
+# NOTE: this FAILS CLOSED. If nvidia-smi cannot be read we report a sentinel
+# "unknown" rather than "nobody is there" -- the whole point of this script is
+# deference, and a transient nvidia-smi failure must not be indistinguishable
+# from an idle GPU or we would keep running straight through someone else's job.
 foreign_pids () {
   local uuid pids p
-  uuid=$(nvidia-smi --query-gpu=index,uuid --format=csv,noheader \
+  uuid=$(nvidia-smi --query-gpu=index,uuid --format=csv,noheader 2>/dev/null \
          | awk -F', *' -v g="$GPU" '$1==g {print $2}')
-  [ -n "$uuid" ] || return 0
-  pids=$(nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader \
-         | awk -F', *' -v u="$uuid" '$1==u {print $2}')
+  if [ -z "$uuid" ]; then echo "nvidia-smi-unreadable"; return 0; fi
+  pids=$(nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader 2>/dev/null) \
+      || { echo "nvidia-smi-unreadable"; return 0; }
+  pids=$(echo "$pids" | awk -F', *' -v u="$uuid" '$1==u {print $2}')
   for p in $pids; do
     # ours if it is the leg we launched
     [ -n "$RUN_PID" ] && [ "$p" = "$RUN_PID" ] && continue
@@ -81,59 +86,82 @@ wait_for_empty () {
   done
 }
 
+# Terminate the current leg cleanly if this script is killed. Without this the
+# backgrounded run.py is orphaned: nothing polls the GPU for it any more (so it
+# never yields, defeating the whole point), and it keeps the inherited fd-9
+# flock, so every other launcher then skips that construct forever.
+RUN_PID=''
+cleanup () {
+  trap - TERM INT EXIT
+  if [ -n "$RUN_PID" ] && kill -0 "$RUN_PID" 2>/dev/null; then
+    echo "[opp $(date '+%F %T')] stopping -- terminating current leg (pid $RUN_PID)"
+    kill -TERM "$RUN_PID" 2>/dev/null
+    for _ in $(seq 20); do kill -0 "$RUN_PID" 2>/dev/null || break; sleep 1; done
+    kill -KILL "$RUN_PID" 2>/dev/null
+  fi
+  exec 9>&- 2>/dev/null
+  exit 143
+}
+trap cleanup TERM INT
+
 echo "[opp $(date '+%F %T')] arm=$ARM gpu=$GPU leg=$LEG_STEPS host=$(hostname)"
 echo "[opp $(date '+%F %T')] policy: run only while GPU $GPU is empty; yield on any foreign process"
 
-# Outer pass loop. A single walk of the arm is not enough: constructs are
-# seeded progressively on GPU 0, so on an early pass most of them have no
-# restart.chk yet and are skipped. Without this loop the runner would walk the
-# list once, find nothing it is allowed to touch, and exit -- leaving an idle
-# GPU while work appears minutes later. Instead it keeps re-walking until every
-# construct in the arm is finished, sleeping when a whole pass found nothing.
+# Outer pass loop. A single walk of the arm is not enough: constructs are seeded
+# progressively on GPU 0, so on an early pass most have no restart.chk yet and
+# are skipped. Without this the runner would walk the list once, find nothing it
+# may touch, and exit -- leaving an idle GPU while work appears minutes later.
 while true; do
 did_work=0
 for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
   name=$(basename "$d")
   if [ -n "$ONLY" ] && [[ ",$ONLY," != *",$name,"* ]]; then continue; fi
-
-  # One launcher per construct directory. The whole point of this script is
-  # that it shares an arm with the GPU 0 queue, so the collision it guards
-  # against -- two processes writing the same restart.chk and DCD -- is the
-  # likely case, not the exotic one.
-  exec 9>"$d/.slab.lock"
-  if ! flock -n 9; then
-    echo "[opp $(date '+%F %T')] $name already running under another launcher -- skipping"
-    exec 9>&-
-    continue
-  fi
+  [ -f "$d/slab_meta.yaml" ] || continue    # not a construct directory
 
   # A fresh construct must NOT be started here. Equilibration is a single
-  # uninterruptible `simulation.step(steps_eq)` with no checkpointing (sim.py),
+  # uninterruptible `simulation.step(steps_eq)` with NO checkpointing (sim.py),
   # so a preemption anywhere in those 5e6 steps throws away the whole ~17 min
-  # and starts over. On a GPU that is interrupted more often than that the
-  # construct would livelock, never reaching production. Seed it on GPU 0
-  # instead: once `restart.chk` exists, equilibration is done and forever
-  # skipped (sim.py forces slab_eq off on checkpoint restart), and everything
-  # after that is checkpointed every LEG_STEPS/10 and safe to preempt.
+  # and starts over; on a GPU reclaimed more often than that the construct
+  # livelocks and never reaches production. Seed it on GPU 0 instead: once
+  # restart.chk exists, slab_eq is forced off on restart and everything after
+  # is checkpointed every LEG_STEPS/10 and safe to preempt.
   if [ ! -f "$d/restart.chk" ] && [ "$ALLOW_FRESH" != "1" ]; then
     echo "[opp $(date '+%F %T')] SKIP $name -- not equilibrated yet (no restart.chk)."
     echo "    Seed it on GPU 0 first:  GPU=0 ONLY=$name ./run_slab_queue.sh $ARM"
     echo "    (ALLOW_FRESH=1 overrides, but risks losing equilibration repeatedly)"
-    exec 9>&-
     continue
   fi
 
   stalled=0
   while true; do
+    # Wait for the GPU BEFORE taking the lock. Holding the per-construct lock
+    # across an unbounded wait would pin the construct to this GPU: if another
+    # user sat on GPU $GPU for two days, run_slab_queue.sh on GPU 0 would find
+    # the lock held and skip the construct, which is the opposite of the
+    # "a yielded run is movable" property this script is supposed to provide.
+    wait_for_empty
+
+    exec 9>"$d/.slab.lock"
+    if ! flock -n 9; then
+      echo "[opp $(date '+%F %T')] $name taken by another launcher -- moving on"
+      exec 9>&-
+      break
+    fi
+
     # Exact remaining-step arithmetic, capped to one leg.
     RUN_PID=''
     "$CAL_ENV/bin/python" "$SLAB/slab_steps.py" prepare "$d" --max-leg "$LEG_STEPS"
     rc=$?
-    [ $rc -eq 3 ] && break          # construct complete -> next construct
-    [ $rc -ne 0 ] && { echo "  ^ slab_steps failed for $name"; break; }
+    if [ $rc -eq 3 ]; then exec 9>&-; break; fi          # complete
+    if [ $rc -ne 0 ]; then
+      echo "  ^ slab_steps.py failed (rc=$rc) for $name -- skipping rather than"
+      echo "    running with an unpatched steps value and overshooting the target"
+      exec 9>&-; break
+    fi
     read before _ _ < <("$CAL_ENV/bin/python" "$SLAB/slab_steps.py" status "$d")
 
-    wait_for_empty
+    # Somebody may have landed while we were taking the lock.
+    if [ -n "$(foreign_pids)" ]; then exec 9>&-; continue; fi
 
     echo "[opp $(date '+%F %T')] START $name leg on GPU $GPU"
     start=$(date +%s)
@@ -141,43 +169,45 @@ for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
         >> "$SLAB/logs/${ARM}_${name}.log" 2>&1 &
     RUN_PID=$!
 
-    # Watch for anyone else landing on this GPU; yield immediately if so.
     yielded=0
     while kill -0 "$RUN_PID" 2>/dev/null; do
       sleep "$POLL"
       f=$(foreign_pids)
-      if [ -n "$f" ]; then
-        echo "[opp $(date '+%F %T')] YIELD -- foreign pid(s) $(echo $f | tr '\n' ' ') on GPU $GPU; stopping $name"
-        kill -TERM "$RUN_PID" 2>/dev/null
-        # give OpenMM a moment to unwind; the last checkpoint is already on disk
-        for _ in $(seq 20); do kill -0 "$RUN_PID" 2>/dev/null || break; sleep 1; done
-        kill -KILL "$RUN_PID" 2>/dev/null
-        yielded=1
-        break
-      fi
+      [ -z "$f" ] && continue
+      # The run may have finished during that sleep; killing a corpse and
+      # calling it a yield would hide a real failure and retry it forever.
+      kill -0 "$RUN_PID" 2>/dev/null || break
+      echo "[opp $(date '+%F %T')] YIELD -- foreign pid(s) $(echo $f | tr '\n' ' ') on GPU $GPU; stopping $name"
+      kill -TERM "$RUN_PID" 2>/dev/null
+      for _ in $(seq 20); do kill -0 "$RUN_PID" 2>/dev/null || break; sleep 1; done
+      kill -KILL "$RUN_PID" 2>/dev/null
+      yielded=1
+      break
     done
     wait "$RUN_PID" 2>/dev/null
     rc=$?
     RUN_PID=''
+    did_work=1
     read done target remaining < <("$CAL_ENV/bin/python" "$SLAB/slab_steps.py" status "$d")
     echo "[opp $(date '+%F %T')] END $name exit=$rc elapsed=$(( $(date +%s) - start ))s progress=${done}/${target}"
+    exec 9>&-    # release before any further waiting
 
-    if [ $yielded -eq 1 ]; then
-      # If we keep getting preempted before a single checkpoint lands, this GPU
-      # is churning faster than LEG_STEPS/10 and we are making no progress at
-      # all. Say so rather than spinning silently forever.
+    # rc=0 means it exited cleanly on its own, whatever the GPU looked like.
+    if [ $yielded -eq 1 ] && [ $rc -ne 0 ]; then
+      # Preempted before a checkpoint landed => no progress at all. If that
+      # keeps happening this GPU is churning faster than the checkpoint
+      # interval and we are burning setup cost for nothing.
       if [ "$done" = "$before" ]; then
         stalled=$((stalled + 1))
         if [ $stalled -ge 3 ]; then
           echo "[opp $(date '+%F %T')] NO PROGRESS on $name after $stalled yields --"
-          echo "    GPU $GPU is being reclaimed faster than the $((LEG_STEPS / 10))-step"
-          echo "    checkpoint interval. Lower LEG_STEPS, or run this construct on GPU 0."
+          echo "    GPU $GPU is reclaimed faster than the $((LEG_STEPS / 10))-step"
+          echo "    checkpoint interval. Lower LEG_STEPS, or run this one on GPU 0."
           stalled=0
         fi
       else
         stalled=0
       fi
-      wait_for_empty            # sit out until they are done, then continue
       continue
     fi
     if [ $rc -ne 0 ]; then
@@ -186,11 +216,9 @@ for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
     fi
     [ "$remaining" = "0" ] && break
   done
-  did_work=1
-  exec 9>&-    # release the per-construct lock
 done
 
-# Is anything in this arm still unfinished? If not, we are genuinely done.
+# Anything left unfinished in this arm?
 pending=0
 for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
   [ -f "$d/slab_meta.yaml" ] || continue
@@ -200,7 +228,7 @@ done
 [ $pending -eq 0 ] && break
 
 if [ $did_work -eq 0 ]; then
-  echo "[opp $(date '+%F %T')] nothing runnable yet ($pending construct(s) still awaiting a seed on GPU 0) -- re-checking in 5 min"
+  echo "[opp $(date '+%F %T')] nothing runnable yet ($pending construct(s) awaiting a seed on GPU 0) -- re-checking in 5 min"
   sleep 300
 fi
 done
