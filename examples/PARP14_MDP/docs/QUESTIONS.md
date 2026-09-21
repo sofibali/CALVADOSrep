@@ -1,5 +1,10 @@
 # PARP14 simulations — what we asked, and what we found
 
+> **Where everything lives:** [`INVENTORY.md`](INVENTORY.md) — every result
+> location and what each artifact contains (trajectories, `data/` caches,
+> figures, the slab campaign), plus what is gitignored and therefore
+> single-copy on this filesystem.
+
 Question-oriented index. `README.md` describes the *infrastructure*;
 `sim_analysis/ANALYSIS_README.md` describes the *scripts*. **This** describes the
 *findings*.
