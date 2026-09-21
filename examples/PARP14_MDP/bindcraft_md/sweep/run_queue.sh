@@ -1,6 +1,12 @@
 #!/bin/bash
-# PARP14 BindCraft queue -- all remaining targets with predict_initial_guess=True.
+# PARP14 BindCraft queue -- remaining targets with predict_initial_guess=True.
 # Serial, one GPU. Each target stops at 8 accepted designs or max_trajectories=50.
+#
+# Order set 2026-09-21: MD2 and MD3 blockers first, then the MD2-MD3 clamp
+# states, then the remaining MD1-MD2 clamp. Block-target hotspots were
+# regenerated from the corrected UniProt-referenced active sites
+# (docs/NUMBERING_AUDIT.md). clamp_md1md2_state3 (complete) and _state1
+# (running when this order was set) are not repeated here.
 set +u
 BC=/home/sbali/BindCraft
 CD=/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md
@@ -22,7 +28,7 @@ run () {
   local dir="$CD/designs/guess_${t}"
   echo "[queue $(date '+%F %T')] START $t (unified_mem=$unified)"
   if [ "$unified" = "1" ]; then
-    # 586-res target -> ~683-res complex OOMs a 46GB L40S; spill to host RAM
+    # 586-res target -> ~716-res complex OOMs a 46GB L40S; spill to host RAM
     export TF_FORCE_UNIFIED_MEMORY=1 XLA_PYTHON_CLIENT_MEM_FRACTION=4.0
   else
     unset TF_FORCE_UNIFIED_MEMORY XLA_PYTHON_CLIENT_MEM_FRACTION
@@ -35,13 +41,11 @@ run () {
   echo "[queue $(date '+%F %T')] END $t exit=$? accepted=$(ls $dir/Accepted/*.pdb 2>/dev/null|wc -l) relaxed=$(ls $dir/Trajectory/Relaxed 2>/dev/null|wc -l)"
 }
 
-run clamp_md1md2_state3
-run clamp_md1md2_state1
-run clamp_md1md2_state5
-run clamp_md2md3_state3
-run clamp_md2md3_state5
-run md3_block_af3
-run md3_block_sim
 run md2_block_af3  1
 run md2_block_sim  1
+run md3_block_af3
+run md3_block_sim
+run clamp_md2md3_state3
+run clamp_md2md3_state5
+run clamp_md1md2_state5
 echo "[queue $(date '+%F %T')] QUEUE COMPLETE"

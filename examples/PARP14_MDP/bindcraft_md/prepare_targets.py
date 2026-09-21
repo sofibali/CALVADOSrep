@@ -83,7 +83,17 @@ _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)
 import sim_registry as _sitereg
 
 CATALYTIC_FL = {k: _sitereg.ACTIVE_SITES_FL[k]['catalytic'] for k in ("MD1", "MD2", "MD3")}
+
+# data/sasa_face_per_residue.csv predates the md1l1 -> md1 unit rename and still
+# labels that domain "MD1L1". Match on the canonical unit name from
+# sim_registry.UNIT_ALIASES rather than a literal, so this keeps working whether
+# the CSV is regenerated or not. (Matching "MD1" literally against the current
+# CSV silently returns zero rows, which drops MD1 from 15 hotspots to the 3
+# catalytic ones.)
 SASA_DOMAIN  = {"MD1": "MD1", "MD2": "MD2", "MD3": "MD3"}
+
+def _sasa_domain_matches(row_domain, md):
+    return _sitereg.canonical_unit(row_domain) == _sitereg.canonical_unit(SASA_DOMAIN[md])
 
 def block_of(resid):
     for k, (lo, hi) in BLOCKS.items():
@@ -192,7 +202,7 @@ def block_hotspots(md, sasa, rsa_cut=0.15):
         loc = fl_to_local(fl)
         if loc: local.add(loc)
     for r in sasa:
-        if r["domain"] != SASA_DOMAIN[md] or not r["is_pocket_in"]:
+        if not _sasa_domain_matches(r["domain"], md) or not r["is_pocket_in"]:
             continue
         try: rsa = float(r["rsa"])
         except ValueError: continue
