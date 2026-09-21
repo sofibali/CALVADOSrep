@@ -621,7 +621,19 @@ class Sim:
         if self.runtime > 0: # in hours
             simulation.runForClockTime(self.runtime*unit.hour, checkpointFile=fcheck_out, checkpointInterval=30*unit.minute)
         else:
-            nbatches = 10
+            # `checkpoint_interval` (in steps) overrides the fixed 10 batches.
+            # Whatever a SIGTERM lands between checkpoints is lost and has to be
+            # re-simulated, so a run that expects to be preempted -- e.g. one
+            # sharing a GPU under examples/PARP14_MDP/slab -- wants to checkpoint
+            # far more often than once per tenth of a leg. Absent or 0 keeps the
+            # original behaviour exactly.
+            #
+            # This loop is the PRODUCTION path only; equilibration above never
+            # writes restart.chk, which matters because its System still carries
+            # the slab-centering force and a checkpoint taken there could not be
+            # loaded back into the production System.
+            ckpt = int(getattr(self, 'checkpoint_interval', 0) or 0)
+            nbatches = max(1, round(self.steps / ckpt)) if ckpt > 0 else 10
             batch = int(self.steps / nbatches)
             for i in tqdm(range(nbatches),mininterval=1):
                 simulation.step(batch)

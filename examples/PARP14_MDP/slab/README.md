@@ -289,6 +289,30 @@ between checkpoints leaves frames on disk for steps the checkpoint never
 captured; the resumed leg re-simulates that window and appends a second,
 different trajectory through it.
 
+**Checkpoints are written every `wfreq` (1e5 steps), not once per tenth of a
+leg.** Stock `sim.py` hard-codes `nbatches = 10`, so a 1e7-step leg checkpointed
+only every 1e6 steps and a yield threw away up to ~156 s of compute. A local
+patch to `calvados/sim.py` makes that cadence configurable via a
+`checkpoint_interval` config key, and `slab_steps.py` sets it to `wfreq`:
+
+| | stock | patched |
+|---|---|---|
+| checkpoint every | leg/10 = 1e6 steps | **wfreq = 1e5 steps** |
+| worst-case loss per yield | ~156 s | **~16 s** |
+| frames at risk per yield | 10 | **1** |
+| overhead | — | ~6 MB write every ~16 s, <0.5% |
+
+> **This is a local patch to the CALVADOS package**, applied to both
+> `calvados/sim.py` in this checkout and the copy in `envs/calvados`
+> (backups at `sim.py.bak_preckpt`). **Re-apply it after any reinstall or
+> `git checkout` of the package.** On an unpatched CALVADOS the
+> `checkpoint_interval` key is simply ignored and the old 10-batch cadence
+> applies — nothing breaks, yields just cost more.
+
+Aligning the leg, the checkpoint, the log line and the frame all to `wfreq` also
+means `int(steps/nbatches)` divides evenly, so no steps are silently dropped,
+and it is what makes the trim boundary below exact.
+
 `run_slab_opportunistic.sh` now runs **`trim_dcd.py --apply`** before every leg,
 which truncates the DCD back to the last checkpoint so the leg appends onto a
 clean boundary. It rewrites only the header's frame count and truncates the
@@ -433,6 +457,9 @@ re-launching an interrupted construct picks up where it stopped.
   which has CUDA and numpy 1.24, and whose `sim.py` is byte-identical to this
   checkout's. `run_slab_queue.sh` now points there and refuses to start if the
   CUDA platform is missing; `submit_slab.slurm` still names the broken env.
+- **`calvados/sim.py` carries a local patch** (`checkpoint_interval`, see
+  *Checkpoints are written every wfreq*). Re-apply after any package reinstall;
+  backups are at `sim.py.bak_preckpt`. Unpatched, the key is ignored.
 - **Do not set `slab_eq` and `ext_force` together.** `sim.py:47-48` overwrites
   the slab-centering force with the external one.
 - **NumPy ≥ 2.0 breaks setup.** `build.build_xyzgrid` uses `np.product`, removed

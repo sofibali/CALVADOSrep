@@ -99,18 +99,25 @@ def main():
         sys.exit(3)
 
     leg = remaining if max_leg is None else min(remaining, max_leg)
-    # sim.py runs `nbatches` batches of `int(steps/nbatches)` steps, so a leg
-    # must be a whole multiple of NBATCHES or steps are silently dropped --
-    # and a leg BELOW NBATCHES gives batch=0, i.e. the run does nothing at all,
-    # `done` never advances, and the opportunistic runner relaunches forever.
+
+    fcfg = os.path.join(run_dir, 'config.yaml')
+    cfg = yaml.safe_load(open(fcfg))
+    wfreq = int(float(cfg.get('wfreq', 0) or 0))
+
+    # Align the leg to wfreq so the checkpoint, the log line and the trajectory
+    # frame all land on the same steps. That makes trim_dcd.py's boundary exact
+    # (at most ONE frame can ever be ahead of the checkpoint) and means sim.py's
+    # `int(steps/nbatches)` divides evenly, so no steps are silently dropped.
     #
-    # Neither rounding direction alone is safe: rounding up always would
-    # overshoot the target on the last leg, rounding down always strands a
-    # 1..NBATCHES-1 remainder that can never be consumed. So: round down while
-    # that leaves a runnable leg, and only for a final sub-batch remainder
-    # round up to NBATCHES, overshooting by <10 steps out of 2e8 rather than
-    # livelocking.
-    if leg >= NBATCHES:
+    # Falling back to NBATCHES: sim.py runs `nbatches` batches of
+    # int(steps/nbatches), so a leg below that floor gives batch=0 -- the run
+    # does nothing at all, `done` never advances, and the opportunistic runner
+    # relaunches forever. Rounding up always would instead overshoot the target
+    # on the last leg. So round down while that leaves a runnable leg, and only
+    # round up for a final sub-batch remainder.
+    if wfreq > 0 and leg >= wfreq:
+        leg = (leg // wfreq) * wfreq
+    elif leg >= NBATCHES:
         leg = (leg // NBATCHES) * NBATCHES
     else:
         print(f'  [steps] {sysname}: {leg} step(s) left is below sim.py\'s '
@@ -118,25 +125,28 @@ def main():
               f'(overshoots target by {NBATCHES - leg})')
         leg = NBATCHES
 
-    fcfg = os.path.join(run_dir, 'config.yaml')
-    cfg = yaml.safe_load(open(fcfg))
     changed = int(float(cfg.get('steps', 0))) != leg
 
-    # For a PREEMPTIBLE leg (--max-leg, i.e. the opportunistic runner), pin
-    # logfreq to the checkpoint interval. sim.py checkpoints after each of its
-    # 10 batches, so with logfreq == leg/10 the last line in {sysname}.log is
-    # written at exactly the step the checkpoint holds. trim_dcd.py relies on
-    # that to know which trajectory frames the checkpoint actually backs, and
-    # therefore which are re-simulated leftovers to drop.
+    # Checkpoint every wfreq rather than sim.py's default of once per tenth of
+    # the leg. Whatever a kill lands between checkpoints is lost and must be
+    # re-simulated; at 6,400 steps/s that is ~16 s instead of ~156 s for a 1e7
+    # leg. It costs a ~6 MB write every ~16 s (<0.5% overhead) and it helps any
+    # interrupted run -- a yield, a logout, a timeout -- not just preemption,
+    # which is why it is not conditional on --max-leg.
     #
-    # Not done for a full-target leg: there logfreq would become 2e7 and the
-    # run would log only 10 times in 2e8 steps, which is useless to monitor --
-    # and a run that never yields has nothing to trim anyway.
-    if max_leg is not None:
-        want_logfreq = max(1, leg // NBATCHES)
-        if int(float(cfg.get('logfreq', 0))) != want_logfreq:
-            cfg['logfreq'] = want_logfreq
-            changed = True
+    # `checkpoint_interval` is read by the local sim.py patch (see the comment
+    # there); on an unpatched CALVADOS it is simply ignored and the default
+    # 10-batch cadence applies.
+    #
+    # logfreq matches it so the last line of {sysname}.log is written at exactly
+    # the step the checkpoint holds -- that is how trim_dcd.py knows which
+    # frames the checkpoint actually backs.
+    ckpt = wfreq
+    if wfreq > 0:
+        for key, want in (('checkpoint_interval', ckpt), ('logfreq', ckpt)):
+            if int(float(cfg.get(key, 0) or 0)) != want:
+                cfg[key] = want
+                changed = True
 
     if changed:
         cfg['steps'] = leg
@@ -151,7 +161,7 @@ def main():
             os.fsync(fh.fileno())
         os.replace(tmp, fcfg)
 
-    tail = f' (checkpoint every {leg // NBATCHES:,})' if max_leg else ''
+    tail = f' (checkpoint every {ckpt:,})' if ckpt else ''
     if done:
         print(f'  [steps] {sysname}: resuming at {done:,}/{target:,}; '
               f'this leg runs {leg:,} steps{tail}')
