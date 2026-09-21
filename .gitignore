@@ -270,3 +270,4 @@ examples/PARP14_MDP/bindcraft_md/__pycache__/
 # Large trajectory archive (4.3 GB) -- kept on disk, never in git.
 # manifest.txt IS tracked and records what the archive contains.
 examples/PARP14_MDP/archive_tica_nonca25/*.tar.gz
+calvados/sim.py.bak_preckpt
