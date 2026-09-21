@@ -1,0 +1,4 @@
+set,reduce,silhouette,bound_pct,state,pop,n,rep,frame,pdb
+p9_dtx3l,pca,0.654,5.9,1,0.8411405295315683,413,rep-1,4492,p9_dtx3l_state1.pdb
+p9_dtx3l,pca,0.654,5.9,2,0.08757637474541752,43,rep-4,8508,p9_dtx3l_state2.pdb
+p9_dtx3l,pca,0.654,5.9,3,0.07128309572301425,35,rep-4,4900,p9_dtx3l_state3.pdb

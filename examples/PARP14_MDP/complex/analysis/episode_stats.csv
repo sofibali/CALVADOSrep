@@ -1,2 +1,17 @@
 set,pair,n_rep,ns_sampled,bound_frac,bound_frac_ci95,n_episodes,tau_mean_ns,tau_median_ns,tau_max_ns,ep_over_10ns,verdict
-p9_dtx3l,parp9-dtx3l,4,460,0.0478,0.0194,22,1.0,1.0,2.5,0,transient encounter -> done
+ternary_docked,parp14-dtx3l,5,2500,0.2486,0.2092,260,2.39,0.5,308.0,2,borderline -> extend
+p14_homo,parp14-parp14,5,2500,0.18,0.0341,327,1.38,1.0,9.5,0,transient encounter -> done
+p14_dtx3l,parp14-dtx3l,5,2500,0.149,0.0249,318,1.17,0.5,7.5,0,transient encounter -> done
+p14_dtx3l_docked,parp14-dtx3l,5,2500,0.132,0.011,274,1.2,0.5,7.5,0,transient encounter -> done
+ternary_docked,parp14-parp9,5,2500,0.1312,0.0381,248,1.32,0.5,11.5,1,transient encounter -> done
+ternary,parp14-parp9,5,2500,0.1302,0.0301,231,1.41,0.5,12.0,2,transient encounter -> done
+p14_p9_docked,parp14-parp9,5,2500,0.1238,0.0411,226,1.37,1.0,10.5,1,transient encounter -> done
+p14_p9,parp14-parp9,5,2500,0.1238,0.0491,239,1.29,1.0,13.0,1,transient encounter -> done
+ternary,parp14-dtx3l,5,2500,0.0996,0.0399,250,1.0,0.5,8.5,0,transient encounter -> done
+p9_dtx3l_docked,parp9-dtx3l,5,2500,0.0938,0.0254,217,1.08,0.5,6.5,0,transient encounter -> done
+p9_dtx3l,parp9-dtx3l,7,3500,0.0811,0.0323,242,1.17,0.5,13.0,1,transient encounter -> done
+ternary,parp9-dtx3l,5,2500,0.077,0.0259,206,0.93,0.5,6.5,0,transient encounter -> done
+dtx3l_homo_docked,dtx3l-dtx3l,5,2500,0.0742,0.0201,169,1.1,0.5,9.0,0,transient encounter -> done
+ternary_docked,parp9-dtx3l,5,2500,0.0682,0.0202,151,1.13,0.5,6.0,0,transient encounter -> done
+dtx3l_homo,dtx3l-dtx3l,5,2500,0.0626,0.016,179,0.87,0.5,4.5,0,transient encounter -> done
+p9_homo,parp9-parp9,5,2500,0.0596,0.0285,148,1.01,0.5,8.5,0,transient encounter -> done

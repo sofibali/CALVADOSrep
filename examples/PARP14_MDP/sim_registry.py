@@ -60,54 +60,68 @@ SAMPLES = list(range(0, 5))
 DOMAIN_UNITS = {
     'rrm1': (1, 145), 'rrm2': (146, 224), 'rrm3': (225, 314),
     'kh1-kh6': (315, 737), 'kh7a': (738, 789),
-    'md1l1': (790, 1004), 'md2': (1004, 1193), 'md3': (1207, 1388),
+    # 'md1' spans macrodomain 1 (UniProt Macro 1, 791-978) PLUS the linker that
+    # runs from the end of that domain to the start of MD2. It was called
+    # 'md1l1' while that linker was thought to be missing; the linker is in
+    # fact present, so the unit is just MD1-with-its-linker. 'md1l1' is kept as
+    # a read alias below so the existing metadata.json files and
+    # representative_frames/ directory names still resolve.
+    #
+    # It ends at 1003, not 1004: MD2 starts at 1004, and a residue cannot
+    # belong to two units (the old 790-1004 / 1004-1193 pair double-counted
+    # 1004, so the 11 units summed to 1789 residues but covered only 1788).
+    'md1': (790, 1003), 'md2': (1004, 1193), 'md3': (1207, 1388),
     'khb-kh8': (1389, 1533), 'wwe': (1534, 1602), 'art': (1603, 1801),
 }
 
-# Active sites in FULL-LENGTH numbering (parp14/input/active_sites.yaml).
-ACTIVE_SITES_FL = {
-    'MD1': {'catalytic': [831, 923, 962],
-            'pocket': [822, 823, 824, 825, 826, 827, 828, 829, 830, 831, 832, 833,
-                       834, 835, 836, 919, 920, 921, 922, 923, 924, 925, 926, 927,
-                       961, 962, 966]},
-    'MD2': {'catalytic': [1035, 1046, 1134, 1171],
-            'pocket': [1021, 1022, 1023, 1024, 1034, 1035, 1036, 1037, 1038, 1039,
-                       1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1130, 1131,
-                       1132, 1133, 1134, 1135, 1136, 1137, 1138, 1139, 1140, 1141,
-                       1170, 1171, 1175, 1178]},
-    'MD3': {'catalytic': [1248, 1259, 1330, 1371],
-            'pocket': [1235, 1236, 1237, 1247, 1248, 1249, 1250, 1251, 1252, 1253,
-                       1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 1302, 1303,
-                       1304, 1324, 1325, 1326, 1327, 1328, 1329, 1330, 1331, 1332,
-                       1333, 1334, 1335, 1336, 1337, 1369, 1370, 1371, 1375]},
-    'ART': {'catalytic': [1684, 1705, 1706, 1722],
-            'pocket': [1681, 1682, 1683, 1684, 1685, 1688, 1701, 1704, 1705, 1706,
-                       1707, 1708, 1709, 1714, 1715, 1716, 1721, 1722, 1726, 1727,
-                       1781]},
-    # iso-ADP-ribose binding site, derived by structural alignment (PyMOL cealign,
-    # RMSD 1.83 A over 64 residues) of PARP14's WWE domain (FL 1534-1602, from
-    # input/parp14.pdb) onto RNF146's WWE domain bound to isoADPR (PDB 3V3L,
-    # Wang et al. 2012 Genes Dev, PMID 22267412) -- catalytic = the PARP14
-    # residues within ~1.9 A (post-alignment) of the RNF146 residue contacting
-    # isoADPR at the corresponding structural position: Tyr1539 (<-RNF146 Tyr107,
-    # 0.45 A), Phe1548 (<-Tyr116, 1.04 A), Tyr1576 (<-Tyr144, 0.86 A) -- 3
-    # aromatics -- and Lys1570 (<-Ile139, 1.83 A) as the charged residue,
-    # matching the expected "2 aromatic + charged" ADPR-recognition pattern
-    # (a 4th, weaker candidate His1546 <-Trp114 at 1.20 A -- PARP14 substitutes
-    # His for RNF146's domain-defining Trp here -- is in the pocket list only).
-    # Confirmed reproducible: both isoADPR-bound copies in the 3V3L asymmetric
-    # unit gave identical RNF146 contact residues.
-    'WWE': {'catalytic': [1539, 1548, 1570, 1576],
-            'pocket': [1538, 1539, 1540, 1541, 1542, 1543, 1545, 1546, 1547, 1548, 1549,
-                       1569, 1570, 1571, 1575, 1576, 1577, 1584, 1585, 1586,
-                       1590, 1591, 1592, 1593, 1594]},
-}
+# Deprecated unit spellings -> canonical key. Historical metadata.json files,
+# fragment names and representative_frames/ directories still carry 'md1l1';
+# resolving rather than rewriting them keeps that corpus readable.
+UNIT_ALIASES = {'md1l1': 'md1'}
+
+
+def canonical_unit(name):
+    """Canonical DOMAIN_UNITS key for a possibly-deprecated unit spelling."""
+    n = str(name).lower()
+    return UNIT_ALIASES.get(n, n)
+
+
+def canonical_units(names):
+    return [canonical_unit(n) for n in names]
+
+# Active sites in FULL-LENGTH numbering.
+#
+# Loaded from parp14/input/active_sites.yaml rather than duplicated here. That
+# file is the single source of truth; it was previously copied into six
+# different modules, which is exactly how they drifted out of sync (and how the
+# mislabelled catalytic residues survived so long -- see
+# examples/PARP14_MDP/docs/NUMBERING_AUDIT.md).
+_ACTIVE_SITES_YAML = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    'parp14', 'input', 'active_sites.yaml')
+
+
+def _load_active_sites(path=_ACTIVE_SITES_YAML):
+    import yaml as _yaml
+    with open(path) as fh:
+        raw = _yaml.safe_load(fh)
+    out = {}
+    for name, info in raw.items():
+        if not isinstance(info, dict) or 'catalytic_residues' not in info:
+            continue
+        out[name] = {'catalytic': list(info['catalytic_residues']),
+                     'pocket': sorted(set(info.get('pocket_residues', []))),
+                     'domain_range': info.get('domain_range')}
+    return out
+
+
+ACTIVE_SITES_FL = _load_active_sites()
 
 SITE_NAMES = ['MD1', 'MD2', 'MD3', 'WWE', 'ART']
 SITE_COLORS = {'MD1': '#e6194b', 'MD2': '#3cb44b', 'MD3': '#4363d8', 'WWE': '#911eb4', 'ART': '#f58231'}
 
 # Maps each FL domain unit -> the active site it carries (for sub-construct detection).
-UNIT_TO_SITE = {'md1l1': 'MD1', 'md2': 'MD2', 'md3': 'MD3', 'wwe': 'WWE', 'art': 'ART'}
+UNIT_TO_SITE = {'md1': 'MD1', 'md2': 'MD2', 'md3': 'MD3', 'wwe': 'WWE', 'art': 'ART'}
 
 # Energy-analysis domain boundaries (FL numbering): trimmed by 3 residues at
 # zero/small-gap borders to prevent steric-clash artifacts between adjacent domains.
@@ -138,23 +152,23 @@ SETS = {
     },
     'norrm': {
         'sysname': 'parp14_norrm', 'label': 'KH1-ART (315-1801)', 'color': '#9467bd',
-        'units': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+        'units': ['kh1-kh6', 'kh7a', 'md1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
     },
     'noart': {
         'sysname': 'parp14_noart', 'label': 'KH1-WWE (315-1602)', 'color': '#8c564b',
-        'units': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+        'units': ['kh1-kh6', 'kh7a', 'md1', 'md2', 'md3', 'khb-kh8', 'wwe'],
     },
     'core': {
         'sysname': 'parp14_core', 'label': 'KH7-ART (738-1801)', 'color': '#2ca02c',
-        'units': ['kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+        'units': ['kh7a', 'md1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
     },
     'mka': {
         'sysname': 'parp14_mka', 'label': 'MD1-ART (790-1801)', 'color': '#d62728',
-        'units': ['md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+        'units': ['md1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
     },
     'md': {
         'sysname': 'parp14_macrodomains', 'label': 'MD1-MD3 (790-1388)', 'color': '#ff7f0e',
-        'units': ['md1l1', 'md2', 'md3'],
+        'units': ['md1', 'md2', 'md3'],
     },
     'md3art': {
         'sysname': 'parp14_md3art', 'label': 'MD3-ART (1207-1801)', 'color': '#17becf',
@@ -171,30 +185,30 @@ SETS = {
     'md_full': {
         'sysname': 'parp14_md1md3_full', 'label': 'MD1-MD3 contiguous (790-1388, 599 res)',
         'color': '#c8831c',
-        'units': ['md1l1', 'md2', 'md3'],
+        'units': ['md1', 'md2', 'md3'],
     },
     'mka_full': {
         'sysname': 'parp14_mka_full', 'label': 'MD1-ART contiguous (790-1801, 1012 res)',
         'color': '#2845bd',
-        'units': ['md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+        'units': ['md1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
     },
     'core_full_go': {
         'sysname': 'parp14_core_full_go',
         'label': 'KH7a-ART contiguous + Go-model KH7a-KHb restraints (738-1801, 1064 res)',
         'color': '#E69F00',
-        'units': ['kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+        'units': ['kh7a', 'md1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
     },
     'kh1_art_full': {
         'sysname': 'parp14_kh1_art_full',
         'label': 'KH1-6-ART contiguous + Go-model KH7a-KHb restraints (315-1801, 1487 res)',
         'color': '#56B4E9',
-        'units': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
+        'units': ['kh1-kh6', 'kh7a', 'md1', 'md2', 'md3', 'khb-kh8', 'wwe', 'art'],
     },
     'kh1_wwe_full': {
         'sysname': 'parp14_kh1_wwe_full',
         'label': 'KH1-6-WWE contiguous + Go-model KH7a-KHb restraints (315-1602, 1288 res, no ART)',
         'color': '#009E73',
-        'units': ['kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+        'units': ['kh1-kh6', 'kh7a', 'md1', 'md2', 'md3', 'khb-kh8', 'wwe'],
     },
     'md2_art_full': {
         'sysname': 'parp14_md2_art_full',
@@ -224,25 +238,25 @@ SETS = {
         'sysname': 'parp14_core_wwe_full_go',
         'label': 'KH7a-WWE contiguous + Go-model KH7a-KHb restraints (738-1602, 865 res, no ART)',
         'color': '#0072B2',
-        'units': ['kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+        'units': ['kh7a', 'md1', 'md2', 'md3', 'khb-kh8', 'wwe'],
     },
     'mka_wwe_full': {
         'sysname': 'parp14_mka_wwe_full',
         'label': 'MD1L1-WWE contiguous (790-1602, 813 res, no ART)',
         'color': '#8a62e8',
-        'units': ['md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+        'units': ['md1', 'md2', 'md3', 'khb-kh8', 'wwe'],
     },
     'fl_wwe_full_go': {
         'sysname': 'parp14_fl_wwe_full_go',
         'label': 'FL-WWE contiguous + Go-model KH7a-KHb restraints (1-1602, 1602 res, no ART)',
         'color': '#D55E00',
-        'units': ['rrm1', 'rrm2', 'rrm3', 'kh1-kh6', 'kh7a', 'md1l1', 'md2', 'md3', 'khb-kh8', 'wwe'],
+        'units': ['rrm1', 'rrm2', 'rrm3', 'kh1-kh6', 'kh7a', 'md1', 'md2', 'md3', 'khb-kh8', 'wwe'],
     },
     'md1_md2': {
         'sysname': 'parp14_md1_md2',
         'label': 'MD1L1-MD2 contiguous, 2-domain isolation test (790-1193, 404 res)',
         'color': '#c8831c',
-        'units': ['md1l1', 'md2'],
+        'units': ['md1', 'md2'],
     },
     'md2_md3': {
         'sysname': 'parp14_md2_md3',
@@ -571,7 +585,7 @@ def write_metadata(folder, units, sysname=None, label=None, extra=None):
     units   : list of FL domain-unit keys present (subset of DOMAIN_UNITS keys)
     sysname : dcd basename (auto-detected from the folder if omitted)
     """
-    units = [u.lower() for u in units]
+    units = canonical_units(units)
     bad = [u for u in units if u not in DOMAIN_UNITS]
     if bad:
         raise ValueError(f"unknown domain units {bad}; valid: {list(DOMAIN_UNITS)}")
@@ -617,7 +631,7 @@ def detect_sysname(folder):
 def register_fragment(frag_name, metadata):
     """Register a contiguous fragment (under fragments/) as a set."""
     set_key = f'frag_{frag_name}'
-    units = [u.lower() for u in metadata.get('units', [])]
+    units = canonical_units(metadata.get('units', []))
     SETS[set_key] = {
         'sysname': metadata.get('sysname', 'parp14'),
         'label': frag_name,
@@ -655,10 +669,10 @@ def discover_fragments():
 def _resolve_units(folder, units=None):
     """Determine FL domain units for a folder (see module docstring for order)."""
     if units:
-        return [u.lower() for u in units]
+        return canonical_units(units)
     meta = read_metadata(folder)
     if meta and meta.get('units'):
-        return [u.lower() for u in meta['units']]
+        return canonical_units(meta['units'])
     base = os.path.basename(os.path.normpath(folder))
     if base in SETS:
         return list(SETS[base]['units'])
@@ -716,7 +730,7 @@ def add_sim_folder_args(parser):
              "folder's metadata.json, or pass --units.")
     parser.add_argument(
         '--units', nargs='+', default=None, metavar='UNIT',
-        help='FL domain units in the --sim-folder construct (e.g. md1l1 md2 md3). '
+        help='FL domain units in the --sim-folder construct (e.g. md1 md2 md3). '
              'Required only if the folder has no metadata.json. '
              f'Valid: {", ".join(DOMAIN_UNITS)}')
     return parser

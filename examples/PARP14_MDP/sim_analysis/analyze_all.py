@@ -213,40 +213,12 @@ FL_DOMAINS = {
     'ART':     (1605, 1801),
 }
 
-ACTIVE_SITES_FL = {
-    'MD1': {'catalytic': [831, 923, 962],
-            'pocket': [822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,
-                       919,920,921,922,923,924,925,926,927,961,962,966]},
-    'MD2': {'catalytic': [1035, 1046, 1134, 1171],
-            'pocket': [1021,1022,1023,1024,1034,1035,1036,1037,1038,1039,1040,1041,
-                       1042,1043,1044,1045,1046,1047,1130,1131,1132,1133,1134,1135,
-                       1136,1137,1138,1139,1140,1141,1170,1171,1175,1178]},
-    'MD3': {'catalytic': [1248, 1259, 1330, 1371],
-            'pocket': [1235,1236,1237,1247,1248,1249,1250,1251,1252,1253,1254,1255,
-                       1256,1257,1258,1259,1260,1261,1302,1303,1304,1324,1325,1326,
-                       1327,1328,1329,1330,1331,1332,1333,1334,1335,1336,1337,1369,
-                       1370,1371,1375]},
-    'ART': {'catalytic': [1684, 1705, 1706, 1722],
-            'pocket': [1681,1682,1683,1684,1685,1688,1701,1704,1705,1706,1707,1708,
-                       1709,1714,1715,1716,1721,1722,1726,1727,1781]},
-    # iso-ADP-ribose binding site, derived by structural alignment (PyMOL cealign,
-    # RMSD 1.83 A over 64 residues) of PARP14's WWE domain (FL 1534-1602, from
-    # input/parp14.pdb) onto RNF146's WWE domain bound to isoADPR (PDB 3V3L,
-    # Wang et al. 2012 Genes Dev, PMID 22267412) -- catalytic = the PARP14
-    # residues within ~1.9 A (post-alignment) of the RNF146 residue contacting
-    # isoADPR at the corresponding structural position: Tyr1539 (<-RNF146 Tyr107,
-    # 0.45 A), Phe1548 (<-Tyr116, 1.04 A), Tyr1576 (<-Tyr144, 0.86 A) -- 3
-    # aromatics -- and Lys1570 (<-Ile139, 1.83 A) as the charged residue,
-    # matching the expected "2 aromatic + charged" ADPR-recognition pattern
-    # (a 4th, weaker candidate His1546 <-Trp114 at 1.20 A -- PARP14 substitutes
-    # His for RNF146's domain-defining Trp here -- is in the pocket list only).
-    # Confirmed reproducible: both isoADPR-bound copies in the 3V3L asymmetric
-    # unit gave identical RNF146 contact residues.
-    'WWE': {'catalytic': [1539, 1548, 1570, 1576],
-            'pocket': [1538,1539,1540,1541,1542,1543,1545,1546,1547,1548,1549,
-                       1569,1570,1571,1575,1576,1577,1584,1585,1586,
-                       1590,1591,1592,1593,1594]},
-}
+# Active sites, loaded from the single source of truth
+# (parp14/input/active_sites.yaml) via sim_registry rather than duplicated.
+# These used to be a hard-coded copy; six such copies drifted apart and carried
+# mislabelled catalytic residues -- see docs/NUMBERING_AUDIT.md.
+import sim_registry as _sitereg
+ACTIVE_SITES_FL = _sitereg.ACTIVE_SITES_FL
 
 SITE_NAMES = ['MD1', 'MD2', 'MD3', 'WWE', 'ART']
 SITE_COLORS = {'MD1': '#e6194b', 'MD2': '#3cb44b', 'MD3': '#4363d8', 'WWE': '#911eb4', 'ART': '#f58231'}

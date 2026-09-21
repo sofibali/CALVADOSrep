@@ -43,6 +43,11 @@ CONSTRUCT_UNITS = {
 }
 
 CATALYTIC_FL = {
+# NOTE (2026-09-21): the catalytic residue numbers below are the OLD,
+# mislabelled set (831 is a glycine in Q460N5, not 'D831'; the ART triad
+# is H1682/Y1714, not 1684/1705/1706). Corrected values live in
+# parp14/input/active_sites.yaml. This module is archived and was left
+# as-is so old figures remain reproducible -- do not copy these numbers.
     'MD1': [831, 923, 962],
     'MD2': [1035, 1046, 1134, 1171],
     'MD3': [1248, 1259, 1330, 1371],

@@ -16,17 +16,34 @@ while true; do
         [ -e "$marker" ] || continue
         s=$(basename "$marker" .complete)
         [ -e "logs/${s}.analyzed" ] && continue
+        [ -e "logs/${s}.failed" ] && continue
 
         echo "[$(date -Is)] analysing $s"
-        if $PY analyze_binding.py "$s" 2>&1 | grep -v LIBCIFPP; then
-            $PY report2_binding.py  2>&1 | grep -v LIBCIFPP
-            $PY figmaps_binding.py  2>&1 | grep -v LIBCIFPP
-            $PY episode_stats.py    2>&1 | grep -v LIBCIFPP
-            $PY figure_face_separation.py "$s" 2>&1 | grep -v LIBCIFPP
+        # Run each stage and test the STAGE's exit code, not a pipeline's.
+        # `cmd | grep -v LIBCIFPP` returns grep's status, so a crashed stage that
+        # printed a traceback looked like success (grep matched the traceback
+        # lines -> rc 0) and the set was marked analysed with no data; a silent
+        # stage looked like failure and, with did_work=1 skipping the sleep,
+        # span in a tight retry loop. Both actually happened.
+        ok=1
+        for stage in "analyze_binding.py $s" "report2_binding.py" \
+                     "figmaps_binding.py" "episode_stats.py" \
+                     "figure_face_separation.py $s"; do
+            log=$(mktemp)
+            # shellcheck disable=SC2086
+            $PY $stage > "$log" 2>&1; rc=$?
+            grep -v LIBCIFPP "$log"; rm -f "$log"
+            if [ "$rc" -ne 0 ]; then
+                echo "[$(date -Is)] $s: stage '${stage%% *}' exited $rc - not marking analysed"
+                ok=0; break
+            fi
+        done
+        if [ "$ok" -eq 1 ]; then
             touch "logs/${s}.analyzed"
             echo "[$(date -Is)] $s analysed"
         else
-            echo "[$(date -Is)] $s analysis FAILED - will retry next pass"
+            touch "logs/${s}.failed"
+            echo "[$(date -Is)] $s analysis FAILED - see logs/${s}.failed"
         fi
         did_work=1
     done

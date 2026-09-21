@@ -53,12 +53,10 @@ FL_DOMAIN_COLORS = {
 }
 
 # Catalytic residues in FL numbering
-CATALYTIC_FL = {
-    'MD1':  [831, 923, 962],
-    'MD2':  [1035, 1046, 1134, 1171],
-    'MD3':  [1248, 1259, 1330, 1371],
-    'ART':  [1684, 1705, 1706, 1722],
-}
+# Loaded from parp14/input/active_sites.yaml via sim_registry (single source
+# of truth); see docs/NUMBERING_AUDIT.md.
+import sim_registry as _sitereg
+CATALYTIC_FL = {k: v['catalytic'] for k, v in _sitereg.ACTIVE_SITES_FL.items()}
 
 DOMAIN_UNITS = {
     'rrm1':    (1, 145),    'rrm2':    (146, 224), 'rrm3':    (225, 314),

@@ -71,37 +71,33 @@ DOMAIN_COLORS_RGB = {
 }
 
 # Active sites (FL numbering)
+# Active sites from the single source of truth (parp14/input/active_sites.yaml)
+# via sim_registry. `cat_labels` are DERIVED from the UniProt Q460N5 sequence
+# rather than typed by hand: the hand-typed ones were wrong (they rendered
+# "D831"/"H1684" into PyMOL sessions when Q460N5 has G831/T1684). See
+# docs/NUMBERING_AUDIT.md.
+import os as _os
+import sim_registry as _sitereg
+
+_FASTA = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__))))), 'parp14', 'PARP14.fasta')
+
+
+def _fl_sequence(path=_FASTA):
+    with open(path) as fh:
+        return ''.join(l.strip() for l in fh if not l.startswith('>'))
+
+
+def _label(seq, resid):
+    return f"{seq[resid - 1]}{resid}" if 1 <= resid <= len(seq) else str(resid)
+
+
+_SEQ = _fl_sequence()
 ACTIVE_SITES_FL = {
-    'MD1': {
-        'catalytic': [831, 923, 962],
-        'cat_labels': ['D831', 'N923', 'D962'],
-        'pocket': [822, 823, 824, 825, 826, 827, 828, 829, 830, 831, 832, 833,
-                   834, 835, 836, 919, 920, 921, 922, 923, 924, 925, 926, 927,
-                   961, 962, 966],
-    },
-    'MD2': {
-        'catalytic': [1035, 1046, 1134, 1171],
-        'cat_labels': ['G1035', 'I1046', 'G1134', 'D1171'],
-        'pocket': [1021, 1022, 1023, 1024, 1034, 1035, 1036, 1037, 1038, 1039,
-                   1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1130, 1131,
-                   1132, 1133, 1134, 1135, 1136, 1137, 1138, 1139, 1140, 1141,
-                   1170, 1171, 1175, 1178],
-    },
-    'MD3': {
-        'catalytic': [1248, 1259, 1330, 1371],
-        'cat_labels': ['G1248', 'V1259', 'G1330', 'N1371'],
-        'pocket': [1235, 1236, 1237, 1247, 1248, 1249, 1250, 1251, 1252, 1253,
-                   1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 1302, 1303,
-                   1304, 1324, 1325, 1326, 1327, 1328, 1329, 1330, 1331, 1332,
-                   1333, 1334, 1335, 1336, 1337, 1369, 1370, 1371, 1375],
-    },
-    'ART': {
-        'catalytic': [1684, 1705, 1706, 1722],
-        'cat_labels': ['H1684', 'Y1705', 'E1706', 'I1722'],
-        'pocket': [1681, 1682, 1683, 1684, 1685, 1688, 1701, 1704, 1705, 1706,
-                   1707, 1708, 1709, 1714, 1715, 1716, 1721, 1722, 1726, 1727,
-                   1781],
-    },
+    name: {'catalytic': info['catalytic'],
+           'cat_labels': [_label(_SEQ, r) for r in info['catalytic']],
+           'pocket': info['pocket']}
+    for name, info in _sitereg.ACTIVE_SITES_FL.items()
 }
 
 SITE_COLORS = {

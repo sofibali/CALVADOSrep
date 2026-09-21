@@ -1,262 +1,311 @@
 # PARP14 Active Site Definitions
 #
-# These definitions are used for active site accessibility analysis.
-# Residue numbers are based on UniProt Q460N5 (PARP14_HUMAN).
+# Residue numbers are UniProt **Q460N5** (PARP14_HUMAN, 1801 aa, SV=3).
+# Verified byte-identical to the live UniProt record; re-check any time with
+#     python examples/PARP14_MDP/sim_analysis/verify_numbering.py
 #
-# Sources:
-# - Macrodomain active sites: Structural studies of ADP-ribose binding
-# - ART catalytic site: NAD+ binding and ADP-ribosyltransferase mechanism
+# CORRECTED 2026-09-21. The previous catalytic_residues did not match the amino
+# acids they were labelled with (e.g. "D831" is a glycine in Q460N5, "H1684" is
+# a threonine) and no global offset reconciled them. See
+# examples/PARP14_MDP/docs/NUMBERING_AUDIT.md for the full audit.
 #
-
+# PROVENANCE OF EACH catalytic_residues ENTRY
+# -------------------------------------------
+#   MD1  824  conserved macrodomain Asn (V-V-N-A-S-N-E loop); UniProt binding site
+#        832  Dukic et al. 2023 (PMC10499325) -- G832E sterically blocks the
+#             active site for ADP-ribose binding; the paper's MD1 loss-of-function
+#        961  UniProt binding site (Asp)
+#   MD2  1034 UniProt binding site
+#        1044 Dukic et al. 2023 -- residue corresponding to MD1 G832; G1044E had
+#             no discernible effect (MD2 is a reader, not a hydrolase)
+#        1135 within UniProt binding site 1133-1137 (G-T-G-N-L)
+#        1176 within UniProt binding site 1175-1178 (D-H-E-N)
+#   MD3  1247, 1258, 1371 UniProt binding sites
+#        1334 within UniProt binding site 1332-1336 (G-T-G-N-A)
+#   ART  1682 catalytic His, canonical PARP H-G-T motif (sequence-derived)
+#        1699 Dukic et al. 2023 -- R1699A is the ADPr-deficient mutant
+#        1714 catalytic Tyr, canonical PARP G-K-G-T-Y-F-A motif (sequence-derived)
+#   WWE  UNCHANGED and UNVERIFIED -- derived by structural alignment to RNF146
+#        (PDB 3V3L), not from a PARP14 structure. See WWE_notes.
+#
+# domain_range now follows UniProt's own Domain annotations exactly
+# (Macro 1 791-978, Macro 2 1003-1190, Macro 3 1216-1387, WWE 1523-1601,
+#  PARP catalytic 1605-1801).
+#
+# pocket_residues were audited and left as they were -- they already covered
+# the UniProt binding sites (MD1 8/8, MD3 10/10, ART contains both H1682 and
+# Y1714); MD2 was missing 1048, 1049, 1176, 1177, which have been added.
+#
 MD1:
-  # Macrodomain 1 - ADP-ribose hydrolase activity
-  description: "Macrodomain 1 (ADP-ribose binding/hydrolysis)"
-  domain_range: [790, 981]
-
-  # Key catalytic residues for ADP-ribose hydrolysis
+  description: Macrodomain 1 (ADP-ribose binding/hydrolysis)
+  domain_range:
+  - 791
+  - 978
   catalytic_residues:
-    - 831   # Asp831 - key for ADP-ribose binding
-    - 923   # Asn923 - coordinates adenine ring
-    - 962   # Asp962 - involved in catalysis
-
-  # Extended binding pocket residues
+  - 824
+  - 832
+  - 961
   pocket_residues:
-    - 822
-    - 823
-    - 824
-    - 825
-    - 826
-    - 827
-    - 828
-    - 829
-    - 830
-    - 831   # catalytic
-    - 832
-    - 833
-    - 834
-    - 835
-    - 836
-    - 919
-    - 920
-    - 921
-    - 922
-    - 923   # catalytic
-    - 924
-    - 925
-    - 926
-    - 927
-    - 961
-    - 962   # catalytic
-    - 966
-
+  - 822
+  - 823
+  - 824
+  - 825
+  - 826
+  - 827
+  - 828
+  - 829
+  - 830
+  - 831
+  - 832
+  - 833
+  - 834
+  - 835
+  - 836
+  - 919
+  - 920
+  - 921
+  - 922
+  - 923
+  - 924
+  - 925
+  - 926
+  - 927
+  - 961
+  - 962
+  - 966
 MD2:
-  # Macrodomain 2 - ADP-ribose binding
-  description: "Macrodomain 2 (ADP-ribose binding)"
-  domain_range: [1005, 1193]
-
-  # Key binding residues
+  description: Macrodomain 2 (ADP-ribose binding)
+  domain_range:
+  - 1003
+  - 1190
   catalytic_residues:
-    - 1035  # Key binding residue
-    - 1046  # Adenine pocket
-    - 1134  # Phosphate coordination
-    - 1171  # Ribose interaction
-
+  - 1034
+  - 1044
+  - 1135
+  - 1176
   pocket_residues:
-    - 1021
-    - 1022
-    - 1023
-    - 1024
-    - 1034
-    - 1035  # catalytic
-    - 1036
-    - 1037
-    - 1038
-    - 1039
-    - 1040
-    - 1041
-    - 1042
-    - 1043
-    - 1044
-    - 1045
-    - 1046  # catalytic
-    - 1047
-    - 1130
-    - 1131
-    - 1132
-    - 1133
-    - 1134  # catalytic
-    - 1135
-    - 1136
-    - 1137
-    - 1138
-    - 1139
-    - 1140
-    - 1141
-    - 1170
-    - 1171  # catalytic
-    - 1175
-    - 1178
-
+  - 1021
+  - 1022
+  - 1023
+  - 1024
+  - 1034
+  - 1035
+  - 1036
+  - 1037
+  - 1038
+  - 1039
+  - 1040
+  - 1041
+  - 1042
+  - 1043
+  - 1044
+  - 1045
+  - 1046
+  - 1047
+  - 1048
+  - 1049
+  - 1130
+  - 1131
+  - 1132
+  - 1133
+  - 1134
+  - 1135
+  - 1136
+  - 1137
+  - 1138
+  - 1139
+  - 1140
+  - 1141
+  - 1170
+  - 1171
+  - 1175
+  - 1176
+  - 1177
+  - 1178
 MD3:
-  # Macrodomain 3 - ADP-ribose binding
-  description: "Macrodomain 3 (ADP-ribose binding)"
-  domain_range: [1207, 1388]
-
+  description: Macrodomain 3 (ADP-ribose binding)
+  domain_range:
+  - 1216
+  - 1387
   catalytic_residues:
-    - 1248  # Key binding
-    - 1259  # Adenine pocket
-    - 1330  # Phosphate coordination
-    - 1371  # Ribose interaction
-
+  - 1247
+  - 1258
+  - 1334
+  - 1371
   pocket_residues:
-    - 1235
-    - 1236
-    - 1237
-    - 1247
-    - 1248  # catalytic
-    - 1249
-    - 1250
-    - 1251
-    - 1252
-    - 1253
-    - 1254
-    - 1255
-    - 1256
-    - 1257
-    - 1258
-    - 1259  # catalytic
-    - 1260
-    - 1261
-    - 1302
-    - 1303
-    - 1304
-    - 1324
-    - 1325
-    - 1326
-    - 1327
-    - 1328
-    - 1329
-    - 1330  # catalytic
-    - 1331
-    - 1332
-    - 1333
-    - 1334
-    - 1335
-    - 1336
-    - 1337
-    - 1369
-    - 1370
-    - 1371  # catalytic
-    - 1375
-
+  - 1235
+  - 1236
+  - 1237
+  - 1247
+  - 1248
+  - 1249
+  - 1250
+  - 1251
+  - 1252
+  - 1253
+  - 1254
+  - 1255
+  - 1256
+  - 1257
+  - 1258
+  - 1259
+  - 1260
+  - 1261
+  - 1302
+  - 1303
+  - 1304
+  - 1324
+  - 1325
+  - 1326
+  - 1327
+  - 1328
+  - 1329
+  - 1330
+  - 1331
+  - 1332
+  - 1333
+  - 1334
+  - 1335
+  - 1336
+  - 1337
+  - 1369
+  - 1370
+  - 1371
+  - 1375
 ART:
-  # ADP-ribosyltransferase - Catalytic domain
-  description: "ADP-ribosyltransferase (catalytic, NAD+ binding)"
-  domain_range: [1603, 1801]
-
-  # Key catalytic residues for ADP-ribosyl transfer
+  description: ADP-ribosyltransferase (catalytic, NAD+ binding)
+  domain_range:
+  - 1605
+  - 1801
   catalytic_residues:
-    - 1684  # His1684 - H-Y-E catalytic triad
-    - 1705  # Tyr1705 - H-Y-E catalytic triad
-    - 1706  # Glu1706 - H-Y-E catalytic triad
-    - 1722  # Conserved NAD+ binding
-
-  # NAD+ binding pocket
+  - 1682
+  - 1699
+  - 1714
   pocket_residues:
-    - 1681
-    - 1682
-    - 1683
-    - 1684  # catalytic (His)
-    - 1685
-    - 1688
-    - 1701
-    - 1704
-    - 1705  # catalytic (Tyr)
-    - 1706  # catalytic (Glu)
-    - 1707
-    - 1708
-    - 1709
-    - 1714
-    - 1715
-    - 1716
-    - 1721
-    - 1722  # catalytic
-    - 1726
-    - 1727
-    - 1781
-
+  - 1681
+  - 1682
+  - 1683
+  - 1684
+  - 1685
+  - 1688
+  - 1701
+  - 1704
+  - 1705
+  - 1706
+  - 1707
+  - 1708
+  - 1709
+  - 1714
+  - 1715
+  - 1716
+  - 1721
+  - 1722
+  - 1726
+  - 1727
+  - 1781
 WWE:
-  # WWE domain - iso-ADP-ribose binding (PAR-reader function)
-  description: "WWE domain (iso-ADP-ribose binding)"
-  domain_range: [1534, 1602]
-
-  # Derived by structural alignment (PyMOL cealign, RMSD 1.83 A over 64
-  # residues) of PARP14's WWE domain onto RNF146's WWE domain bound to
-  # isoADPR (PDB 3V3L, Wang et al. 2012 Genes Dev, PMID 22267412).
-  # catalytic_residues = PARP14 residues within ~1.9 A (post-alignment) of
-  # the RNF146 residue contacting isoADPR at the corresponding structural
-  # position -- 3 aromatics + 1 charged, matching the expected WWE
-  # ADPR-recognition pattern. Confirmed reproducible across both isoADPR-
-  # bound copies in the 3V3L asymmetric unit (identical RNF146 contacts).
+  description: WWE domain (iso-ADP-ribose binding)
+  domain_range:
+  - 1523
+  - 1601
   catalytic_residues:
-    - 1539  # Tyr1539 <- RNF146 Tyr107 (0.45 A)
-    - 1548  # Phe1548 <- RNF146 Tyr116 (1.04 A)
-    - 1570  # Lys1570 <- RNF146 Ile139 (1.83 A) -- the charged residue
-    - 1576  # Tyr1576 <- RNF146 Tyr144 (0.86 A)
-
+  - 1539
+  - 1548
+  - 1570
+  - 1576
   pocket_residues:
-    - 1538
-    - 1539  # catalytic
-    - 1540
-    - 1541
-    - 1542
-    - 1543
-    - 1545
-    - 1546  # His1546 <- RNF146's domain-defining Trp114 (1.20 A) -- PARP14
-            # substitutes His here, a weaker/divergent 4th candidate
-    - 1547
-    - 1548  # catalytic
-    - 1549
-    - 1569
-    - 1570  # catalytic
-    - 1571
-    - 1575
-    - 1576  # catalytic
-    - 1577
-    - 1584
-    - 1585
-    - 1586
-    - 1590
-    - 1591
-    - 1592
-    - 1593
-    - 1594
-
-# Additional annotations for reference
+  - 1538
+  - 1539
+  - 1540
+  - 1541
+  - 1542
+  - 1543
+  - 1545
+  - 1546
+  - 1547
+  - 1548
+  - 1549
+  - 1569
+  - 1570
+  - 1571
+  - 1575
+  - 1576
+  - 1577
+  - 1584
+  - 1585
+  - 1586
+  - 1590
+  - 1591
+  - 1592
+  - 1593
+  - 1594
 annotations:
-  MD1_notes: |
-    MD1 has weak ADP-ribose binding affinity.
-    MD1 is the eraser - hydrolitic activity.
+  MD1_notes: 'MD1 is the eraser -- an active ADP-ribosyl hydrolase with glutamate
+
+    specificity (Dukic et al. 2023, PMC10499325).
+
     The active site adopts a characteristic macrodomain fold.
-    Key: Asp831 is critical for substrate hydrolysis.
 
-  MD2_notes: |
-    MD2 binds ADP-ribose but has no catalytic activity agains modified proteins.
+    Key: G832 -- the G832E mutation sterically blocks the active site for
+
+    ADP-ribose binding and is the loss-of-function control used in that paper.
+
+    (An earlier version of this file claimed ''Asp831 is critical''; residue 831
+
+    in UniProt Q460N5 is a glycine, not an aspartate -- see
+
+    examples/PARP14_MDP/docs/NUMBERING_AUDIT.md.)
+
+    '
+  MD2_notes: 'MD2 binds ADP-ribose but has no catalytic activity against modified proteins.
+
     Functions as a reader domain for ADP-ribosylation marks.
-    Has been shown to be impportant for localization. 
 
-  MD3_notes: |
-    Shows highest affinity for ADP-ribose.
+    Has been shown to be important for localization.
+
+    G1044 is the structural equivalent of MD1''s G832; G1044E had no discernible
+
+    effect (Dukic et al. 2023), consistent with MD2 being a reader, not a hydrolase.
+
+    '
+  MD3_notes: 'Shows highest affinity for ADP-ribose.
+
     No shown function in cells or spefic binding partners.
-  WWE_notes: |
-    Binds iso-ADP-ribose (a PAR degradation product), functioning as a PAR reader.
+
+    '
+  WWE_notes: 'Binds iso-ADP-ribose (a PAR degradation product), functioning as a PAR reader.
+
     Residue numbers derived by structural alignment against RNF146 (PDB 3V3L),
+
     not a PARP14-specific ligand-bound structure -- no such structure exists yet
+
     (1X4R is apo; 3GOY only has a small-molecule inhibitor bound in ART).
-    RNF146 lacks 2 of its 4 conserved iso-ADPR-contacting residues in PARP14's
+
+    RNF146 lacks 2 of its 4 conserved iso-ADPR-contacting residues in PARP14''s
+
     WWE domain (Wang et al. 2012), so treat this as a working hypothesis.
-  ART_notes: |
-    ART domain transfers ADP-ribose from NAD+ to targets.
-    H-Y-E catalytic motif is essential for activity.
-    Primary enzymatic function of PARP14.
-    Inhibition of this domain is a therapeutic target.
+
+    '
+  ART_notes: 'ART domain transfers ADP-ribose from NAD+ to targets; the primary enzymatic
+
+    function of PARP14 and a therapeutic target.
+
+    PARP14 is a MONO-ADP-ribosyltransferase (UniProt Q460N5 protein name:
+
+    ''Protein mono-ADP-ribosyltransferase PARP14''). Its triad is therefore
+
+    H-Y-[I/L/V], NOT the H-Y-E of the poly-ARTs PARP1/2 -- there is no catalytic
+
+    glutamate. An earlier version of this file asserted an ''H-Y-E catalytic motif''
+
+    at 1684/1705/1706; those positions are T/N/A in Q460N5.
+
+    H1682 and Y1714 are read directly off the canonical PARP motifs in the
+
+    sequence (H-G-T at 1682, G-K-G-T-Y-F-A at 1710). The third triad position is
+
+    NOT established by the cited paper and is deliberately not listed here.
+
+    R1699A is the ADPr-deficient catalytic mutant (Dukic et al. 2023).
+
+    '

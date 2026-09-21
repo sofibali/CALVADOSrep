@@ -73,7 +73,9 @@ ACTIVE_SITES = {
 }
 CONTACT_NM  = 1.0
 RIM_FRACTION = 0.35
-SKIP_FRAMES = 50          # 25 ns equilibration at 0.5 ns/frame analysed
+NS_PER_RAW_FRAME = 0.05   # wfreq 5000 x 0.01 ps
+SKIP_NS = 25.0            # equilibration discarded
+SKIP_FRAMES = int(SKIP_NS / NS_PER_RAW_FRAME)   # RAW dcd frames, not analysed samples
 DEFAULT_TARGET_FRAMES = 2000   # ~0.25 ns/sample; episodes here are ~1-2 ns
 
 # canonical domain names, in restraint-block order, per chain
@@ -106,13 +108,32 @@ def load_active_sites():
     return out
 
 
-def load_domains(s):
-    """chain -> [(lo, hi), ...] restrained blocks."""
-    return yaml.safe_load(open(ROOT / s / 'input' / 'domains.yaml'))
+def load_domains(s, chains):
+    """Per chain INSTANCE -> [(lo, hi), ...] restrained blocks.
+
+    domains.yaml is keyed by component name, which is not always the chain name:
+    the homodimer-docked sets were built as two separate components, so
+    dtx3l_homo_docked is keyed dtx3l_1/dtx3l_2 while SETS says ['dtx3l','dtx3l'].
+    Resolve per instance, falling back to <chain>_<n> and then to any key with
+    the chain name as prefix.
+    """
+    raw = yaml.safe_load(open(ROOT / s / 'input' / 'domains.yaml'))
+    out = []
+    for i, c in enumerate(chains):
+        if c in raw:
+            out.append(raw[c]); continue
+        k = f'{c}_{i + 1}'
+        if k in raw:
+            out.append(raw[k]); continue
+        cand = [v for kk, v in raw.items() if kk.startswith(c)]
+        if not cand:
+            raise KeyError(f'{s}: no domains.yaml entry for chain {c} '
+                           f'(keys: {sorted(raw)})')
+        out.append(cand[min(i, len(cand) - 1)])
+    return out
 
 
 def classify_faces(coords, resids, blocks, chain, sites):
-    chain_com = coords.mean(axis=0)
     """resid -> (domain_name, face). coords in nm, one frame, this chain only."""
     names = DOMAIN_NAMES.get(chain, [f'D{i+1}' for i in range(len(blocks))])
     out = {}
@@ -135,14 +156,28 @@ def classify_faces(coords, resids, blocks, chain, sites):
                 cat = None
         if not cat:
             # No catalytic reference -> first principal component. The SVD sign is
-            # arbitrary, so 'front' would be a meaningless label on its own; fix it
-            # to point AWAY from the parent chain's centre of mass. 'front' is then
-            # the outward-facing pole (the one presented to solvent and to a partner
-            # chain) and 'back' the pole turned toward the rest of its own chain.
+            # arbitrary, so it must be fixed deterministically.
+            #
+            # It used to be fixed to point away from the PARENT CHAIN's centre of
+            # mass ('outward'). That was wrong: the chain COM is not restrained, it
+            # reorients continuously as the linkers flex, so the same residue got a
+            # different label at different frames -- measured at 15-19% of residues
+            # relabelled between frames, with whole domains (PARP9 1/2KH1a, DTX3L
+            # RRM/KH1-3) flipping front<->back ~70% of the time. Those columns
+            # carried no information.
+            #
+            # The sign is now anchored to the domain's OWN sequence: the axis points
+            # from the N-terminal half's COM to the C-terminal half's COM. Both
+            # endpoints sit inside the same harmonically restrained block, so the
+            # sign is rigid for the whole run and identical across replicates.
+            #
+            # NOTE: 'front'/'back' is therefore a STABLE GEOMETRIC label, not an
+            # outward/inward one. Do not read solvent exposure into it.
             U, S, Vt = np.linalg.svd(X - com, full_matrices=False)
             axis = Vt[0]
-            outward = com - chain_com
-            if np.dot(axis, outward) < 0:
+            mid = len(X) // 2
+            seq_dir = X[mid:].mean(axis=0) - X[:mid].mean(axis=0)
+            if np.dot(axis, seq_dir) < 0:
                 axis = -axis
             pole_hi, pole_lo = 'front', 'back'
 
@@ -151,17 +186,28 @@ def classify_faces(coords, resids, blocks, chain, sites):
             continue
         axis = axis / n
         proj = (X - com) @ axis
-        half = float(np.percentile(np.abs(proj), 95)) or 1.0
-        for r, p in zip(rid, proj / half):
+        half_extent = float(np.percentile(np.abs(proj), 95)) or 1.0
+        # Exposure tag. A buried residue cannot make an inter-chain contact, so
+        # counting it in the enrichment denominator dilutes whichever face holds
+        # more buried residues. The rim is systematically the most buried band
+        # (measured intra-chain coordination: rim 18.0, active 17.5, back 15.6,
+        # front 13.9), which alone pushed every rim row below 1.0. Exposure here
+        # is intra-chain CA coordination within CONTACT_NM; a residue counts as
+        # exposed if it is below its own domain's median.
+        nb = (np.linalg.norm(coords[:, None, :] - X[None, :, :], axis=2)
+              < CONTACT_NM).sum(axis=0)
+        med = float(np.median(nb))
+        for r, pr, cn in zip(rid, proj / half_extent, nb):
             out[int(r)] = (dname,
-                           pole_hi if p > RIM_FRACTION else
-                           pole_lo if p < -RIM_FRACTION else 'rim')
+                           pole_hi if pr > RIM_FRACTION else
+                           pole_lo if pr < -RIM_FRACTION else 'rim',
+                           bool(cn <= med))
     return out
 
 
 def analyse(s, target_frames=DEFAULT_TARGET_FRAMES):
     chains = SETS[s]
-    blocks_by_chain = load_domains(s)
+    blocks_by_chain = load_domains(s, chains)
     sites = load_active_sites()
     sysn = sysname(s)
 
@@ -171,6 +217,7 @@ def analyse(s, target_frames=DEFAULT_TARGET_FRAMES):
     for idx, c in enumerate(chains):
         offs.append((idx, c, o, o + ac.LENGTHS[c])); o += ac.LENGTHS[c]
 
+    step_set = None
     per_res  = defaultdict(float)                 # (cidx, resid) -> contacts/frame
     dom_series = defaultdict(list)                # (cidx, domain) -> per-frame bound flag
     face_map = {}
@@ -191,8 +238,14 @@ def analyse(s, target_frames=DEFAULT_TARGET_FRAMES):
         usable = max(0, len(u.trajectory) - SKIP_FRAMES)
         if usable < 10:
             continue
-        step = max(1, usable // target_frames) if target_frames else 1
-        ns_per_sample = cfg['wfreq'] * 0.01 / 1000.0 * step
+        # One stride for the whole set. It used to be recomputed per replicate and
+        # only the last value survived into the return dict, so a set containing
+        # one short replicate converted pooled episode lengths with the wrong
+        # scalar (up to 4x off) and pooled samples of unequal time weight.
+        if step_set is None:
+            step_set = max(1, usable // target_frames) if target_frames else 1
+        step = step_set
+        ns_per_sample = cfg['wfreq'] * NS_PER_RAW_FRAME / 5000.0 * step
 
         if not face_map:                           # faces from the first frame
             u.trajectory[0]
@@ -200,7 +253,7 @@ def analyse(s, target_frames=DEFAULT_TARGET_FRAMES):
             resids = u.atoms.resids
             for cidx, c, a, b in offs:
                 face_map[cidx] = classify_faces(P0[a:b], resids[a:b],
-                                                blocks_by_chain[c], c, sites)
+                                                blocks_by_chain[cidx], c, sites)
 
         rep_series = defaultdict(list)
         nfr = 0
@@ -222,7 +275,7 @@ def analyse(s, target_frames=DEFAULT_TARGET_FRAMES):
                             if fm:
                                 touched.add((cidx, fm[0]))
             for cidx in face_map:
-                for dname in {d for d, _ in face_map[cidx].values()}:
+                for dname in {v[0] for v in face_map[cidx].values()}:
                     rep_series[(cidx, dname)].append(1 if (cidx, dname) in touched else 0)
             nfr += 1
         for k, v in rep_series.items():
@@ -247,26 +300,37 @@ def tabulate(res, ns_per_sample):
     rows = []
     for cidx, c, a, b in res['offs']:
         fm = res['face_map'].get(cidx, {})
-        doms = sorted({d for d, _ in fm.values()},
+        doms = sorted({v[0] for v in fm.values()},
                       key=lambda n: DOMAIN_NAMES.get(c, []).index(n)
                       if n in DOMAIN_NAMES.get(c, []) else 99)
         for dname in doms:
-            resids_d = [r for r, (dn, _) in fm.items() if dn == dname]
+            resids_d = [r for r, v in fm.items() if v[0] == dname]
             ctot = sum(res['per_res'].get((cidx, r), 0.0) for r in resids_d)
             series = res['dom_series'].get((cidx, dname), [])
             allb = np.concatenate(series) if series else np.array([0])
             eps = np.concatenate([episodes(x) for x in series]) if series else np.array([])
+            exposed_d = [r for r in resids_d if fm[r][2]]
             for face in ('active', 'front', 'rim', 'back'):
                 rf = [r for r in resids_d if fm[r][1] == face]
                 if not rf:
                     continue
                 cf = sum(res['per_res'].get((cidx, r), 0.0) for r in rf)
-                enr = ((cf / ctot) / (len(rf) / len(resids_d))) if ctot > 0 else np.nan
+                # Primary metric: exposed residues only in BOTH numerator and
+                # denominator -- a buried residue cannot contact the partner chain,
+                # so leaving it in the denominator measures burial, not preference.
+                ef = [r for r in rf if fm[r][2]]
+                cfe = sum(res['per_res'].get((cidx, r), 0.0) for r in ef)
+                cte = sum(res['per_res'].get((cidx, r), 0.0) for r in exposed_d)
+                enr = ((cfe / cte) / (len(ef) / len(exposed_d))) \
+                    if (cte > 0 and ef and exposed_d) else np.nan
+                # Kept for comparison: the uncorrected, burial-confounded version.
+                enr_raw = ((cf / ctot) / (len(rf) / len(resids_d))) if ctot > 0 else np.nan
                 rows.append(dict(
                     set=res['set'], chain=f'{c}#{cidx+1}', domain=dname, face=face,
-                    n_res=len(rf), contacts_per_frame=round(cf, 4),
+                    n_res=len(rf), n_res_exposed=len(ef), contacts_per_frame=round(cf, 4),
                     frac_domain_contacts=round(cf / ctot, 4) if ctot > 0 else np.nan,
                     enrichment=round(enr, 3) if enr == enr else np.nan,
+                    enrichment_uncorrected=round(enr_raw, 3) if enr_raw == enr_raw else np.nan,
                     domain_contact_freq=round(float(allb.mean()), 4),
                     n_separations=int(len(eps)),
                     tau_mean_ns=round(float(eps.mean() * ns_per_sample), 2) if len(eps) else 0.0))
@@ -339,8 +403,9 @@ def plots(df, res, ns_per_sample):
         M = np.array([m[:n] for m in mats])
         fig, ax = plt.subplots(figsize=(11, max(2.6, 0.22 * len(keys) + 1.2)))
         ax.imshow(M, aspect='auto', cmap='Blues', interpolation='nearest',
-                  extent=[SKIP_FRAMES * ns_per_sample,
-                          (SKIP_FRAMES + n * (1)) * ns_per_sample, len(keys) - 0.5, -0.5])
+                  extent=[SKIP_FRAMES * NS_PER_RAW_FRAME,
+                          SKIP_FRAMES * NS_PER_RAW_FRAME + n * ns_per_sample,
+                          len(keys) - 0.5, -0.5])
         ax.set_yticks(np.arange(len(keys))); ax.set_yticklabels(lab, fontsize=6)
         ax.set_xlabel('time (ns)')
         ax.set_title(f'{s} — replicate 1: when each domain is in inter-chain contact '

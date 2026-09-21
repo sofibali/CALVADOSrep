@@ -27,7 +27,10 @@ parp9:
     description: "Macrodomain 2 - ADP-ribose / NAD+ reader"
     domain_range: [306, 487]          # UniProt Macro 2; restraint block [311, 493]
     source: structure
-    evidence: "PDB 9QYF ADP-ribose (APR) 1.30 A and 9QYH NAD 2.50 A; union of contacts <=4.0 A"
+    evidence: >
+      PDB 9QYF ADP-ribose 1.30 A and 9QYH NAD 2.50 A; union of contacts <=4.0 A.
+      In 9QYF the APR and AR6 heterogroups are two anomers of ONE ADP-ribose
+      modelled as 0.5-occupancy altlocs in the SAME site, not two sites.
     catalytic_residues: [345, 346, 347, 325, 396, 472]
     # G346E reduces poly(ADP-ribose) binding ~50% (UniProt mutagenesis); in pocket.
     pocket_residues: [324, 325, 326, 327, 337, 338, 339, 345, 346, 347, 348, 351,
@@ -39,10 +42,14 @@ parp9:
     domain_range: [628, 850]          # UniProt PARP catalytic; restraint block [644, 823]
     source: mutagenesis
     evidence: >
-      No ADP-ribose/NAD+-bound structure exists for this domain. Aligning it to
-      PARP14's ART (31% identity) puts V707, C728 and D729 at the positions of
-      PARP14's H1682/Y1714 catalytic triad, so the H-Y-[E/I] motif is NOT
-      retained -- PARP9 is a pseudo-ART. Consistent with Chatrin et al. 2020,
+      No ADP-ribose/NAD+-bound structure exists for this domain (all 8 PARP9 PDB
+      entries cover 102-497, i.e. the macrodomains only). Aligning it to PARP14's
+      ART (BLOSUM62, 31% identity) maps PARP14 H1682 -> PARP9 Q705 and PARP14
+      Y1714 -> PARP9 Y737. PARP9 therefore RETAINS the catalytic tyrosine and
+      loses the histidine required for NAD+ binding -- the literature describes
+      this as a Q-Y-T triad in place of H-Y-[E/I/L/Y]. It is a pseudo-ART, but
+      the loss is specifically the His, not the whole motif. Consistent with
+      Chatrin et al. 2020,
       which showed DTX3L's own RING-DTC catalyses ADP-ribosylation of ubiquitin
       independently of PARP9. The residues below are the only positions with
       direct functional evidence, from UniProt mutagenesis: deletion of 719-722
@@ -58,16 +65,21 @@ dtx3l:
     source: mutagenesis
     evidence: >
       No DTX3L RING structure is deposited (only 3PG6 = DTC, and 8R79 = D2).
-      C561A, C596A and C599A each abolish catalytic activity (UniProt
-      mutagenesis). These are zinc ligands marking the RING core rather than a
-      ligand pocket, so the axis they define points at the structural centre of
-      the domain, not at the E2-binding surface.
+      UniProt annotates loss of catalytic activity for the TRIPLE mutant
+      C561A/C596A/C599A -- every one of the three entries carries the "when
+      associated with" qualifier, so no single-cysteine phenotype is annotated.
+      (A separate 561..564 CVIC->SVIS also loses activity.) These are zinc
+      ligands marking the RING core rather than a ligand pocket, so the axis
+      they define points at the structural centre of the domain, not at the
+      E2-binding surface.
     catalytic_residues: [561, 596, 599]
     pocket_residues: [561, 596, 599]
 
   DTC:
     description: "Deltex C-terminal domain - NAD+ binding site"
     domain_range: [601, 740]          # restraint block [608, 737]
+    # NB: Q8TDB6 has NO UniProt DOMAIN features at all. 601-740 is the 3PG6
+    # crystallisation construct range, not a UniProt annotation -- cite PDB/lit.
     source: homology
     evidence: >
       DTX3L's own DTC structure (3PG6) is apo. Site transferred from DTX1-RD
@@ -78,7 +90,7 @@ dtx3l:
       DTX1 -> DTX3L correspondences: R534->R660 and S566->S692 (pyrophosphate),
       W577->W703 (adenine stacking), N578->N704, H581->H707 and H582->H708
       (adenosine ribose), T584->T710 (adenine N1), H593->Y719 (stacking,
-      conservative His->Tyr substitution). H581A/H593A in DTX1 abolish
+      conservative His->Tyr substitution). H581A/H593A in DTX1 are defective in promoting
       ADP-ribosylation of ubiquitin while leaving E3 ligase activity intact.
     catalytic_residues: [703, 707, 708, 710, 719]
     pocket_residues: [657, 660, 691, 692, 693, 694, 695, 701, 702, 703, 704,

@@ -127,11 +127,11 @@ Two-phase pipeline for studying PARP14 (1801 residues) domain deletion variants:
 - Protocol: 20 ns per replicate, discard first 0.5 ns equilibration, 25 x 19.5 ns = 487.5 ns effective per set
 - **Simulation sets** (prepared by `prepare_and_run_all.py`):
   - `fl` — Full-length (1801 res, 300 nm box, EBI AF2, `colabfold=1`)
-  - `md` — Macrodomains only: MD1L1+MD2+MD3 (586 res, 80 nm box)
-  - `core` — KH7a+MD1L1+MD2+MD3+KHb-KH8+WWE+ART (1051 res, 120 nm box)
-  - `mka` — MD1L1+MD2+MD3+KHb-KH8+WWE+ART (999 res, 100 nm box)
-  - `norrm` — No-RRM: KH1-6+KH7a+MD1L1+MD2+MD3+KHb-KH8+WWE+ART (1474 res, 250 nm box)
-  - `noart` — No-ART: KH1-6+KH7a+MD1L1+MD2+MD3+KHb-KH8+WWE (1275 res, 200 nm box)
+  - `md` — Macrodomains only: MD1+MD2+MD3 (586 res, 80 nm box)
+  - `core` — KH7a+MD1+MD2+MD3+KHb-KH8+WWE+ART (1051 res, 120 nm box)
+  - `mka` — MD1+MD2+MD3+KHb-KH8+WWE+ART (999 res, 100 nm box)
+  - `norrm` — No-RRM: KH1-6+KH7a+MD1+MD2+MD3+KHb-KH8+WWE+ART (1474 res, 250 nm box)
+  - `noart` — No-ART: KH1-6+KH7a+MD1+MD2+MD3+KHb-KH8+WWE (1275 res, 200 nm box)
 - Domain restraints use FL structured-core boundaries (from `input/domains.yaml`), mapped to construct numbering; inter-domain linkers left flexible (unrestrained)
 - Directory layout (nested): `{set}/seed-{1-5}_sample-{0-4}/` (e.g. `md/seed-1_sample-0/`)
 - Shared inputs per construct: `{set}/input/domains.yaml` + `residues_CALVADOS3.csv`
@@ -156,7 +156,7 @@ Two-phase pipeline for studying PARP14 (1801 residues) domain deletion variants:
 
 **Phase 3 — Per-residue analysis**:
 - `figure_sasa_faces.py` — RSA (relative SASA, Chothia Gly-X-Gly normalized per Wu 2017) heatmap + per-domain active-site-face vs back-face annotation. Outputs: `figures/rsa_heatmap_FL.png`, `figures/rsa_per_domain_matrix_FL.png`, PyMOL session, per-residue CSV.
-- `figure_md_distances.py` — Inter-domain COM-COM (or min CA-CA) distance violin plots across all 25 replicates pooled. Default pairs: MD1L1-MD2/MD3/ART, MD2-MD3, MD3-ART. 1.0 nm contact cutoff line.
+- `figure_md_distances.py` — Inter-domain COM-COM (or min CA-CA) distance violin plots across all 25 replicates pooled. Default pairs: MD1-MD2/MD3/ART, MD2-MD3, MD3-ART. 1.0 nm contact cutoff line.
 - `cluster_states.py` — K-means clustering of frames using inter-domain distances (optional Rg), with silhouette/elbow sweep, PCA scatter, per-state distance profile heatmap, replicate-by-state distribution heatmap, and extraction of centroid-representative PDB structures per state. Requires `scikit-learn`.
 
 **Phase 4 — Prediction layer** (`examples/PARP14_MDP/sim_analysis/`):
@@ -179,18 +179,39 @@ Two-phase pipeline for studying PARP14 (1801 residues) domain deletion variants:
 | RRM3 | 225-314 | RNA Recognition Motif 3 |
 | KH1-KH6 | 315-737 | K-Homology domains (grouped) |
 | KH7a | 738-789 | K-Homology domain |
-| MD1L1 | 790-1004 | Macrodomain 1 + linker to MD2 |
+| MD1 | 790-1003 | Macrodomain 1 + its linker to MD2 |
 | MD2 | 1004-1193 | Macrodomain 2 |
 | MD3 | 1207-1388 | Macrodomain 3 |
 | KHb-KH8 | 1389-1533 | K-Homology domains (grouped) |
 | WWE | 1534-1602 | WWE domain |
 | ART | 1603-1801 | ADP-ribosyltransferase (catalytic) |
 
-**Active Sites** (defined in `parp14/input/active_sites.yaml`):
-- MD1: D831, N923, D962 (ADP-ribose hydrolase)
-- MD2: 1035, 1046, 1134, 1171 (ADP-ribose reader)
-- MD3: 1248, 1259, 1330, 1371 (ADP-ribose binding)
-- ART: H1684, Y1705, E1706, 1722 (H-Y-E catalytic triad)
+**Active Sites** — single source of truth is `parp14/input/active_sites.yaml`;
+every consumer loads it via `sim_registry.ACTIVE_SITES_FL`. **Do not re-type these
+numbers into another module** — six hard-coded copies are exactly how the old,
+wrong values survived. Numbering is UniProt **Q460N5** (1801 aa).
+
+- MD1: **N824, G832, D961** (ADP-ribose hydrolase / eraser)
+- MD2: **S1034, G1044, G1135, H1176** (ADP-ribose reader)
+- MD3: **S1247, V1258, G1334, F1371** (ADP-ribose binding)
+- ART: **H1682, R1699, Y1714** (mono-ART catalytic site)
+
+> **Corrected 2026-09-21.** The previous values (MD1 D831/N923/D962,
+> ART H1684/Y1705/E1706) did not match the amino acids they were labelled with —
+> residue 831 is a glycine in Q460N5, 1684 is a threonine — and no global offset
+> reconciled them. Provenance now: Đukić et al. 2023 (PMC10499325) for G832 (the
+> G832E hydrolase-blocking mutant), G1044 and R1699A; UniProt annotated binding
+> sites for the rest; and the canonical PARP motifs H-G-T (1682) and G-K-G-T-Y-F-A
+> (1710-1716) for the ART His/Tyr.
+>
+> **PARP14 is a MONO-ADP-ribosyltransferase**, so it does *not* have the H-Y-E
+> triad of the poly-ARTs PARP1/2 — there is no catalytic glutamate. The third
+> triad position is a hydrophobic residue and is deliberately not listed, since
+> the cited paper does not establish it.
+>
+> Verify any time with `python examples/PARP14_MDP/sim_analysis/verify_numbering.py`
+> (checks against the live UniProt record; exits non-zero on failure). Full audit:
+> `examples/PARP14_MDP/docs/NUMBERING_AUDIT.md`.
 
 **Visualization:** `parp14/make_pse.py` generates PyMOL PSE with domain coloring + active site labels (uses `pymol-render` conda env).
 

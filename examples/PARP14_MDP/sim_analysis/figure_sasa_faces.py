@@ -75,36 +75,30 @@ DOMAINS = [
     ('RRM3',    225,  314, '#aec7e8'),
     ('KH1-KH6', 315,  737, '#ff7f0e'),
     ('KH7a',    738,  789, '#d62728'),
-    ('MD1L1',   790,  1004, '#17becf'),
-    ('MD2',     1005, 1193, '#9467bd'),
+    ('MD1',     790,  1003, '#17becf'),
+    ('MD2',     1004, 1193, '#9467bd'),
     ('MD3',     1207, 1388, '#8c564b'),
     ('KHb-KH8', 1389, 1533, '#e377c2'),
     ('WWE',     1534, 1602, '#7f7f7f'),
     ('ART',     1603, 1801, '#bcbd22'),
 ]
 
-# Active sites (FL numbering, catalytic residues only)
-ACTIVE_SITES = {
-    'MD1L1': [831, 923, 962],
-    'MD2':   [1035, 1046, 1134, 1171],
-    'MD3':   [1248, 1259, 1330, 1371],
-    'ART':   [1684, 1705, 1706, 1722],
-}
+# Active sites and pockets, loaded from the single source of truth
+# (parp14/input/active_sites.yaml) via sim_registry rather than duplicated here.
+# The old hard-coded copy carried the mislabelled catalytic residues corrected
+# on 2026-09-21 -- see docs/NUMBERING_AUDIT.md.
+#
+# The domain key is 'MD1', not the former 'MD1L1': that name dated from a time
+# when the MD1->MD2 linker was thought to be missing. The linker is present, so
+# the unit is simply MD1 with its linker.
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+import sim_registry as _sitereg
 
-# Pocket residues (more inclusive)
-POCKET_RESIDUES = {
-    'MD1L1': [822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,
-              919,920,921,922,923,924,925,926,927,961,962,966],
-    'MD2':   [1021,1022,1023,1024,1034,1035,1036,1037,1038,1039,1040,1041,
-              1042,1043,1044,1045,1046,1047,1130,1131,1132,1133,1134,1135,
-              1136,1137,1138,1139,1140,1141,1170,1171,1175,1178],
-    'MD3':   [1235,1236,1237,1247,1248,1249,1250,1251,1252,1253,1254,1255,
-              1256,1257,1258,1259,1260,1261,1302,1303,1304,1324,1325,1326,
-              1327,1328,1329,1330,1331,1332,1333,1334,1335,1336,1337,1369,
-              1370,1371,1375],
-    'ART':   [1681,1682,1683,1684,1685,1688,1701,1704,1705,1706,1707,1708,
-              1709,1714,1715,1716,1721,1722,1726,1727,1781],
-}
+ACTIVE_SITES = {k: v['catalytic'] for k, v in _sitereg.ACTIVE_SITES_FL.items()
+                if k != 'WWE'}
+POCKET_RESIDUES = {k: v['pocket'] for k, v in _sitereg.ACTIVE_SITES_FL.items()
+                   if k != 'WWE'}
 
 # Raw-SASA classification thresholds (Å²). Legacy: RSA below is what every
 # downstream analysis actually uses. The module docstring used to claim the
@@ -143,7 +137,7 @@ def load_restraint_domains(yaml_path, canonical=None):
     missing, so this never becomes a hard dependency.
     """
     if canonical is None:
-        canonical = {'MD1L1': (790, 1004), 'MD2': (1005, 1193),
+        canonical = {'MD1': (790, 1003), 'MD2': (1004, 1193),
                      'MD3': (1207, 1388), 'ART': (1603, 1801),
                      'WWE': (1534, 1602)}
     try:
@@ -710,7 +704,7 @@ def plot_rsa_per_domain_matrix(rows, outpath):
         d_idx = None
         d_start = None
         for i, (dn, ds, de, _) in enumerate(DOMAINS):
-            if dn == an or (an == 'MD1' and dn == 'MD1L1'):
+            if dn == an or (an == 'MD1' and dn == 'MD1L1'):   # legacy spelling
                 d_idx = i
                 d_start = ds
                 break
