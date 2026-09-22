@@ -401,23 +401,63 @@ associating" could simply be 6× more concentrated.
 
 ### What was done about it (2026-09-22)
 
-The active runs are rescaled to a common **protein-bead density of
-0.06494 beads/nm³ (107.8 mM residues)**, taken from `fl` — the full-length
-reference and the anchor of matched pair C. Matching *protein* density rather
-than total beads keeps the rna arm comparable, since its RNA is added on top.
+**`md_full` was rescaled and then reverted.** It was briefly moved to
+39×39×503 to match `fl`'s concentration, then put back to its original
+25×25×325. Matching concentration is the right control for comparing
+*constructs*, but the first runs showed nothing condenses at ~108 mM, and
+diluting `md_full` 3.8× would have removed the one high-concentration probe
+left in the active queue.
 
-| run | change | status |
-|---|---|---|
-| `md_full` | 25×25×325 → **39×39×503** (3.77× volume) | rescaled, not yet started |
-| `kh1_art_full` | 40×40×520 → **40×40×487** | rescaled, not yet started |
-| `fl` | — | **done at the target** (it defines it) |
-| `fl_wwe_full_go` | — | running; sits **8% below** target (0.0597 vs 0.0649). Not restarted — it was 73%/32% through, and 8% is small next to the 4× it fixes elsewhere |
-| `core_full_go` | — | **done at 38% above** target (0.090). Not comparable on concentration; rerun it if that matters |
+`kh1_art_full` keeps its rescaled 40×40×487 box (108 mM, matching `fl`).
 
-Chain counts and bead counts are unchanged, so GPU cost per run is unchanged;
-only the box volume moved. `Lz/Lx` stays at 12–13, matching the rest of the panel.
+**Neither "equal concentration" nor "equal bead count" is the physically right
+invariant.** Equal bead count was a *cost* choice, not a physics one. And if a
+construct genuinely phase-separates, the overall concentration does not affect
+c_sat at all — the coexisting densities are thermodynamic properties and the
+overall concentration only sets the lever rule, i.e. how much material sits in
+each phase. What must be matched is the *geometry*:
 
-### Parked constructs
+- slab thick enough to have a bulk interior (interfaces are ~3–5 nm, so ≥15–20 nm)
+- dilute region long enough to reach bulk far from both interfaces
+- cross-section larger than a few Rg
+
+All ten panel configurations satisfy those (slab 19–60 nm, dilute 200–500 nm),
+so no design here breaks the method.
+
+Concentration only became the dominant variable *because* nothing condenses.
+When a run dissolves you have not measured c_sat; you have learned
+`c_sat > c_box`. The way out is a concentration scan, not a matched panel.
+
+### FL concentration ladder — `ladder/`
+
+Three extra `fl` runs at 2×, 4× and 8× the reference concentration, to bracket
+where (or whether) full-length PARP14 condenses. Same 30 chains and 54,030
+beads as `fl`, so the same cost per run; only `Lz` shrinks.
+
+| rung | box (nm) | mM residues | × fl | dense slab | dilute region | ratio |
+|---|---|---|---|---|---|---|
+| `fl` (done) | 40×40×520 | 108 | 1× | 21 nm | 499 nm | 24 |
+| `fl_c2x` | 40×40×260 | 216 | 2× | 21 nm | 239 nm | 11.6 |
+| `fl_c4x` | 40×40×130 | 431 | 4× | 21 nm | 109 nm | 5.3 |
+| `fl_c8x` | 40×40×65 | 863 | 8× | 21 nm | 44 nm | **2.2** |
+
+(dense-slab thickness assumes a condensate at ~300 mg/mL)
+
+`fl_c8x`'s dilute region is only ~2× the slab thickness. That is enough to see
+*whether* it condenses but too tight to read a trustworthy c_sat off — if it
+does condense there, re-run that point in a longer box before quoting a number.
+
+It is a separate arm, chained to start only when the main panel finishes:
+
+```bash
+GPU=1 ALLOW_FRESH=1 LEG_STEPS=10000000 \
+  nohup ./run_slab_opportunistic.sh ladder <pid-of-main-runner> &
+```
+
+`run_slab_opportunistic.sh` now takes an optional wait-PID as its second
+argument, like `run_slab_queue.sh` does.
+
+### Parked constructs### Parked constructs
 
 `kh1_wwe_full`, `mka_full`, `mka_wwe_full`, `md3_wwe_full` and `md2_md3` are
 **parked**: fully prepared and validated, but out of the queue. Both launchers

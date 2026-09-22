@@ -1,9 +1,9 @@
 arm: homotypic
 beads: 49717
 box:
-- 39.0
-- 39.0
-- 503.0
+- 25.0
+- 25.0
+- 325.0
 construct: md_full
 n_rna: 0
 nchain: 83

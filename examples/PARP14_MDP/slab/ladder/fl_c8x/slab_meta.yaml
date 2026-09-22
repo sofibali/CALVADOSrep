@@ -1,0 +1,13 @@
+arm: homotypic
+beads: 54030
+box:
+- 40.0
+- 40.0
+- 65.0
+construct: fl_c8x
+n_rna: 0
+nchain: 30
+note: FL concentration ladder, 8x the fl reference concentration
+nres: 1801
+steps: 200000000
+sysname: parp14

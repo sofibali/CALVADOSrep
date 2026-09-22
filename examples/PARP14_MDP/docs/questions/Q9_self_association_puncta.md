@@ -1,6 +1,6 @@
 # Q9 — Which constructs self-associate into puncta with RNA and ADP-ribosylated substrate?
 
-**Status:** OPEN — **first 4 slab runs complete (2026-09-22): none of them phase-separate.** Experimental
+**Status:** OPEN — **6 slab runs complete (2026-09-22): none phase-separate, but ART and RNA interact.** Experimental
 data ~months out (cell lines in construction as of Sept 2026).
 
 ---
@@ -92,6 +92,46 @@ nonsensical cutoffs, because it is fitting interfaces that do not exist.
 strength, in CALVADOS3, neither full-length PARP14 nor the KH7a-to-ART core
 self-associates strongly enough to hold a condensate together at the simulated
 concentration.
+
+### Matched pair C: ART and RNA are not independent
+
+`fl_wwe_full_go` (−ART) finished on both arms, completing the first ±ART pair.
+Dispersal width at the end of production (smaller = more cohesive):
+
+| | +ART (`fl`) | −ART (`fl_wwe_full_go`) | effect of removing ART |
+|---|---|---|---|
+| homotypic | 130 nm | 176 nm | 1.35× more dispersed |
+| +RNA | **78 nm** | 182 nm | **2.33× more dispersed** |
+| effect of adding RNA | **1.67× less dispersed** | 1.03× — none | |
+
+Removing ART makes the protein disperse faster in both arms. But the
+interesting part is the interaction: **RNA retards dispersal only when ART is
+present.** With ART, adding polyU tightens the assembly 1.67×; without ART,
+RNA does nothing at all (176 → 182 nm, within noise).
+
+Neither condenses — every one of the six still dissolves — so this is a
+difference in *cohesion*, not in phase behaviour.
+
+**Composition suggests why.** There is no ADP-ribosylation in CALVADOS; ART here
+is simply 199 more residues of a particular composition. Those residues are
+unusual for this protein:
+
+| region | length | %K+R | net charge | %aromatic |
+|---|---|---|---|---|
+| ART 1603–1801 | 199 | 10.6 | **+3** | **13.1** |
+| everything except ART | 1602 | 12.9 | −8 | 7.3 |
+
+ART is *not* more Arg/Lys-rich (0.82× the rest), so this is not simple
+electrostatic RNA binding. It is the protein's only **net-positive** module,
+sitting in an otherwise acidic chain, and it is **1.8× richer in aromatics** —
+both of which raise cohesion under CALVADOS's Ashbaugh–Hatch λ (high for F/W/Y)
+and favour association with RNA.
+
+**Caveat:** the pair is not perfectly matched. `fl_wwe_full_go` runs at 99 mM
+residues vs `fl`'s 108 mM (9% lower) with 31 vs 30 chains, and lower
+concentration disperses faster on its own. A 9% offset is unlikely to produce a
+35% difference, and cannot explain the 2.33× in the RNA arm at all — but the
+homotypic comparison in particular is not clean.
 
 ### The one suggestive signal
 

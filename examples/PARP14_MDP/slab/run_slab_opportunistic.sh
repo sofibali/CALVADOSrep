@@ -39,7 +39,8 @@
 set +u
 SLAB=$(cd "$(dirname "$0")" && pwd)
 CAL_ENV=/home/sbali/miniconda3/envs/calvados
-ARM=${1:?usage: [GPU=n] ./run_slab_opportunistic.sh <homotypic|rna|benchmark>}
+ARM=${1:?usage: [GPU=n] ./run_slab_opportunistic.sh <arm> [wait_pid]}
+WAIT_PID=${2:-0}
 GPU=${GPU:-1}
 LEG_STEPS=${LEG_STEPS:-10000000}  # 1e7: ~3% restart overhead, 10 dup frames/yield. See README "Yielding leaves overlapping frames".
 POLL=${POLL:-30}
@@ -103,6 +104,14 @@ cleanup () {
   exit 143
 }
 trap cleanup TERM INT
+
+# Chain behind another launcher, so a follow-on arm (e.g. the FL
+# concentration ladder) starts only once the main panel is finished.
+if [ "$WAIT_PID" != "0" ]; then
+  echo "[opp $(date '+%F %T')] waiting for PID $WAIT_PID before starting arm $ARM"
+  while kill -0 "$WAIT_PID" 2>/dev/null; do sleep 120; done
+  echo "[opp $(date '+%F %T')] PID $WAIT_PID finished -- starting"
+fi
 
 echo "[opp $(date '+%F %T')] arm=$ARM gpu=$GPU leg=$LEG_STEPS host=$(hostname)"
 echo "[opp $(date '+%F %T')] policy: run only while GPU $GPU is empty; yield on any foreign process"
