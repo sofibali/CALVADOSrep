@@ -374,6 +374,64 @@ rate, pack; if each simply halves, don't.
 
 ---
 
+## Concentration was NOT held constant — and that matters
+
+The panel traded chain count against construct size to keep every run near
+~50k beads, i.e. near-equal **cost**. Nobody held **concentration** fixed, and
+it varies enormously across the original design:
+
+| construct | chains | box (nm) | protein beads/nm³ | mM residues | chain µM |
+|---|---|---|---|---|---|
+| `md2_md3` | 100 | 20×20×260 | 0.370 | 615 | 1597 |
+| `md3_wwe_full` | 100 | 20×20×260 | 0.381 | 632 | 1597 |
+| `md_full` | 83 | 25×25×325 | 0.245 | 406 | 679 |
+| `mka_wwe_full` | 62 | 30×30×390 | 0.144 | 238 | 293 |
+| `mka_full` | 49 | 30×30×390 | 0.141 | 235 | 232 |
+| `core_full_go` | 47 | 35×35×455 | 0.090 | 149 | 140 |
+| `kh1_wwe_full` | 39 | 35×35×455 | 0.090 | 150 | 116 |
+| `kh1_art_full` | 34 | 40×40×520 | 0.061 | 101 | 68 |
+| `fl_wwe_full_go` | 31 | 40×40×520 | 0.060 | 99 | 62 |
+| `fl` | 30 | 40×40×520 | 0.065 | 108 | 60 |
+
+**Chain concentration spans 26.7×, residue concentration 6.4×.** Since the first
+four completed runs all *failed* to condense, and condensation depends directly
+on concentration, comparing constructs across that range would confound
+construct identity with concentration. A small construct looking "more
+associating" could simply be 6× more concentrated.
+
+### What was done about it (2026-09-22)
+
+The active runs are rescaled to a common **protein-bead density of
+0.06494 beads/nm³ (107.8 mM residues)**, taken from `fl` — the full-length
+reference and the anchor of matched pair C. Matching *protein* density rather
+than total beads keeps the rna arm comparable, since its RNA is added on top.
+
+| run | change | status |
+|---|---|---|
+| `md_full` | 25×25×325 → **39×39×503** (3.77× volume) | rescaled, not yet started |
+| `kh1_art_full` | 40×40×520 → **40×40×487** | rescaled, not yet started |
+| `fl` | — | **done at the target** (it defines it) |
+| `fl_wwe_full_go` | — | running; sits **8% below** target (0.0597 vs 0.0649). Not restarted — it was 73%/32% through, and 8% is small next to the 4× it fixes elsewhere |
+| `core_full_go` | — | **done at 38% above** target (0.090). Not comparable on concentration; rerun it if that matters |
+
+Chain counts and bead counts are unchanged, so GPU cost per run is unchanged;
+only the box volume moved. `Lz/Lx` stays at 12–13, matching the rest of the panel.
+
+### Parked constructs
+
+`kh1_wwe_full`, `mka_full`, `mka_wwe_full`, `md3_wwe_full` and `md2_md3` are
+**parked**: fully prepared and validated, but out of the queue. Both launchers
+skip any construct directory containing a `.parked` file (they are not moved —
+`components.yaml` carries absolute paths, so moving would break them).
+
+```bash
+rm homotypic/md2_md3/.parked      # un-park
+```
+
+**They still carry their ORIGINAL boxes**, so they are *not* at the common
+concentration. Rescale before running them alongside the active set, or the
+comparison is confounded — each `.parked` file says so.
+
 ## The panel
 
 10 constructs × 2 arms, chosen to span the two valences the multivalency

@@ -2,7 +2,7 @@ bilayer_eq: false
 box:
 - 40.0
 - 40.0
-- 520
+- 487.0
 box_eq: false
 boxscaling_xyz:
 - true

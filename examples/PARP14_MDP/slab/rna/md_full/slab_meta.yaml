@@ -1,13 +1,13 @@
-construct: md_full
 arm: rna
-sysname: parp14_md1md3_full
-nres: 599
-nchain: 83
-n_rna: 25
-box:
-- 25.0
-- 25.0
-- 325
-steps: 200000000
 beads: 51717
+box:
+- 39.0
+- 39.0
+- 503.0
+construct: md_full
+n_rna: 25
+nchain: 83
 note: RNA-null + eraser
+nres: 599
+steps: 200000000
+sysname: parp14_md1md3_full

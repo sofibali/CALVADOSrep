@@ -116,7 +116,14 @@ did_work=0
 for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
   name=$(basename "$d")
   if [ -n "$ONLY" ] && [[ ",$ONLY," != *",$name,"* ]]; then continue; fi
-  [ -f "$d/slab_meta.yaml" ] || continue    # not a construct directory
+  [ -f "$d/slab_meta.yaml" ] || continue
+  # A construct can be taken out of the queue without deleting or moving
+  # it (moving would break components.yaml's absolute paths). The marker
+  # file says why it was parked and how to un-park it.
+  if [ -f "$d/.parked" ]; then
+    echo "[opp $(date '+%F %T')] PARKED $name -- skipping (see $d/.parked)"
+    continue
+  fi    # not a construct directory
 
   # A fresh construct must NOT be started here. Equilibration is a single
   # uninterruptible `simulation.step(steps_eq)` with NO checkpointing (sim.py),

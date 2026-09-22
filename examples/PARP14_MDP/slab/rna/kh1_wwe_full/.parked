@@ -1,0 +1,12 @@
+Parked 2026-09-22 -- not in the active queue, but fully prepared and runnable.
+
+Removed from the running panel by request. Nothing is wrong with these inputs:
+they build and run (all 20 were validated on CUDA), and no steps have been done.
+
+NOTE ON CONCENTRATION: the active runs were rescaled on 2026-09-22 to a common
+protein-bead density of 0.06494 beads/nm^3 (107.8 mM residues, matching fl).
+THIS construct still carries its original box and is NOT at that concentration
+-- see slab/README.md "Concentration was not held constant". Rescale its box
+before running it alongside the others, or its result will not be comparable.
+
+To un-park:  rm rna/kh1_wwe_full/.parked

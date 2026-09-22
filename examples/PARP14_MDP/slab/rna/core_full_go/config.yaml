@@ -8,6 +8,7 @@ boxscaling_xyz:
 - true
 - true
 - true
+checkpoint_interval: 100000
 custom_restraint_type: harmonic
 custom_restraints: false
 cutoff_lj: 2.0
@@ -22,7 +23,7 @@ friction_coeff: 0.01
 gpu_id: 0
 ionic: 0.15
 k_eq: 0.02
-logfreq: 1000000
+logfreq: 100000
 pH: 7.5
 platform: CUDA
 pressure:
@@ -37,7 +38,7 @@ runtime: 0
 slab_eq: true
 slab_outer: 40
 slab_width: 35
-steps: 200000000
+steps: 10000000
 steps_eq: 5000000
 sysname: parp14_core_full_go
 temp: 293.15

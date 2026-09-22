@@ -1,13 +1,13 @@
-construct: kh1_art_full
 arm: homotypic
-sysname: parp14_kh1_art_full
-nres: 1487
-nchain: 34
-n_rna: 0
+beads: 50558
 box:
 - 40.0
 - 40.0
-- 520
-steps: 200000000
-beads: 50558
+- 487.0
+construct: kh1_art_full
+n_rna: 0
+nchain: 34
 note: +ART  of matched pair B
+nres: 1487
+steps: 200000000
+sysname: parp14_kh1_art_full
