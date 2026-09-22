@@ -1,6 +1,6 @@
 # Q9 — Which constructs self-associate into puncta with RNA and ADP-ribosylated substrate?
 
-**Status:** OPEN — simulations prepared and validated, not yet run. Experimental
+**Status:** OPEN — **first 4 slab runs complete (2026-09-22): none of them phase-separate.** Experimental
 data ~months out (cell lines in construction as of Sept 2026).
 
 ---
@@ -64,6 +64,58 @@ of the two valences, not a sum.
 constructs that already have structures. Includes three matched ±ART pairs.
 Coverage is RNA valence {0, 2, 3, 9, 12} — **gap at 4–8**, and nothing at
 ADPr-reader 0. Filling either needs new AF3 predictions.
+
+## First result — the slabs dissolve
+
+Four of the twenty slab runs have finished the full 2e8 steps (2 µs):
+`fl` and `core_full_go`, both arms. **None of them forms a stable condensate.**
+
+`slab_eq` compresses every chain into a thin slab and then removes that pull.
+If the construct self-associates the slab persists. Instead it disperses,
+monotonically, for the whole 2 µs — measured as the z-range holding 90% of the
+beads:
+
+| run | chains | box z (nm) | after `slab_eq` | production start | production end |
+|---|---|---|---|---|---|
+| `homotypic/core_full_go` | 47 | 455 | 11 nm | 80 | **193** |
+| `homotypic/fl` | 30 | 520 | 6 nm | 65 | **130** |
+| `rna/core_full_go` | 47 | 455 | 11 nm | 57 | **108** |
+| `rna/fl` | 30 | 520 | 6 nm | 46 | **78** |
+
+So **c_sat is not defined for these runs** — there is no dense/dilute
+coexistence to measure. `SlabAnalysis`'s tanh interface fit returns NaN and
+nonsensical cutoffs, because it is fitting interfaces that do not exist.
+`slab/analyze_slab.py` now checks slab stability first and reports
+`NO PHASE SEP` rather than quoting a meaningless number.
+
+**This is a result, not a failure.** Read literally: at 293 K, 150 mM ionic
+strength, in CALVADOS3, neither full-length PARP14 nor the KH7a-to-ART core
+self-associates strongly enough to hold a condensate together at the simulated
+concentration.
+
+### The one suggestive signal
+
+**The +RNA arm dissolves consistently more slowly than homotypic** — 108 vs
+193 nm for `core_full_go`, 78 vs 130 nm for `fl`, a ~1.7× narrower distribution
+in both matched pairs. That is the direction the RNA-multivalency leg of the
+hypothesis predicts: polyU cross-links chains and retards dispersal, just not
+enough to stabilise a phase. Two pairs is not a trend, but it is the first
+multi-chain evidence in the project and the remaining 16 runs test it directly.
+
+### Caveats that matter before reading too much into this
+
+- **The slabs are still expanding at the end of production.** 2 µs is enough to
+  show the direction unambiguously but not to reach the equilibrium dispersed
+  state, so no *upper bound* on c_sat can be quoted either.
+- **Concentration is a design choice.** Chain counts were set to hit ~50k beads
+  per run, not to hit a physiological concentration. A construct that does not
+  condense here might at higher concentration.
+- **Force-field scope.** CALVADOS3 is parameterised for single-chain dimensions
+  and IDP phase behaviour; the folded-domain interactions that might drive
+  PARP14 assembly are represented only through the same residue-level
+  Ashbaugh-Hatch/Debye-Hückel terms, with domains held rigid by restraints.
+- The RNA arm additionally mixes force fields (CALVADOS2 RNA beads with
+  CALVADOS3 protein), as noted below.
 
 ## What is blocking
 
