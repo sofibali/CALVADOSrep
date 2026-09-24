@@ -1,6 +1,6 @@
 # Q9 — Which constructs self-associate into puncta with RNA and ADP-ribosylated substrate?
 
-**Status:** OPEN — **6 slab runs complete (2026-09-22): none phase-separate, but ART and RNA interact.** Experimental
+**Status:** OPEN — **all 10 active slab runs complete (2026-09-24): none show liquid-liquid phase separation.** Experimental
 data ~months out (cell lines in construction as of Sept 2026).
 
 ---
@@ -92,6 +92,40 @@ nonsensical cutoffs, because it is fitting interfaces that do not exist.
 strength, in CALVADOS3, neither full-length PARP14 nor the KH7a-to-ART core
 self-associates strongly enough to hold a condensate together at the simulated
 concentration.
+
+### `md_full` holds together — but it is arrested, not a condensate
+
+`md_full` (MD1+MD2+MD3, 83 chains, the only high-concentration run at
+**406 mM residues**) is the one construct whose slab does **not** disperse. It
+sits at 14.2 nm for the entire 2 µs.
+
+That is not evidence of phase separation. A slab that never disperses looks the
+same whether it is a liquid condensate or a jammed solid, and this one is
+jammed:
+
+| | `md_full` | the runs that dispersed |
+|---|---|---|
+| slab width over 2 µs | 14.2 ± **0.00** nm | 107–134 ± 33–46 nm |
+| chain z-order correlation, first vs last frame | **0.982** | 0.21–0.37 |
+| per-chain displacement over 2 µs | 0.55 nm | — |
+| dense-phase density | **~1020 mg/mL** | — |
+| beads in the dilute phase | **exactly 0** | — |
+
+A liquid condensate fluctuates in width and lets chains diffuse past one
+another. Here the width does not vary *at all*, no chain ever changes places,
+and the density is ~3× a physiological condensate. `slab_eq` compressed 83
+chains into a 25×25 nm cross-section and the result vitrified. **c_sat is not
+defined for it**, any more than for the runs that dissolved.
+
+Whether this is "so cohesive it glasses" or "an artifact of over-compression in
+a small box" cannot be separated from one run. Either way it is not LLPS.
+`analyze_slab.py` now tests width fluctuation and chain-order scrambling and
+labels such runs `TRAPPED` rather than reporting a c_sat.
+
+### `kh1_art_full` behaves like the rest
+
+Both arms disperse (170 nm homotypic, 146 nm +RNA from a 6 nm slab), with RNA
+again retarding dispersal — 0.86×, the same direction as every other pair.
 
 ### Matched pair C: ART and RNA are not independent
 

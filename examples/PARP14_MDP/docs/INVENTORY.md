@@ -1,6 +1,6 @@
 # PARP14 project inventory — where everything is and what it contains
 
-Last surveyed 2026-09-21. Everything below is under
+Last surveyed 2026-09-24. Everything below is under
 `/home/sbali/CALVADOS/examples/PARP14_MDP/` unless noted, with Phase-1
 structure generation in the sibling `/home/sbali/CALVADOS/parp14/`.
 
@@ -129,17 +129,34 @@ correct bead counts). Each construct directory holds `config.yaml`,
 
 ### Current output
 
-Only `core_full_go` has data; everything else is at 0 steps.
+**All 10 active runs are complete** (5 constructs × 2 arms, 2e8 steps = 2 µs
+each). Each run directory holds ~1.2 GB of trajectory:
 
-| path | state |
-|---|---|
-| `slab/homotypic/core_full_go/parp14_core_full_go.dcd` | 186 MB, ~26M/200M steps |
-| `slab/homotypic/core_full_go/restart.chk` | resumable, equilibration done |
-| `slab/rna/core_full_go/` | equilibration only; that arm is waiting on a contended GPU |
+| construct | homotypic | rna | mM residues | outcome |
+|---|---|---|---|---|
+| `fl` | ✓ | ✓ | 108 | disperses |
+| `fl_wwe_full_go` | ✓ | ✓ | 99 | disperses |
+| `kh1_art_full` | ✓ | ✓ | 108 | disperses |
+| `core_full_go` | ✓ | ✓ | 149 | disperses |
+| `md_full` | ✓ | ✓ | 406 | **arrested** (jammed, not a condensate) |
+
+**Nothing shows liquid-liquid phase separation**, so no c_sat has been measured.
+See `docs/questions/Q9_self_association_puncta.md` for the analysis.
+
+`ladder/` — `fl_c2x`, `fl_c4x`, `fl_c8x` at 2×/4×/8× the `fl` concentration,
+running now, to find where full-length PARP14 transitions.
+
+Five constructs are **parked** (`.parked` marker, skipped by both launchers):
+`kh1_wwe_full`, `mka_full`, `mka_wwe_full`, `md3_wwe_full`, `md2_md3`. Prepared
+and validated, but out of the queue and still at their original concentrations.
 
 **The result this campaign exists to produce is c_sat**, which lands in
 `{construct}/{sysname}_ps_results.csv` as the `c_dilute` column (mM), via
-`calvados.analysis.SlabAnalysis`. No run has reached that point yet.
+`calvados.analysis.SlabAnalysis`. Those files exist for the finished runs but
+their `c_dilute`/`c_dense` columns are **empty** — correctly, because none of
+these systems has a dense/dilute coexistence to measure. Run
+`slab/analyze_slab.py <run_dir>`, which classifies each run as dispersing,
+`TRAPPED` or liquid *before* trusting any fitted number.
 
 `components.yaml` carries **absolute paths**, so the tree is not portable —
 re-run `prepare_slab.py` at a new location rather than copying.

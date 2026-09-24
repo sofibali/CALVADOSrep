@@ -119,6 +119,56 @@ def slab_stability(d, sysname, stride=400):
     return w90(eq[-3:]), w90(pr[:2]), w90(pr[-2:])
 
 
+
+def phase_state(d, sysname, stride=100):
+    """
+    Is the dense region a LIQUID condensate, or a kinetically trapped solid?
+
+    A slab that never disperses is not automatically evidence of phase
+    separation. `slab_eq` compresses every chain into a thin slab; at high
+    enough concentration in a small cross-section that compaction can jam,
+    and the result is a frozen aggregate that also never disperses. The two
+    look identical if you only measure slab width at the start and the end.
+
+    They are trivially separable by whether anything MOVES:
+
+      * a liquid condensate fluctuates in width and scrambles chain order as
+        chains diffuse past one another;
+      * a trapped solid has a constant width and preserves chain order.
+
+    Returns (mean_width, sd_width, order_correlation, core_mg_per_mL).
+    `order_correlation` is the Spearman correlation of per-chain z-rank between
+    the first and last frame: ~1 means no chain ever changed places.
+    """
+    import mdtraj as md
+
+    meta = yaml.safe_load(open(os.path.join(d, 'slab_meta.yaml')))
+    nch, nres = int(meta['nchain']), int(meta['nres'])
+    Lx, Ly, _ = [float(x) for x in meta['box']]
+    t = md.load(os.path.join(d, f'{sysname}.dcd'),
+                top=os.path.join(d, 'top.pdb'), stride=stride)
+    lz = t.unitcell_lengths[0, 2]
+
+    widths, com = [], np.zeros((t.n_frames, nch))
+    for fr in range(t.n_frames):
+        z = t.xyz[fr, :, 2].copy()
+        zc = (z - z.mean() + lz / 2) % lz
+        h, _ = np.histogram(zc, bins=160, range=(0, lz))
+        hs = np.sort(h)[::-1]
+        widths.append((np.cumsum(hs) / hs.sum() < 0.9).sum() / 160 * lz)
+        for c in range(nch):
+            com[fr, c] = z[c * nres:(c + 1) * nres].mean()
+    com -= com.mean(axis=1, keepdims=True)          # remove slab drift
+    rank = lambda a: np.argsort(np.argsort(a))
+    tau = float(np.corrcoef(rank(com[0]), rank(com[-1]))[0, 1])
+
+    w = float(np.mean(widths))
+    # beads/nm^3 -> mg/mL, at ~110 Da per coarse-grained residue
+    g_per_cm3 = nch * nres / (Lx * Ly * w) * 110 * 1.66053907e-24 * 1e21
+    mg_ml = g_per_cm3 * 1000.0
+    return w, float(np.std(widths)), tau, mg_ml
+
+
 def run_one(analysis, d, discard, step):
     meta = yaml.safe_load(open(os.path.join(d, 'slab_meta.yaml')))
     sysname, nchain = meta['sysname'], int(meta['nchain'])
@@ -136,7 +186,22 @@ def run_one(analysis, d, discard, step):
     print(f'slab width (90% of beads): after slab_eq {w_eq:.0f} nm -> '
           f'production start {w_p0:.0f} nm -> production end {w_p1:.0f} nm')
     dissolved = w_p1 > 3 * w_eq
-    if dissolved:
+    trapped = False
+    if not dissolved:
+        wm, wsd, tau, mg = phase_state(d, sysname)
+        print(f'the slab persisted: width {wm:.1f} +/- {wsd:.2f} nm, core ~{mg:.0f} mg/mL,'
+              f' chain-order correlation {tau:.3f}')
+        if wsd < 0.5 and tau > 0.9:
+            print('  *** KINETICALLY TRAPPED, not a condensate. The width never'
+                  ' fluctuates\n      and no chain ever changes places, so this is a'
+                  ' jammed solid that\n      slab_eq compressed into existence -- not'
+                  ' liquid-liquid coexistence.\n      c_sat is NOT defined for it'
+                  ' either.')
+            trapped = True        # no measurable c_sat either
+        else:
+            print('  liquid-like: width fluctuates and chains rearrange -- a genuine'
+                  ' dense phase')
+    if dissolved and not trapped:
         print('  *** THE SLAB DISSOLVED. There is no dense/dilute coexistence, so\n'
               '      c_sat is NOT defined for this run -- the tanh interface fit\n'
               '      below is fitting interfaces that do not exist and any number\n'
@@ -161,6 +226,7 @@ def run_one(analysis, d, discard, step):
           f'   dense = {row.get("c_dense")} mM')
     print(f'      cutoffs: {[f"{k}={v}" for k, v in row.items() if k.startswith("cutoffs")]}')
     return {'run': rel, 'sysname': sysname, 'dissolved': dissolved,
+            'trapped': trapped,
             'w_eq': w_eq, 'w_end': w_p1, **row}
 
 
@@ -195,12 +261,17 @@ def main():
         print(f'{"run":<28}{"slab nm (eq->end)":>20}{"c_sat (mM)":>14}')
         for r in rows:
             span = f'{r["w_eq"]:.0f} -> {r["w_end"]:.0f}'
-            csat = 'NO PHASE SEP' if r['dissolved'] else (r.get('c_dilute') or '?')
+            csat = ('TRAPPED' if r.get('trapped') else
+                    'NO PHASE SEP' if r['dissolved'] else (r.get('c_dilute') or '?'))
             print(f'{r["run"]:<28}{span:>20}{csat:>14}')
-        if any(r['dissolved'] for r in rows):
+        if any(r['dissolved'] and not r.get('trapped') for r in rows):
             print('\nNO PHASE SEP = the compacted slab dispersed during production, so\n'
                   'there is no coexistence to measure. That is a result, not a failure:\n'
                   'it means the construct does not condense at this concentration.')
+        if any(r.get('trapped') for r in rows):
+            print('\nTRAPPED = the slab persisted but never fluctuated and no chain ever\n'
+                  'changed places: a jammed solid slab_eq compressed into existence, not\n'
+                  'liquid-liquid coexistence. c_sat is not defined for it either.')
 
 
 if __name__ == '__main__':

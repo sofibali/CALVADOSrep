@@ -38,7 +38,7 @@ runtime: 0
 slab_eq: true
 slab_outer: 40
 slab_width: 40
-steps: 10000000
+steps: 7500000
 steps_eq: 5000000
 sysname: parp14_fl_wwe_full_go
 temp: 293.15
