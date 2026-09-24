@@ -241,10 +241,14 @@ for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
   done
 done
 
-# Anything left unfinished in this arm?
+# Anything left unfinished in this arm? Parked constructs must NOT count --
+# they are deliberately out of the queue, and counting them kept this loop
+# alive forever after the arm was actually finished, which in turn stranded
+# anything chained behind this PID (the ladder sat idle for two days).
 pending=0
 for d in $(find "$ARM_DIR" -mindepth 1 -maxdepth 1 -type d | sort); do
   [ -f "$d/slab_meta.yaml" ] || continue
+  [ -f "$d/.parked" ] && continue
   read _ _ rem < <("$CAL_ENV/bin/python" "$SLAB/slab_steps.py" status "$d")
   [ "$rem" != "0" ] && pending=$((pending + 1))
 done

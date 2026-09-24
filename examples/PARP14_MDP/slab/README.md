@@ -588,6 +588,18 @@ re-launching an interrupted construct picks up where it stopped.
   misattributed a co-resident PLACER job's memory to ours. Check
   `nvidia-smi --query-compute-apps=pid,used_memory` per PID before believing a
   per-run memory figure on this machine.)
+- **A parked construct must not count as "pending".** The opportunistic
+  runner's outer loop exits when nothing in the arm is unfinished. Parked
+  constructs were being counted, so the loop never exited after the arm was
+  actually done -- and anything chained behind that PID never started. This
+  stranded the FL ladder for two days with both GPUs idle. Fixed 2026-09-24;
+  the symptom to watch for is a runner logging
+  `nothing runnable yet (N awaiting a seed)` forever when N equals the number
+  of parked constructs.
+- **A runner can take up to 5 minutes to die.** The SIGTERM trap only fires once
+  the current foreground command returns, and the idle path sits in
+  `sleep 300`. If it has no run.py child, `kill -KILL` is safe; if it does, wait
+  for the trap so the child checkpoints out.
 - **lyra is shared, and that dominates the schedule.** See *Contention* below.
 
 ## Not included
