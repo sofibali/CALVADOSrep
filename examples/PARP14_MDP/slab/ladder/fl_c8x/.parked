@@ -1,0 +1,19 @@
+Parked 2026-09-24 -- prepared and validated, but out of the queue.
+
+WHY: at 863 mM residues this is 2x the concentration at which md_full
+vitrified (406 mM: width 14.2 +/- 0.00 nm over 2 us, chain-order correlation
+0.982, ~1020 mg/mL, zero beads in the dilute phase). It would almost certainly
+return TRAPPED -- ~11 GPU-hours for an answer we can already predict -- and its
+dilute region is only ~2x the dense-slab thickness, so it could not give a
+trustworthy c_sat even if it did condense.
+
+Parked to let ladder/md_full_lowc run sooner; that one is a genuine control
+(is md_full more cohesive, or just more concentrated?) rather than a
+near-certain negative.
+
+Run it if the lower rungs turn out interesting -- e.g. if fl_c4x (431 mM) comes
+back liquid rather than trapped, the jamming threshold is higher than expected
+and 863 mM becomes worth measuring. If you do, widen the box first so the
+dilute region is >3x the slab thickness.
+
+To un-park:  rm ladder/fl_c8x/.parked
