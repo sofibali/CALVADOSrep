@@ -17,6 +17,7 @@ scripts and docs are in version control. Treat this machine as the sole copy.
 | `docs/QUESTIONS.md` | the science entry point: each question the simulations ask, whether it is answered, and the answer with caveats |
 | `docs/questions/Q1–Q10_*.md` | one file per question. Q3 accessibility, Q4 writer-vs-eraser, Q9 self-association/puncta are the ones with live analyses |
 | `docs/NUMBERING_AUDIT.md` | the residue-numbering audit (found 2026-09-18, fixed 2026-09-21) and what it did/didn't invalidate |
+| `docs/GEOMETRY_AUDIT.md` | PBC handling (analyses fine, visualisation needs `unwrap_traj.py`) and why restrained domains carry a ~1.3 Å CA-vs-COM offset against crystal references |
 | `analysis_glossary.txt` | every metric: what it measures physically, units, typical ranges, which figures it produces |
 | `slab/README.md` | multi-chain campaign: measured cost, GPU-sharing policy, gotchas |
 | `slab/SESSION_2026-09-18_lyra.md` | what was measured on lyra, tree state, what to check when moving machines |
