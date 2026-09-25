@@ -151,13 +151,48 @@ CA-vs-COM difference, and ~0.5–2% of any Rg excess is the same effect. Neither
 invalidates the ranking — both are near-constant offsets across trim values —
 but they should not be read as restraint error.
 
-### If you want them consistent
+### Fixed by converting the reference, not the model — 2026-09-25
 
-Setting `use_com: false` would place beads at CA and build restraints from CA
-distances, matching the 0.38 nm bond. That changes the model, so it should not
-be flipped on existing work without re-running. The cleaner option for
-*comparisons* is to convert the crystal reference to residue COM before
-computing RMSD/Rg, which removes the floor without touching the simulations.
+`sim_analysis/ref_geometry.py` puts an experimental structure into the same
+representation as a CALVADOS bead model. The trajectories are untouched; only
+the yardstick changes.
+
+```bash
+python sim_analysis/ref_geometry.py --report    # the floor, per reference
+```
+
+| reference | residues | CA-vs-COM RMSD | Rg CA | Rg COM | ΔRg |
+|---|---|---|---|---|---|
+| MD1 (3Q6Z) | 185 | 0.128 nm | 1.509 | 1.521 | +0.8% |
+| MD2 (3VFQ) | 187 | 0.123 nm | 1.533 | 1.548 | +0.9% |
+| WWE (3GOY) | 69 | 0.137 nm | 1.514 | 1.518 | +0.3% |
+| ART (3GOY) | 110 | 0.133 nm | 1.491 | 1.517 | +1.8% |
+| WWE (1X4R) | 99 | 0.130 nm | 1.834 | 1.851 | +0.9% |
+
+`archive_analysis/compare_restraints.py` now loads its references this way.
+
+Two details that matter for matching CALVADOS exactly:
+
+* **Heavy atoms only.** The AF2/AF3 structures the simulations were built from
+  carry no hydrogens, so their bead is a heavy-atom COM. `1x4r` is an NMR entry
+  and is ~50% hydrogen; including those would shift that one reference's COM
+  relative to every other and re-introduce an offset for the WWE comparison
+  alone.
+* **One chain.** Found while doing this: **3GOY has four chains (A–D), all
+  numbered 1532–1720.** Selecting on residue number alone — which the original
+  `load_xtal_ca` did — returned all four copies stacked: 441 "residues" for a
+  118-residue domain, Rg 3.2 nm instead of 1.5. So the WWE and ART
+  RMSD-vs-crystal numbers from Phase 2.5 were computed against a four-copy
+  reference and should not be trusted. MD1 (3Q6Z) and MD2 (3VFQ) are
+  single-chain and were unaffected.
+
+`compare_restraints.py` also had every data path resolving one level too deep
+after it was moved into `archive_analysis/`, so it could not have run there at
+all. Root resolution now walks up to the project root.
+
+Setting `use_com: false` would instead place beads at CA and build restraints
+from CA distances, matching the 0.38 nm bond — but that changes the model and
+would require re-running everything, so it was not done.
 
 ### A second-order oddity worth knowing
 

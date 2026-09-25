@@ -10,6 +10,7 @@ Usage:
 """
 import os
 import json
+import sys
 import numpy as np
 import mdtraj as md
 import matplotlib
@@ -17,7 +18,13 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from pathlib import Path
 
+# This script was written to sit in examples/PARP14_MDP/ and was later moved
+# into archive_analysis/, which left every data path resolving one level too
+# deep (input/, restraint_tests/, sim_analysis/ all live in the parent). Walk up
+# until the project root is found so it works from either location.
 CWD = Path(__file__).resolve().parent
+if not (CWD / 'input').is_dir() and (CWD.parent / 'input').is_dir():
+    CWD = CWD.parent
 TEST_DIR = CWD / 'restraint_tests'
 PLOT_DIR = TEST_DIR / 'comparison_plots'
 AF2_PDB = CWD / 'input' / 'parp14.pdb'
@@ -90,17 +97,36 @@ def load_test_traj(test_name):
 
 
 def load_xtal_ca(pdb_path, resid_range):
-    """Load CA coords from crystal PDB for a residue range."""
-    traj = md.load(str(pdb_path))
-    ca = traj.topology.select('name CA')
-    ca_traj = traj.atom_slice(ca)
-    # Get residue indices within range
-    resids = [r.resSeq for r in ca_traj.topology.residues]
-    mask = [(resid_range[0] <= r <= resid_range[1]) for r in resids]
-    idx = [i for i, m in enumerate(mask) if m]
-    if not idx:
+    """
+    Reference coordinates for a residue range, as residue CENTRES OF MASS.
+
+    Two corrections over the original CA version, both of which biased the
+    RMSD numbers this script produces (see docs/GEOMETRY_AUDIT.md):
+
+    1. **COM, not CA.** These simulations run with `use_com: true`, so a
+       CALVADOS bead sits at the residue centre of mass. Comparing such a model
+       against crystal CA coordinates carries a ~1.3 A RMSD floor and a
+       0.4-2.3% Rg excess that are purely representational. Converting the
+       reference removes the floor and leaves the trajectories untouched.
+
+    2. **One chain.** The original selected on residue number across the whole
+       file. 3GOY has FOUR chains (A-D) all numbered 1532-1720, so the WWE and
+       ART references silently came back as four stacked copies -- 441
+       "residues" for a 118-residue domain, Rg 3.2 nm instead of 1.5.
+
+    Name kept for compatibility with the call sites.
+    """
+    sys.path.insert(0, str(CWD / 'sim_analysis'))
+    from ref_geometry import residue_com
+
+    # heavy atoms only: the AF2/AF3 structures the sims were built from carry no
+    # hydrogens, and 1x4r (NMR) is ~50% H -- including them would shift that one
+    # reference's COM relative to all the others.
+    coords, resids = residue_com(str(pdb_path), resid_range,
+                                 heavy_only=True, chain=None)
+    if coords is None:
         return None, []
-    return ca_traj.xyz[0, idx, :], [resids[i] for i in idx]
+    return coords, resids
 
 
 def compute_domain_rmsd(sim_traj, ref_coords, domain_fl_range, ref_resid_range):
