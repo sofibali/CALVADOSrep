@@ -94,3 +94,37 @@ Each would have silently invalidated the comparison:
 `core_khb` all build and run 200 steps on CUDA (L40S). Restraint counts, RNA
 chain counts and the absence of a bridge in `md_full` were checked in the
 build logs.
+
+## GPU2 policy: continuous, yielding to a checkpoint-aligned pause
+
+The panel runs continuously on GPU2 (`run_rnapanel_gpu2.sh`), with
+`gpu2_yield_watchdog.sh` watching for other users:
+
+```bash
+nohup ./run_rnapanel_gpu2.sh    > logs/rnapanel_gpu2.log > 2>&1 &
+nohup ./gpu2_yield_watchdog.sh  > logs/gpu2_watchdog.log 2>&1 &
+```
+
+After 3 consecutive busy polls (3 x 60 s of sustained foreign use on GPU2 --
+one short job does not trip it), the watchdog stops the continuous queue and
+restarts the panel under `run_slab_opportunistic.sh`, which runs only while the
+card is empty and gets off the moment anyone else appears.
+
+**It pauses at a checkpoint, not on detection.** `sim.py` writes `restart.chk`
+after each batch (`sim.py:642`) and **not at all during the 5e6-step slab
+equilibration**, so what a SIGTERM costs depends entirely on where the run is:
+
+| state | cost of an immediate kill |
+|---|---|
+| mid-production | <= one `checkpoint_interval` = 100k steps ≈ **20 s** |
+| mid-equilibration | the whole equilibration so far, up to **~17 min**, redone from scratch |
+
+So the watchdog arms and then waits for `restart.chk` to be written — a fresh
+mtime if production is under way, or the file appearing at all if the run is
+still equilibrating — and terminates in the seconds right after. Near-zero
+work lost either way, and an almost-finished equilibration is never discarded.
+The wait is bounded by `MAX_WAIT` (default 1 h) and is normally under a minute.
+
+Ownership is decided by walking each GPU2 process's ancestry back to the
+driver PID, so the campaign never mistakes its own leg for a foreign job.
+`nvidia-smi` being unreadable counts as busy — yielding is the safe direction.
