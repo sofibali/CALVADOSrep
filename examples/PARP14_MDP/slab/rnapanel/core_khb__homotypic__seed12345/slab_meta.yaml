@@ -1,0 +1,23 @@
+construct: core_khb
+arm: homotypic
+seed: 12345
+sysname: parp14_core_khb
+nres: 796
+nchain: 63
+n_rna: 0
+box:
+- 40.0
+- 40.0
+- 520.0
+steps: 200000000
+beads: 50148
+conc_mM_residues: 100.1
+rna_valence: 2
+rna_per_chain: 0.0
+rna_per_binding_unit: 0.0
+custom_restraints: true
+n_custom_pairs: 8883
+n_restraint_domains: 6
+dense_slab_nm_at_300mgml: 19.1
+dilute_nm: 500.9
+note: "valence 2, \u2212WWE \u2212ART"

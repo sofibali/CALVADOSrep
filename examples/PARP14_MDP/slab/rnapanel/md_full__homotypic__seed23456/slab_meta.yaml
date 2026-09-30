@@ -1,0 +1,23 @@
+construct: md_full
+arm: homotypic
+seed: 23456
+sysname: parp14_md_full
+nres: 599
+nchain: 83
+n_rna: 0
+box:
+- 40.0
+- 40.0
+- 516.0
+steps: 200000000
+beads: 49717
+conc_mM_residues: 100.0
+rna_valence: 0
+rna_per_chain: 0.0
+rna_per_binding_unit: null
+custom_restraints: false
+n_custom_pairs: 0
+n_restraint_domains: 3
+dense_slab_nm_at_300mgml: 18.9
+dilute_nm: 497.1
+note: "valence 0, \u2212ART \u2014 the one construct that condenses"

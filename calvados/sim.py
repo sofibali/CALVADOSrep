@@ -468,7 +468,9 @@ class Sim:
             total_beads.append(int(comp.nmol * comp.nbeads))
         self.custom_restr_abs = []
         for i,j,r,k in custom_restr:
-            print(i,j,r,k)
+            # was an unguarded debug print of every restraint: with the
+            # bridge expanded across all chain copies that is ~9k lines
+            # (600 kB) per build, reprinted on every leg restart.
             crestr = []
             for idx, x in enumerate([i,j]):
                 name, copy, bead = x[0], x[1], x[2] # 1-based

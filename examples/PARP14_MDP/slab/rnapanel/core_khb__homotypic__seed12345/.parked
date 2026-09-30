@@ -1,0 +1,12 @@
+Parked at staging: the -WWE-ART tier.
+
+Requested as "maybe do -WWE-ART for the constructs", so it is prepared and
+validated but not queued -- the 24-run core tier (fl, kh1_art_full,
+core_full_go, md_full) runs first and answers the RNA question on its own.
+
+These constructs truncate at KHb-KH8 (FL residue 1533), removing BOTH the WWE
+domain and the ART catalytic domain. Run 1 found RNA retards dispersal 1.67x
+ONLY when ART is present, so this tier is the direct test of whether that
+coupling needs ART specifically.
+
+To un-park:  rm .parked   (then the queue picks it up on its next pass)
