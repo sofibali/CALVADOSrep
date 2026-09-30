@@ -170,6 +170,15 @@ Two-phase pipeline for studying PARP14 (1801 residues) domain deletion variants:
 - **No ADPr-substrate arm is buildable as a config change**: `PTMProtein` has no example/test, sets `c_termini` to the last PTM bead (`calvados/components.py:737`), and never reads from PDB so it is incompatible with `restraint: True` — which every multi-domain PARP14 construct needs. No ADP-ribose bead parameters exist. Viable route is an unrestrained substrate peptide.
 - Local fix applied to the upstream package: `calvados/analysis.py` `fit_profile` had its "NOT CONVERGED" check *after* the `return`, so a failed interface fit never warned and c_sat could come back silently wrong.
 
+**Phase 5b — Slab run 2, the ±RNA panel** (`examples/PARP14_MDP/prepare_slab_rna.py`, runs in `slab/rnapanel/`):
+- Run 1 swept broadly at uncontrolled concentration and **without the optimised restraints**. Run 2 is the narrow replicated re-run: 7 constructs × 2 arms (`homotypic`, `rna`) × 3 paired seeds, all at **100 mM residues**, with per-domain Phase 2.5 trims + the 141-pair KH7a–KHb bridge.
+- Core tier (24 runs, queued): `fl`, `kh1_art_full`, `core_full_go`, `md_full`. −WWE−ART tier (18 runs, **parked** via `.parked`): `fl_khb`, `kh1_khb`, `core_khb` — these truncate at KHb–KH8 and isolate whether run 1's "RNA retards dispersal 1.67× only with ART" needs ART specifically.
+- `core` = KH7a + MD1 + MD2 + MD3 + KHb–KH8 + WWE + ART (FL 738–1801, 1064 aa).
+- Launch: `./run_rnapanel_gpu2.sh` (seeding pass, then production to 2e8 on GPU2), or `GPU=n ./run_slab_queue.sh rnapanel`. See `slab/rnapanel/README.md`.
+- **Custom restraints do not broadcast across chain copies.** The file format is `name copy bead | name copy bead | r k` and `Sim.map_custom_restraints` resolves each line to one bead pair. Every monomer run had `nmol=1` so `copy 1` was always right; in a 47-chain slab it bridges one chain. Any multi-chain run using `custom_restraints` must emit 141 × nmol lines.
+- **RNA parameters must be passed explicitly.** `prepare_slab.py:94` `RNA_OPTS` (kb 1400/2200, ka 4.20, nb cutoff 2.0) differ from `calvados/data/default_component.yaml` (8033/8033, 7.24, 0.6). Falling back to the defaults silently substitutes a much stiffer polymer.
+- Second local fix to the upstream package: `map_custom_restraints` printed every restraint unguarded (~9k lines / 600 kB per build, reprinted every leg restart). Removed; backup at `calvados/sim.py.bak_cresprint`.
+
 **PARP14 Domain Architecture (11 grouped units for combinatorial library):**
 
 | Domain | Residues | Function |
