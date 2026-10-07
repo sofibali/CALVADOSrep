@@ -1,0 +1,10 @@
+model,n_frames,n_xl,n_decoy,auc_all,auc_repro,xl_median_pct,decoy_median_pct,xl_mean_pct,decoy_mean_pct
+CALVADOS unrestrained (separated),4438,36,4716,0.6463,0.682,0.102,0.068,0.113,0.084
+CALVADOS unrestrained (docked),3170,36,4716,0.7436,0.8145,0.158,0.063,0.143,0.085
+CALVADOS ternary (docked),12680,36,4716,0.6681,0.6601,0.071,0.055,0.072,0.058
+CALVADOS +3 XL harmonic k=20,3170,36,4716,0.7332,0.8241,1.498,0.946,20.771,2.033
+CALVADOS +3 XL Go r=1.5 k=100,3170,36,4716,0.6925,0.8183,1.404,0.757,19.893,1.732
+CALVADOS +21 XL IMProv-tiered,3170,36,4716,0.4222,0.4147,0.0,0.0,2.701,1.553
+HyRes unrestrained,625,36,4716,0.5,0.5,0.0,0.0,0.0,0.0
+HyRes matched (separated),1875,36,4716,0.54,0.4724,3.734,1.12,7.588,5.517
+HyRes matched (docked),1875,36,4716,0.6625,0.7414,11.68,0.267,32.987,9.231

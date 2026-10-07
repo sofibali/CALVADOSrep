@@ -1,0 +1,10 @@
+model,n_pos,n_decoy,auc,lo,hi,xl_median,decoy_median
+CALVADOS unrestrained (docked),18,4716,0.802,0.706,0.886,0.158,0.063
+CALVADOS +3 XL harmonic k=20,18,4716,0.795,0.704,0.883,1.562,0.946
+CALVADOS +3 XL Go r=1.5 k=100,18,4716,0.788,0.667,0.894,1.671,0.757
+CALVADOS unrestrained (separated),18,4716,0.734,0.628,0.831,0.135,0.068
+HyRes matched (docked),18,4716,0.708,0.57,0.837,15.92,0.267
+CALVADOS ternary (docked),18,4716,0.646,0.526,0.759,0.071,0.055
+HyRes unrestrained,18,4716,0.5,0.5,0.5,0.0,0.0
+HyRes matched (separated),18,4716,0.481,0.341,0.619,1.84,1.12
+CALVADOS +21 XL IMProv-tiered,18,4716,0.393,0.387,0.399,0.0,0.0

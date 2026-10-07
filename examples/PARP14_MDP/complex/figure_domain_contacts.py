@@ -113,7 +113,7 @@ def _accumulate(P, boxv, doms, acc):
                 oi += len(ix)
 
 
-def analyse_calvados(s, root, target_frames):
+def analyse_calvados(s, root, target_frames, per_rep=False):
     chains = SETS[s if s in SETS else 'p9_dtx3l']
     blocks_by_chain = load_domains(s if (HERE / 'binding' / s).is_dir() else 'p9_dtx3l',
                                    chains)
@@ -124,6 +124,7 @@ def analyse_calvados(s, root, target_frames):
     acc = defaultdict(list)
     step_set = None
     nrep = nfr_tot = 0
+    per_rep_out = []          # [(rep name, acc, nframes)] when per_rep
     for rep in sorted((HERE / root / s).glob('rep-*'),
                       key=lambda p: int(p.name.split('-')[1])):
         dcd = rep / f'{sysname(s if s in SETS else "p9_dtx3l")}.dcd'
@@ -145,10 +146,16 @@ def analyse_calvados(s, root, target_frames):
         resids = u.atoms.resids
         doms = [(c, domain_index(blocks_by_chain[k], resids[a:b2], a, c))
                 for k, (c, a, b2) in enumerate(offs)]
+        racc, nfr = (defaultdict(list) if per_rep else acc), 0
         for ts in u.trajectory[SKIP_FRAMES::step_set]:
-            _accumulate(u.atoms.positions.astype(np.float32), boxv, doms, acc)
-            nfr_tot += 1
+            P = u.atoms.positions.astype(np.float32)
+            _accumulate(P, boxv, doms, acc if not per_rep else racc)
+            nfr += 1; nfr_tot += 1
+        if per_rep:
+            per_rep_out.append((rep.name, racc, nfr))
         nrep += 1
+    if per_rep:
+        return per_rep_out
     return (acc, nrep, nfr_tot) if nrep else (None, 0, 0)
 
 
@@ -291,6 +298,8 @@ def main():
     ap.add_argument('--label', default=None)
     ap.add_argument('--target-frames', type=int, default=DEFAULT_TARGET_FRAMES)
     ap.add_argument('--out', default='domain_contact_maps.csv')
+    ap.add_argument('--per-rep', action='store_true',
+                    help='one model row per replicate, for spread and convergence')
     ap.add_argument('--compare', action='store_true',
                     help='build the cross-model figure from the existing CSV')
     a = ap.parse_args()
@@ -317,6 +326,13 @@ def main():
                 continue
             label = a.label or f'{a.root}/{s}'
             print(f'== {label}')
+            if a.per_rep:
+                for rname, racc, nfr in analyse_calvados(s, a.root,
+                                                         a.target_frames, True):
+                    lab = f'{label} {rname}'
+                    allrows.append(tabulate(racc, lab, 1, nfr))
+                    print(f'   {rname}: {nfr} frames')
+                continue
             acc, nrep, nfr = analyse_calvados(s, a.root, a.target_frames)
             if not acc:
                 print('   no usable replicates'); continue
