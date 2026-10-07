@@ -113,3 +113,8 @@ complex/hyres/runs/prep/*.pdb
 # Pinned at ff02ac1. See complex/hyres/runs/prod_rep1/README.md for the four
 # upstream bugs that must be worked around.
 complex/hyres/HyRes_GPU/
+
+# complex/data/ is source data, not the npz analysis cache the data/ rule
+# above targets: the published crosslink table and the checks that read it.
+!complex/data/
+!complex/data/**
