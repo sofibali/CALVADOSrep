@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm
-OUT=Path('/tmp/claude-64170/-home-vle-Vincent/a5f0a8dd-a59a-412d-b58f-35aebe7f4fab/scratchpad/conv')
+OUT=Path(__file__).resolve().parent / 'analysis' / 'conv'
 FIG=OUT/'figures'
 maps=np.load(OUT/'data'/'bound_maps.npy',allow_pickle=True)[0]
 plt.rcParams.update({'font.size':8,'figure.dpi':150,'savefig.bbox':'tight'})

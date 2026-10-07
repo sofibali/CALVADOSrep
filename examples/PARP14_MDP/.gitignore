@@ -71,3 +71,45 @@ fragments/launch_commands.txt~
 # Output of analysis scripts
 parp14_accessibility.pse
 fl_movie.pse
+
+# ------------------------------------------------------------------
+# complex/ -- the PARP9/DTX3L binding campaign
+# Results ARE tracked so they can be used from any machine: analysis/
+# (CSVs, figures, representative state PDBs), the scripts, and the
+# shared per-set input/. Trajectories and per-replicate machine state
+# are not -- *.dcd and *.chk are excluded above, and 39 GB of them sit
+# on disk here.
+# ------------------------------------------------------------------
+
+# Figures under complex/ are results, not scratch -- override the blanket
+# figures/ rule above.
+!complex/analysis/figures/
+!complex/analysis/figures/**
+
+# Per-replicate state written by the run scripts: serialised OpenMM systems
+# (~2.6 MB each), the restraint/bond dumps, and dated snapshot PDBs. All are
+# regenerable from the prepare script plus the tracked input/ directory.
+complex/*/*/rep-*/*.xml
+complex/*/*/rep-*/bonds_*.txt
+complex/*/*/rep-*/restr_*.txt
+complex/*/*/rep-*/*_2026*.pdb
+complex/*/*/rep-*/*.log
+complex/*/*/rep-*/*.complete
+
+# HyRes run outputs (trajectories excluded above; these are bulk per-run state)
+complex/hyres/runs/**/*.psf
+complex/hyres/runs/**/system.pdb
+
+# HyRes conversion intermediates: every stage convert.sh writes on the way
+# (_fix, _H, _Hn, _cg, _cg2, _cgH and their _dock_ twins). Regenerable, and
+# only the final *_hyres.pdb pair defines the runs.
+complex/hyres/runs/prep/*.pdb
+!complex/hyres/runs/prep/*_hyres.pdb
+
+# Upstream HyRes force field, cloned in place as its own git repo. Tracking it
+# here would write a gitlink that clones cannot resolve. Get it with:
+#   git clone https://github.com/lslumass/HyRes_GPU.git \
+#       examples/PARP14_MDP/complex/hyres/HyRes_GPU
+# Pinned at ff02ac1. See complex/hyres/runs/prod_rep1/README.md for the four
+# upstream bugs that must be worked around.
+complex/hyres/HyRes_GPU/

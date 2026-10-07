@@ -14,7 +14,7 @@ import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm
 
-OUT=Path('/tmp/claude-64170/-home-vle-Vincent/a5f0a8dd-a59a-412d-b58f-35aebe7f4fab/scratchpad/conv')
+OUT=Path(__file__).resolve().parent / 'analysis' / 'conv'
 FIG=OUT/'figures'; FIG.mkdir(exist_ok=True)
 NS=0.5                                  # ns per analysed sample
 BOUND_NM=1.0                            # min CA-CA distance defining "bound"

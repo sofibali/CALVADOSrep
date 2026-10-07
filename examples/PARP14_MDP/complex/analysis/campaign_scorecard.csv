@@ -1,0 +1,25 @@
+engine,run,components,beads,n_reps,total_us,start,inter_restraints,xl_scored,xl_all36,xl_repro21,xl_all4,xl_ever,xl_pct1,dmap,n_pairs_over50,n_pairs_over20,interface,assoc_pct,top_pair,top_pair_pct,top_pair_nm,top_pair_share
+CALVADOS,binding/p9_dtx3l,parp9+dtx3l,1594,7,3.5,separated,none,yes,0.12,0.12,0.08,100.0,0.0,yes,0,0,none,6.3,parp9 MD1 ↔ dtx3l DTC,11.76,7.11,6.5
+CALVADOS,binding/p9_dtx3l_docked,parp9+dtx3l,1594,5,2.5,docked,none,yes,0.14,0.14,0.17,100.0,0.0,yes,0,0,none,6.2,parp9 MD1 ↔ dtx3l KH1,11.58,7.4,6.8
+CALVADOS,binding/dtx3l_homo,dtx3l+dtx3l,1480,5,2.5,separated,none,not scorable - no PARP9+DTX3L pair,,,,,,yes,0,0,none,3.8,dtx3l DTC ↔ dtx3l KH1,10.64,8.96,7.2
+CALVADOS,binding/dtx3l_homo_docked,dtx3l+dtx3l,1480,5,2.5,docked,none,not scorable - no PARP9+DTX3L pair,,,,,,yes,0,0,none,5.0,dtx3l DTC ↔ dtx3l DTC,9.68,9.34,6.4
+CALVADOS,binding/p9_homo,parp9+parp9,1708,5,2.5,separated,none,not scorable - no PARP9+DTX3L pair,,,,,,yes,0,0,none,4.1,parp9 MD1 ↔ parp9 ART,15.69,5.9,8.3
+CALVADOS,binding/p14_dtx3l,parp14+dtx3l,2541,5,2.5,separated,none,not scorable - no PARP9+DTX3L pair,,,,,,yes,0,0,none,12.5,parp14 RRM3 ↔ dtx3l DTC,6.41,10.6,3.4
+CALVADOS,binding/p14_dtx3l_docked,parp14+dtx3l,2541,5,2.5,docked,none,not scorable - no PARP9+DTX3L pair,,,,,,yes,0,0,none,9.1,parp14 RRM1 ↔ dtx3l DTC,6.14,12.66,3.6
+CALVADOS,binding/p14_p9,parp14+parp9,2655,5,2.5,separated,none,not scorable - no PARP9+DTX3L pair,,,,,,yes,0,0,none,9.1,parp14 MD2 ↔ parp9 MD2,7.89,8.71,4.1
+CALVADOS,binding/p14_p9_docked,parp14+parp9,2655,5,2.5,docked,none,not scorable - no PARP9+DTX3L pair,,,,,,yes,0,0,none,8.6,parp14 MD1 ↔ parp9 MD1,7.48,7.44,4.4
+CALVADOS,binding/ternary,parp14+parp9+dtx3l,3395,5,2.5,separated,none,yes,0.08,0.09,0.06,76.7,0.0,yes,0,0,none,6.0,parp9 MD2 ↔ dtx3l RRM,10.67,8.75,7.0
+CALVADOS,binding/ternary_docked,parp14+parp9+dtx3l,3395,20,10.0,docked,none,yes,0.08,0.08,0.08,100.0,0.0,yes,0,0,none,4.3,parp9 ART ↔ dtx3l DTC,11.74,8.49,7.1
+CALVADOS,binding/p14_homo,parp14+parp14,3602,5,2.5,separated,none,not scorable - no PARP9+DTX3L pair,,,,,,yes,0,0,none,17.8,parp14 ART ↔ parp14 RRM3,4.95,12.59,2.2
+CALVADOS,binding_go/p9_dtx3l_xl_h5,parp9+dtx3l,1594,5,2.5,separated,"3 crosslinks, harmonic",yes,24.1,31.18,54.18,100.0,93.3,yes,1,4,narrow,96.8,parp9 KH2 ↔ dtx3l KH4,88.26,0.77,29.9
+CALVADOS,binding_go/p9_dtx3l_xl_h20,parp9+dtx3l,1594,5,2.5,separated,"3 crosslinks, harmonic",yes,30.39,39.73,70.65,100.0,96.7,yes,1,4,narrow,98.2,parp9 KH2 ↔ dtx3l KH4,90.38,0.74,30.8
+CALVADOS,binding_go/p9_dtx3l_xl_h100,parp9+dtx3l,1594,5,2.5,separated,"3 crosslinks, harmonic",yes,31.78,41.61,73.06,100.0,93.3,yes,1,3,narrow,97.5,parp9 KH2 ↔ dtx3l KH4,90.57,0.74,30.6
+CALVADOS,binding_go/p9_dtx3l_xl_go15,parp9+dtx3l,1594,5,2.5,separated,"3 crosslinks, go",yes,17.08,22.12,38.68,100.0,70.0,yes,1,3,narrow,62.2,parp9 KH2 ↔ dtx3l KH4,85.48,0.94,29.5
+CALVADOS,binding_gotight/p9_dtx3l_got_r15_k50,parp9+dtx3l,1594,5,2.5,separated,"3 crosslinks, go",yes,23.7,30.81,54.73,100.0,90.0,yes,2,4,narrow,64.3,parp9 KH2 ↔ dtx3l KH4,93.28,0.78,29.0
+CALVADOS,binding_gotight/p9_dtx3l_got_r15_k100,parp9+dtx3l,1594,5,2.5,separated,"3 crosslinks, go",yes,27.89,36.34,64.59,100.0,90.0,yes,2,4,narrow,76.9,parp9 KH2 ↔ dtx3l KH4,94.92,0.78,28.9
+CALVADOS,binding_gotight/p9_dtx3l_got_r12_k50,parp9+dtx3l,1594,5,2.5,separated,"3 crosslinks, go",yes,24.81,31.94,55.63,100.0,73.3,yes,2,4,narrow,65.2,parp9 KH2 ↔ dtx3l KH4,95.21,0.81,28.5
+CALVADOS,binding_gotight/p9_dtx3l_got_r12_k100,parp9+dtx3l,1594,5,2.5,separated,"3 crosslinks, go",yes,25.89,33.41,57.99,100.0,86.7,yes,2,4,narrow,68.5,parp9 KH2 ↔ dtx3l KH4,96.26,0.76,27.9
+CALVADOS,binding_xl/p9_dtx3l_xl30_k20,parp9+dtx3l,1594,5,2.5,separated,"21 crosslinks, harmonic",yes,1.91,0.01,0.0,3.3,0.0,yes,1,1,single-pair lock,89.8,parp9 ART ↔ dtx3l KH3,98.48,0.73,87.2
+HyRes,hyres/prod_rep1 (unrestrained),parp9+dtx3l,9968,1,0.5,separated,none,yes,0.0,0.0,0.0,0.0,0.0,yes,0,0,never associated,0.0,parp9 1/2KH1a ↔ dtx3l RRM,,,
+HyRes,hyres/matched separated,parp9+dtx3l,9968,3,1.5,separated,none,yes,6.49,4.95,0.46,63.3,46.7,yes,2,16,narrow,73.4,parp9 MD1 ↔ dtx3l RRM,75.49,1.27,9.6
+HyRes,hyres/matched docked,parp9+dtx3l,9968,3,1.5,docked,none,yes,43.51,53.72,88.18,83.3,76.7,yes,12,20,broad,100.0,parp9 KH2 ↔ dtx3l KH4,100.0,0.54,7.0

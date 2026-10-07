@@ -1,0 +1,6 @@
+state,pdb,rep,frame,n_satisfied,crosslinks
+best,p9_dtx3l_best.pdb,rep-4,9660,6,K166-K356;K166-K354;K166-K306;K166-K322;K166-K335;K174-K668
+mode1,p9_dtx3l_mode1.pdb,rep-2,1220,1,K557-K423
+mode2,p9_dtx3l_mode2.pdb,rep-7,8620,5,K166-K356;K166-K363;K174-K337;K166-K354;K166-K306
+mode3,p9_dtx3l_mode3.pdb,rep-7,1660,3,K557-K316;K557-K354;K693-K363
+mode4,p9_dtx3l_mode4.pdb,rep-6,3380,1,K488-K668

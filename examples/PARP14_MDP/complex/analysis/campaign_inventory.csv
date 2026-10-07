@@ -1,0 +1,25 @@
+engine,run,components,beads,box_nm,ns_per_rep,n_reps,total_us,start,intra_restraints,inter_restraints
+CALVADOS,binding/p9_dtx3l,parp9+dtx3l,1594,40.0,500.0,7,3.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","85 custom (0 inter-chain), harmonic"
+CALVADOS,binding/p9_dtx3l_docked,parp9+dtx3l,1594,40.0,500.0,5,2.5,docked (AF3),"domains.yaml (harmonic k=700, cutoff 0.9 nm)","84 custom (0 inter-chain), harmonic"
+CALVADOS,binding/dtx3l_homo,dtx3l+dtx3l,1480,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)",none
+CALVADOS,binding/dtx3l_homo_docked,dtx3l+dtx3l,1480,40.0,500.0,5,2.5,docked (AF3),"domains.yaml (harmonic k=700, cutoff 0.9 nm)",none
+CALVADOS,binding/p9_homo,parp9+parp9,1708,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","170 custom (0 inter-chain), harmonic"
+CALVADOS,binding/p14_dtx3l,parp14+dtx3l,2541,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","111 custom (0 inter-chain), harmonic"
+CALVADOS,binding/p14_dtx3l_docked,parp14+dtx3l,2541,40.0,500.0,5,2.5,docked (AF3),"domains.yaml (harmonic k=700, cutoff 0.9 nm)","112 custom (0 inter-chain), harmonic"
+CALVADOS,binding/p14_p9,parp14+parp9,2655,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","196 custom (0 inter-chain), harmonic"
+CALVADOS,binding/p14_p9_docked,parp14+parp9,2655,40.0,500.0,5,2.5,docked (AF3),"domains.yaml (harmonic k=700, cutoff 0.9 nm)","202 custom (0 inter-chain), harmonic"
+CALVADOS,binding/ternary,parp14+parp9+dtx3l,3395,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","196 custom (0 inter-chain), harmonic"
+CALVADOS,binding/ternary_docked,parp14+parp9+dtx3l,3395,40.0,500.0,20,10.0,docked (AF3),"domains.yaml (harmonic k=700, cutoff 0.9 nm)","200 custom (0 inter-chain), harmonic"
+CALVADOS,binding/p14_homo,parp14+parp14,3602,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","222 custom (0 inter-chain), harmonic"
+CALVADOS,binding_go/p9_dtx3l_xl_h5,parp9+dtx3l,1594,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","88 custom (3 inter-chain), harmonic"
+CALVADOS,binding_go/p9_dtx3l_xl_h20,parp9+dtx3l,1594,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","88 custom (3 inter-chain), harmonic"
+CALVADOS,binding_go/p9_dtx3l_xl_h100,parp9+dtx3l,1594,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","88 custom (3 inter-chain), harmonic"
+CALVADOS,binding_go/p9_dtx3l_xl_go15,parp9+dtx3l,1594,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","88 custom (3 inter-chain), go"
+CALVADOS,binding_gotight/p9_dtx3l_got_r15_k50,parp9+dtx3l,1594,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","88 custom (3 inter-chain), go"
+CALVADOS,binding_gotight/p9_dtx3l_got_r15_k100,parp9+dtx3l,1594,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","88 custom (3 inter-chain), go"
+CALVADOS,binding_gotight/p9_dtx3l_got_r12_k50,parp9+dtx3l,1594,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","88 custom (3 inter-chain), go"
+CALVADOS,binding_gotight/p9_dtx3l_got_r12_k100,parp9+dtx3l,1594,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","88 custom (3 inter-chain), go"
+CALVADOS,binding_xl/p9_dtx3l_xl30_k20,parp9+dtx3l,1594,40.0,500.0,5,2.5,grid,"domains.yaml (harmonic k=700, cutoff 0.9 nm)","106 custom (21 inter-chain), harmonic"
+HyRes,hyres/prod_rep1 (unrestrained),parp9+dtx3l,9968,40.0,500.0,1,0.5,separated,NONE,none
+HyRes,hyres/matched separated,parp9+dtx3l,9968,40.0,500.0,3,1.5,separated,7540 harmonic CA-CA (CALVADOS-equivalent),none
+HyRes,hyres/matched docked,parp9+dtx3l,9968,40.0,500.0,3,1.5,docked (AF3),7665 harmonic CA-CA (CALVADOS-equivalent),none

@@ -97,6 +97,24 @@ def tica(X, episodes, lag, n=2):
     return Xc @ comps.T, comps, ew[order]
 
 
+# scikit-learn lives in envs/CALVADOS (1.7.2), NOT in envs/calvados -- the two
+# differ only by case and only the lowercase one has CUDA, so the simulations and
+# the clustering run in different envs. When sklearn is importable we use it and
+# cross-check against the local implementations; when it is not, the local ones
+# stand on their own. deeptime/pyemma are in no env, so TICA is hand-rolled either way.
+try:
+    from sklearn.cluster import KMeans as _SKKMeans
+    from sklearn.metrics import silhouette_score as _sk_sil
+    HAVE_SK = True
+except Exception:
+    HAVE_SK = False
+
+
+def kmeans_sk(X, k, seed=0):
+    m = _SKKMeans(n_clusters=k, n_init=10, random_state=seed).fit(X)
+    return m.labels_, m.cluster_centers_
+
+
 def kmeans(X, k, seed=0, iters=200):
     rng = np.random.default_rng(seed)
     c = [X[rng.integers(len(X))]]
@@ -111,6 +129,16 @@ def kmeans(X, k, seed=0, iters=200):
             break
         C = newC
     return lab, C
+
+
+def silhouette_sk(X, lab, cap=4000, seed=0):
+    if len(set(lab)) < 2:
+        return np.nan
+    rng = np.random.default_rng(seed)
+    idx = rng.choice(len(X), min(cap, len(X)), replace=False)
+    if len(set(lab[idx])) < 2:
+        idx = np.arange(len(X))
+    return float(_sk_sil(X[idx], lab[idx]))
 
 
 def silhouette(X, lab, cap=2000, seed=0):
@@ -209,7 +237,7 @@ def write_state_pdb(s, src, out_pdb):
     u.atoms.write(str(out_pdb))
 
 
-def run_set(s, reduce_mode, kmax, stride, lag_ns, fixed_k=None):
+def run_set(s, reduce_mode, kmax, stride, lag_ns, fixed_k=None, force_local=False):
     X, mind, labels, srcs, offs = featurize(s, stride)
     if not len(X):
         print(f'  {s}: no frames'); return None
@@ -250,14 +278,32 @@ def run_set(s, reduce_mode, kmax, stride, lag_ns, fixed_k=None):
     else:
         Y, comps, expl = pca(Z, 2)
 
+    km = kmeans_sk if (HAVE_SK and not force_local) else kmeans
+    sil = silhouette_sk if (HAVE_SK and not force_local) else silhouette
     ks = range(2, kmax + 1)
     sils = {}
     for k in ks:
-        lab, _ = kmeans(Y, k, seed=0)
-        sils[k] = silhouette(Y, lab)
+        lab, _ = km(Y, k, seed=0)
+        sils[k] = sil(Y, lab)
     best = fixed_k or max(sils, key=lambda k: sils[k])
-    lab, C = kmeans(Y, best, seed=0)
-    print(f'  {s}: {used}, k={best} (silhouette {sils[best]:.3f})', flush=True)
+    lab, C = km(Y, best, seed=0)
+    backend = 'sklearn' if (HAVE_SK and not force_local) else 'local'
+    print(f'  {s}: {used}, k={best} (silhouette {sils[best]:.3f}, {backend} k-means)',
+          flush=True)
+
+    # Cross-check: the two implementations should agree on the partition. A large
+    # disagreement means one of them is wrong, which is worth knowing before the
+    # states are interpreted.
+    xcheck = None
+    if HAVE_SK and not force_local:
+        lab2, _ = kmeans(Y, best, seed=0)
+        # label ids are arbitrary; compare via the pair-agreement (Rand) index
+        n = min(len(lab), 3000)
+        a, b = lab[:n], lab2[:n]
+        sa = (a[:, None] == a[None, :]); sb = (b[:, None] == b[None, :])
+        iu = np.triu_indices(n, 1)
+        xcheck = float((sa[iu] == sb[iu]).mean())
+        print(f'    cross-check vs local k-means: Rand index {xcheck:.3f}', flush=True)
 
     # representative frame per state = nearest to the centroid
     reps = []
@@ -274,7 +320,7 @@ def run_set(s, reduce_mode, kmax, stride, lag_ns, fixed_k=None):
             print(f'    ! state {i+1} pdb: {e}')
         reps.append(dict(state=i+1, pop=float(m.mean()), n=int(m.sum()),
                          rep=src[0], frame=int(src[1]), pdb=pdb.name))
-    return dict(set=s, Y=Y, lab=lab, best=best, sils=sils, used=used,
+    return dict(set=s, Y=Y, lab=lab, best=best, sils=sils, used=used, xcheck=xcheck,
                 Xb=Xb, labels=kept_labels, reps=reps, expl=expl,
                 bound_pct=100*nb/len(X))
 
@@ -327,17 +373,20 @@ def main():
     ap.add_argument('--k', type=int, default=None)
     ap.add_argument('--stride', type=int, default=DEFAULT_STRIDE)
     ap.add_argument('--lag-ns', type=float, default=1.0)
+    ap.add_argument('--local', action='store_true',
+                    help='force the built-in k-means even when sklearn is available')
     a = ap.parse_args()
     todo = a.sets or [s for s in SETS if (ROOT / s).is_dir()]
     import pandas as pd
     rows = []
     for s in todo:
-        r = run_set(s, a.reduce, a.kmax, a.stride, a.lag_ns, a.k)
+        r = run_set(s, a.reduce, a.kmax, a.stride, a.lag_ns, a.k, a.local)
         if r is None:
             continue
         plot_set(r)
         for d in r['reps']:
             rows.append(dict(set=s, reduce=r['used'], silhouette=round(r['sils'][r['best']], 3),
+                             xcheck_rand=r['xcheck'],
                              bound_pct=round(r['bound_pct'], 1), **d))
     if rows:
         df = pd.DataFrame(rows)

@@ -8,6 +8,7 @@ boxscaling_xyz:
 - true
 - true
 - true
+checkpoint_interval: 100000
 custom_restraint_type: harmonic
 custom_restraints: false
 cutoff_lj: 2.0
@@ -37,7 +38,7 @@ runtime: 0
 slab_eq: true
 slab_outer: 40
 slab_width: 40
-steps: 200000000
+steps: 9600000
 steps_eq: 5000000
 sysname: parp14
 temp: 293.15

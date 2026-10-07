@@ -21,7 +21,7 @@ from MDAnalysis.analysis.distances import distance_array
 warnings.filterwarnings('ignore')
 
 ROOT   = Path('/home/vle/Vincent/p14fl_test/complexes')
-OUT    = Path('/tmp/claude-64170/-home-vle-Vincent/a5f0a8dd-a59a-412d-b58f-35aebe7f4fab/scratchpad/conv')
+OUT    = Path(__file__).resolve().parent / 'analysis' / 'conv'
 NS_PER_FRAME = 0.05          # 50 ps
 CUTOFF  = 1.0                # nm, CA-CA inter-chain contact
 STRIDE  = 10                 # 500 ps between analysed frames

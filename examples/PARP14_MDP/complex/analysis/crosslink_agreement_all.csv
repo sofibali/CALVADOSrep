@@ -1,0 +1,49 @@
+model,subset,n,per_frame_30A,ever_30A,pct1_30A
+CALVADOS unrestrained (separated),ALL (36),51,0.12,98.0,0.0
+CALVADOS unrestrained (separated),reproducible (21),30,0.12,100.0,0.0
+CALVADOS unrestrained (separated),all-4-replicate (8),8,0.08,100.0,0.0
+CALVADOS unrestrained (docked),ALL (36),51,0.14,96.1,0.0
+CALVADOS unrestrained (docked),reproducible (21),30,0.14,100.0,0.0
+CALVADOS unrestrained (docked),all-4-replicate (8),8,0.17,100.0,0.0
+CALVADOS ternary (separated),ALL (36),51,0.08,80.4,0.0
+CALVADOS ternary (separated),reproducible (21),30,0.09,76.7,0.0
+CALVADOS ternary (separated),all-4-replicate (8),8,0.06,75.0,0.0
+CALVADOS ternary (docked),ALL (36),51,0.08,100.0,0.0
+CALVADOS ternary (docked),reproducible (21),30,0.08,100.0,0.0
+CALVADOS ternary (docked),all-4-replicate (8),8,0.08,100.0,0.0
+CALVADOS +3 XL harmonic k=5,ALL (36),51,24.1,100.0,84.3
+CALVADOS +3 XL harmonic k=5,reproducible (21),30,31.18,100.0,93.3
+CALVADOS +3 XL harmonic k=5,all-4-replicate (8),8,54.18,100.0,100.0
+CALVADOS +3 XL harmonic k=20,ALL (36),51,30.39,100.0,86.3
+CALVADOS +3 XL harmonic k=20,reproducible (21),30,39.73,100.0,96.7
+CALVADOS +3 XL harmonic k=20,all-4-replicate (8),8,70.65,100.0,100.0
+CALVADOS +3 XL harmonic k=100,ALL (36),51,31.78,100.0,80.4
+CALVADOS +3 XL harmonic k=100,reproducible (21),30,41.61,100.0,93.3
+CALVADOS +3 XL harmonic k=100,all-4-replicate (8),8,73.06,100.0,100.0
+CALVADOS +3 XL Go k=15,ALL (36),51,17.08,100.0,62.7
+CALVADOS +3 XL Go k=15,reproducible (21),30,22.12,100.0,70.0
+CALVADOS +3 XL Go k=15,all-4-replicate (8),8,38.68,100.0,87.5
+CALVADOS +3 XL Go tight r=1.5 k=50,ALL (36),51,23.7,100.0,72.5
+CALVADOS +3 XL Go tight r=1.5 k=50,reproducible (21),30,30.81,100.0,90.0
+CALVADOS +3 XL Go tight r=1.5 k=50,all-4-replicate (8),8,54.73,100.0,100.0
+CALVADOS +3 XL Go tight r=1.5 k=100,ALL (36),51,27.89,100.0,74.5
+CALVADOS +3 XL Go tight r=1.5 k=100,reproducible (21),30,36.34,100.0,90.0
+CALVADOS +3 XL Go tight r=1.5 k=100,all-4-replicate (8),8,64.59,100.0,100.0
+CALVADOS +3 XL Go tight r=1.2 k=50,ALL (36),51,24.81,100.0,64.7
+CALVADOS +3 XL Go tight r=1.2 k=50,reproducible (21),30,31.94,100.0,73.3
+CALVADOS +3 XL Go tight r=1.2 k=50,all-4-replicate (8),8,55.63,100.0,87.5
+CALVADOS +3 XL Go tight r=1.2 k=100,ALL (36),51,25.89,100.0,70.6
+CALVADOS +3 XL Go tight r=1.2 k=100,reproducible (21),30,33.41,100.0,86.7
+CALVADOS +3 XL Go tight r=1.2 k=100,all-4-replicate (8),8,57.99,100.0,100.0
+CALVADOS +21 XL IMProv-tiered,ALL (36),51,1.91,3.9,2.0
+CALVADOS +21 XL IMProv-tiered,reproducible (21),30,0.01,3.3,0.0
+CALVADOS +21 XL IMProv-tiered,all-4-replicate (8),8,0.0,0.0,0.0
+HyRes unrestrained (separated),ALL (36),51,0.0,0.0,0.0
+HyRes unrestrained (separated),reproducible (21),30,0.0,0.0,0.0
+HyRes unrestrained (separated),all-4-replicate (8),8,0.0,0.0,0.0
+HyRes matched (separated),ALL (36),51,6.49,66.7,49.0
+HyRes matched (separated),reproducible (21),30,4.95,63.3,46.7
+HyRes matched (separated),all-4-replicate (8),8,0.46,37.5,12.5
+HyRes matched (docked),ALL (36),51,43.51,76.5,70.6
+HyRes matched (docked),reproducible (21),30,53.72,83.3,76.7
+HyRes matched (docked),all-4-replicate (8),8,88.18,100.0,100.0

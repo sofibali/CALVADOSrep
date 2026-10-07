@@ -43,9 +43,15 @@ def load():
     return d
 
 
-def grouped(ax, d, col, err=None, ylab='', title='', logy=False):
-    """Paired separated/docked bars, one group per (set, pair)."""
-    keys = (d.groupby('label')[col].max().sort_values(ascending=False).index.tolist())
+def grouped(ax, d, col, err=None, ylab='', title='', logy=False, keys=None):
+    """Paired separated/docked bars, one group per (set, pair).
+
+    `keys` fixes the category order across panels. Sorting each panel by its own
+    values puts the same group in a different x position in each one, which makes
+    the three panels impossible to read against each other.
+    """
+    if keys is None:
+        keys = (d.groupby('label')[col].max().sort_values(ascending=False).index.tolist())
     x = np.arange(len(keys)); w = 0.38
     for k, (arm, colr) in enumerate((('separated', SEP), ('docked', DOCK))):
         sub = d[d.arm == arm].set_index('label').reindex(keys)
@@ -72,10 +78,13 @@ def main():
     d = load()
 
     fig, axes = plt.subplots(3, 1, figsize=(11, 12))
+    # one order for all three panels: by bound fraction, the robust observable
+    order = (d.groupby('label')['bound_frac'].max()
+             .sort_values(ascending=False).index.tolist())
     grouped(axes[0], d, 'bound_frac', 'bound_frac_ci95',
             'fraction of frames in contact',
             'Bound fraction — how much of the run the chains spend touching '
-            '(min CA-CA < 1.0 nm; error bars 95% CI over replicates)')
+            '(min CA-CA < 1.0 nm; error bars 95% CI over replicates)', keys=order)
     axes[0].legend(fontsize=7, frameon=False, ncol=2)
 
     grouped(axes[1], d, 'tau_survival_ns', None, 'contact lifetime τ (ns)',

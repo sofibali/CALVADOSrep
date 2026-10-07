@@ -1,0 +1,6 @@
+state,pdb,frame,ns,min_nm,bound,n_sat,sat
+t000,p9_dtx3l_rep1_t000.pdb,0,0.0,17.82,False,0,
+t025,p9_dtx3l_rep1_t025.pdb,2500,125.0,8.94,False,0,
+t050,p9_dtx3l_rep1_t050.pdb,5000,250.0,7.27,False,0,
+t075,p9_dtx3l_rep1_t075.pdb,7499,375.0,3.78,False,0,
+t100,p9_dtx3l_rep1_t100.pdb,9999,500.0,3.27,False,0,

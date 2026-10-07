@@ -1,0 +1,12 @@
+set,chain,domain,resid,face,contacts_per_frame,aa,mutate_to,mutation,pdb_rename,d_lambda,d_charge,rationale
+p9_dtx3l,dtx3l#2,DTC,654,active,0.0242,R,E,R654E,ARG->GLU,-0.741,-2.0,charge reversal (+ -> -): tests electrostatic steering
+p9_dtx3l,parp9#1,MD1,171,rim,0.0214,R,E,R171E,ARG->GLU,-0.741,-2.0,charge reversal (+ -> -): tests electrostatic steering
+p9_dtx3l,dtx3l#2,DTC,652,active,0.0214,G,S,G652S,GLY->SER,-0.307,0.0,hydrophobic -> polar: tests the hydrophobic contribution
+p9_dtx3l,dtx3l#2,DTC,628,back,0.0209,E,K,E628K,GLU->LYS,0.138,2.0,charge reversal (- -> +): tests electrostatic steering
+p9_dtx3l,parp9#1,KH2,590,back,0.0186,R,E,R590E,ARG->GLU,-0.741,-2.0,charge reversal (+ -> -): tests electrostatic steering
+p9_dtx3l,parp9#1,MD1,204,active,0.0177,W,S,W204S,TRP->SER,-0.586,0.0,hydrophobic -> polar: tests the hydrophobic contribution
+p9_dtx3l,dtx3l#2,DTC,668,back,0.0172,K,E,K668E,LYS->GLU,-0.138,-2.0,charge reversal (+ -> -): tests electrostatic steering
+p9_dtx3l,dtx3l#2,DTC,621,back,0.0172,R,E,R621E,ARG->GLU,-0.741,-2.0,charge reversal (+ -> -): tests electrostatic steering
+p9_dtx3l,parp9#1,ART,787,active,0.0168,G,S,G787S,GLY->SER,-0.307,0.0,hydrophobic -> polar: tests the hydrophobic contribution
+p9_dtx3l,parp9#1,KH2,619,front,0.0154,L,S,L619S,LEU->SER,-0.108,0.0,hydrophobic -> polar: tests the hydrophobic contribution
+p9_dtx3l,parp9#1,ART,777,active,0.0144,L,S,L777S,LEU->SER,-0.108,0.0,hydrophobic -> polar: tests the hydrophobic contribution
