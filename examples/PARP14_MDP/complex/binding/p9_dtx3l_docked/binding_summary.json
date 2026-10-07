@@ -1,0 +1,23 @@
+{
+  "name": "p9_dtx3l",
+  "arm": "docked",
+  "af3_job": "/home/vle/Vincent/p14fl_test/af3/parp9_dtx3l",
+  "box_nm": 40.0,
+  "n_chains": 2,
+  "conc_uM_per_chain": 25.9,
+  "prod_ns": 500.0,
+  "dt_ps": 0.01,
+  "nreps": 20,
+  "start": "af3_docked",
+  "components": [
+    "parp9",
+    "dtx3l"
+  ],
+  "af3_models": [
+    "/home/vle/Vincent/p14fl_test/af3/parp9_dtx3l/seed-6_sample-2/model.cif",
+    "/home/vle/Vincent/p14fl_test/af3/parp9_dtx3l/seed-7_sample-2/model.cif",
+    "/home/vle/Vincent/p14fl_test/af3/parp9_dtx3l/seed-8_sample-2/model.cif",
+    "/home/vle/Vincent/p14fl_test/af3/parp9_dtx3l/seed-9_sample-0/model.cif",
+    "/home/vle/Vincent/p14fl_test/af3/parp9_dtx3l/seed-10_sample-0/model.cif"
+  ]
+}

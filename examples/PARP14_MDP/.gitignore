@@ -118,3 +118,15 @@ complex/hyres/HyRes_GPU/
 # above targets: the published crosslink table and the checks that read it.
 !complex/data/
 !complex/data/**
+complex/data/__pycache__/
+
+# Per-set setup metadata written by prepare_binding.py: box, concentration,
+# restraint summary and the source AF3 model for each component. Results, not
+# scratch -- override the root *.json rule.
+!complex/binding*/*/binding_summary.json
+
+# binding.tar.gz was a 43 MB snapshot of binding/ taken before those configs
+# were tracked individually. Every one of its 2,027 files is now in the repo
+# in its own right, so it was removed. It stays in git history; nothing should
+# recreate it.
+complex/binding.tar.gz

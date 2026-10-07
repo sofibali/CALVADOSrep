@@ -1,0 +1,20 @@
+{
+  "name": "p14_homo",
+  "box_nm": 40.0,
+  "n_chains": 2,
+  "conc_uM_per_chain": 25.9,
+  "prod_ns": 500.0,
+  "dt_ps": 0.01,
+  "nreps": 20,
+  "topol": "grid",
+  "start": "separated",
+  "restraints": "harmonic k=700.0",
+  "n_custom_restraint_pairs": 222,
+  "components": [
+    {
+      "protein": "parp14",
+      "nmol": 2,
+      "monomer_model": "/home/vle/Vincent/p14fl_test/af3/parp14/seed-10_sample-0/model.cif"
+    }
+  ]
+}

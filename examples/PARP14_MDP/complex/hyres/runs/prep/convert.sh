@@ -2,10 +2,11 @@
 # all-atom PDB -> HyRes PDB, the full corrected pipeline.
 #   $1 input all-atom pdb   $2 output tag   $3 4-char segid
 set -eu
-P=/home/sbali/miniconda3/envs/hyres/bin/python
+# override with HYRES_PY=/path/to/python
+P=${HYRES_PY:-/home/sbali/miniconda3/envs/hyres/bin/python}
 D=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-A=$D/../../HyRes_GPU/at2hyres
-S=/tmp/claude-64170/-home-sbali-CALVADOS-examples-PARP14-MDP-complex/d20d78d0-35be-4d3b-9d0a-a0d0ae134789/scratchpad/charmmify.py
+A=$D/../../vendor/at2hyres
+S=$D/charmmify.py
 in=$1; tag=$2; seg=$3
 $P $D/addH.py "$in" "$D/${tag}_H.pdb" >/dev/null
 # CHARMM names the backbone amide hydrogen HN; OpenMM/PDB writes H
