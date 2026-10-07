@@ -271,3 +271,4 @@ examples/PARP14_MDP/bindcraft_md/__pycache__/
 # manifest.txt IS tracked and records what the archive contains.
 examples/PARP14_MDP/archive_tica_nonca25/*.tar.gz
 calvados/sim.py.bak_preckpt
+calvados/sim.py.bak_cresprint
