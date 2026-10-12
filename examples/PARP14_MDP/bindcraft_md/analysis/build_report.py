@@ -14,6 +14,8 @@ IMG = {
 HITIMG={f"h{i}": b64(os.path.join(D, f"crop_hit_{i}.png")) for i in range(5)}
 HITIMG["clamp"]=b64(os.path.join(D,"crop_clamp.png"))
 HITIMG["variants"]=b64(os.path.join(D,"crop_variants.png"))
+POCKIMG={k:b64(os.path.join(D,f"crop_pocket_{k}.png")) for k in ("md1_block_af3","md2_block_af3","md3_block_af3")}
+BCIMG={k:b64(os.path.join(D,f"crop_bc_target_{k}.png")) for k in ("bc1","bc2")}
 SEQG=json.load(open(os.path.join(D,"hits_seqs.json")))
 import pandas as _pd
 _ACC=_pd.read_csv("/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/designs/sweep_af3_guess/final_design_stats.csv")
@@ -215,6 +217,285 @@ def gates_svg():
         y+=rowh+gap
     o.append("</svg>"); return "".join(o)
 
+
+def clampcmp_svg():
+    c=fig["_clampcmp"]
+    order=["i_pAE","n_InterfaceUnsatHbonds","ShapeComplementarity","Surface_Hydrophobicity","Binder_RMSD","dG"]
+    W,rowh,gap,labelw=620,18,26,220
+    H=len(order)*(rowh*2+gap)
+    o=[f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="clamp state3 vs state1 gate failures" class="chart">']
+    y=0
+    for k in order:
+        o.append(f'<text x="0" y="{y+rowh*0.72}" class="svg-lab">{k}</text>')
+        o.append(f'<text x="0" y="{y+rowh*1.72}" class="svg-sub">thr {c["state3"]["gates"][k]["thr"]}</text>')
+        for i,(lab,col) in enumerate([("state3","var(--md1)"),("state1","var(--md2)")]):
+            v=c[lab]["gates"][k]; bw=max(v["pct"],0.5)/100*(W-labelw-96); yy=y+i*rowh
+            o.append(f'<rect x="{labelw}" y="{yy+2}" width="{W-labelw-96}" height="{rowh-5}" class="track"/>')
+            o.append(f'<rect x="{labelw}" y="{yy+2}" width="{bw:.1f}" height="{rowh-5}" fill="{col}"><title>{lab} {k}: {v["pct"]}% fail, median {v["med"]}</title></rect>')
+            o.append(f'<text x="{W}" y="{yy+rowh*0.72}" class="svg-num" text-anchor="end">{v["pct"]:.0f}%  med {v["med"]}</text>')
+        y+=rowh*2+gap
+    o.append("</svg>"); return "".join(o)
+
+
+CLSCOL={"apol":"#d9cfb8","arom":"#9085e9","polar":"#1baf7a","pos":"#2a78d6","neg":"#e34948","gly":"#c2c8d0"}
+CLSNAME={"apol":"apolar","arom":"aromatic","polar":"polar","pos":"basic","neg":"acidic","gly":"glycine"}
+
+def pocketcomp_svg():
+    pk=fig["_pockets"]
+    order=["md1_block_af3","clamp_md1md2_state3","md2_block_af3","md3_block_af3","clamp_md1md2_state1"]
+    W,rowh,gap,labelw=620,26,14,170
+    H=len(order)*(rowh+gap)
+    o=[f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="pocket residue composition" class="chart">']
+    y=0; barw=W-labelw-58
+    for k in order:
+        v=pk[k]; n=v["n"]; x=labelw
+        o.append(f'<text x="0" y="{y+rowh*0.68}" class="svg-lab">{v["label"]}</text>')
+        for cls in ("apol","arom","gly","polar","pos","neg"):
+            c=v["cls"].get(cls,0)
+            if not c: continue
+            sw=c/n*barw
+            o.append(f'<rect x="{x:.1f}" y="{y}" width="{max(sw-1.5,0):.1f}" height="{rowh}" fill="{CLSCOL[cls]}"><title>{v["label"]}: {c} {CLSNAME[cls]} of {n}</title></rect>')
+            if sw>30:
+                o.append(f'<text x="{x+sw/2:.1f}" y="{y+rowh*0.66}" class="svg-inbar2" text-anchor="middle">{c}</text>')
+            x+=sw
+        o.append(f'<text x="{W}" y="{y+rowh*0.68}" class="svg-num" text-anchor="end">{v["apol_frac"]:.0f}% apol</text>')
+        y+=rowh+gap
+    o.append("</svg>"); return "".join(o)
+
+def pocketoutcome_svg():
+    pk=fig["_pockets"]
+    pts=[("md1_block_af3",43.8,9,"9 accepted"),("clamp_md1md2_state3",42.9,5,"5 accepted"),
+         ("md2_block_af3",38.1,None,"not yet run"),("md3_block_af3",28.6,0,"0 scored"),
+         ("clamp_md1md2_state1",28.6,0,"0 accepted")]
+    W,H,pl,pb,pt,pr=620,250,44,44,16,120
+    pw,ph=W-pl-pr,H-pb-pt
+    xs=lambda v:(v-24)/(48-24)*pw+pl
+    ys=lambda v:pt+ph-(v/10)*ph
+    o=[f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="apolar fraction vs outcome" class="chart">']
+    for gx in (25,30,35,40,45):
+        o.append(f'<line x1="{xs(gx):.1f}" y1="{pt}" x2="{xs(gx):.1f}" y2="{pt+ph}" class="grid"/>')
+        o.append(f'<text x="{xs(gx):.1f}" y="{H-26}" class="svg-tick" text-anchor="middle">{gx}%</text>')
+    for gy in (0,5,10):
+        o.append(f'<line x1="{pl}" y1="{ys(gy):.1f}" x2="{W-pr}" y2="{ys(gy):.1f}" class="grid"/>')
+        o.append(f'<text x="{pl-7}" y="{ys(gy)+3:.1f}" class="svg-tick" text-anchor="end">{gy}</text>')
+    for k,ap,acc,lab in pts:
+        if acc is None:
+            o.append(f'<circle cx="{xs(ap):.1f}" cy="{ys(0):.1f}" r="6" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="3 2"><title>{pk[k]["label"]}: {ap}% apolar, {lab}</title></circle>')
+            o.append(f'<text x="{xs(ap)+11:.1f}" y="{ys(0)+3:.1f}" class="svg-tick">{pk[k]["label"]} — {lab}</text>')
+        else:
+            col="var(--win)" if acc>0 else "var(--flag)"
+            o.append(f'<circle cx="{xs(ap):.1f}" cy="{ys(acc):.1f}" r="7" fill="{col}"><title>{pk[k]["label"]}: {ap}% apolar, {lab}</title></circle>')
+            o.append(f'<text x="{xs(ap)+12:.1f}" y="{ys(acc)+3:.1f}" class="svg-tick">{pk[k]["label"]} — {lab}</text>')
+    o.append(f'<text x="{pl+pw/2:.1f}" y="{H-6}" class="svg-tick" text-anchor="middle">apolar fraction of the hotspot patch</text>')
+    o.append(f'<text transform="translate(11,{pt+ph/2:.1f}) rotate(-90)" class="svg-tick" text-anchor="middle">accepted designs</text>')
+    o.append("</svg>"); return "".join(o)
+
+def pockets_section():
+    pk=fig["_pockets"]
+    rows="".join(
+      f'<tr><td>{pk[k]["label"]}</td><td class="n">{pk[k]["n"]}</td>'
+      f'<td class="n">{pk[k]["donors"]}</td><td class="n">{pk[k]["acceptors"]}</td>'
+      f'<td class="n">{pk[k]["hb_per_res"]}</td><td class="n">{pk[k]["charge"]:+d}</td>'
+      f'<td class="n">{pk[k]["sasa"]:.0f}</td><td class="n">{pk[k]["sasa_per_res"]:.0f}</td>'
+      f'<td class="n">{pk[k]["polar_frac"]:.0f}%</td><td class="n">{pk[k]["apol_frac"]:.0f}%</td></tr>'
+      for k in ["md1_block_af3","clamp_md1md2_state3","md2_block_af3","md3_block_af3","clamp_md1md2_state1"])
+    legend="".join(f'<span><i class="sw" style="background:{CLSCOL[c]}"></i>{CLSNAME[c]}</span>' for c in ("apol","arom","gly","polar","pos","neg"))
+    imgs="".join(
+      f'<figure class="hit"><img src="{POCKIMG[k]}" alt="{pk[k]["label"]} pocket coloured by residue class"/>'
+      f'<figcaption><code>{k}</code><br>{pk[k]["apol_frac"]:.0f}% apolar · {pk[k]["hb_per_res"]} H-bond groups/residue</figcaption></figure>'
+      for k in ("md1_block_af3","md2_block_af3","md3_block_af3"))
+    return f'''
+<h2>Why some pockets work and others do not</h2>
+<p class="sub">Every target uses the same pipeline, the same filters and now the same flag. What differs is the
+surface each one asks a binder to grip. Characterising the hotspot patches — composition, hydrogen-bonding
+capacity, charge and buried area — turns out to separate the successes from the failures cleanly.</p>
+
+<div class="panel">
+  <h4 style="margin-top:0">Residue composition of each hotspot patch</h4>
+  <div class="legend">{legend}</div>
+  {pocketcomp_svg()}
+  <div class="tblwrap" style="margin-top:1.2rem">
+  <table>
+  <thead><tr><th>Pocket</th><th>res</th><th>H-don</th><th>H-acc</th><th>HB/res</th><th>net charge</th><th>SASA Å²</th><th>Å²/res</th><th>polar</th><th>apolar</th></tr></thead>
+  <tbody>{rows}</tbody>
+  </table>
+  </div>
+  <p class="cap">Side-chain hydrogen-bond donors and acceptors counted with standard per-residue values;
+  SASA from Shrake–Rupley on the target structure; charge at pH 7.</p>
+</div>
+
+<h3 style="margin-top:2.2rem">Apolar fraction predicts the outcome</h3>
+<div class="panel" style="margin-top:.8rem">
+  {pocketoutcome_svg()}
+  <p class="cap">Accepted designs against the apolar fraction of the hotspot patch. The two targets that
+  produced binders sit at <b>43–44% apolar</b>; both failures sit at <b>28.6%</b>, and MD3 — the most polar
+  patch tested — failed most completely of all, with 100% i_pAE rejection across 1,000 sequences.
+  <b>MD2, at 38.1%, is the open case and is running now</b>: the hypothesis predicts an intermediate result,
+  which is the thing that would make apolar fraction usable as a pre-screen rather than a post-hoc story.</p>
+  <div class="flag">
+    <span class="lab">Why this is the mechanism, not a coincidence</span>
+    De novo binders grip hydrophobic surface; that is where the binding free energy comes from and it costs
+    nothing to satisfy. Every polar group at the interface, by contrast, must be paired or it counts against
+    the design — and <b>buried unsatisfied H-bonds is precisely the gate that has limited every run</b>
+    (68% of clamp state 3's designs, 96% of state 1's). A patch that is 57% polar with ~1.9 hydrogen-bonding
+    groups per residue sets a bar the designer has to clear on nearly every contact. MD3 also carries a
+    <b>net +2 charge</b> across the patch, so a complementary binder has to be correspondingly acidic.
+  </div>
+</div>
+
+<div class="hitgrid" style="margin-top:1.2rem">{imgs}</div>
+<p class="cap">Hotspot patches on the molecular surface, coloured by residue class. MD1's patch carries visible
+apolar (tan) and aromatic (violet) area; MD3's is dominated by polar (green) and basic (blue) surface.</p>
+'''
+
+NOTES_JS = r'''
+<script>
+(async function () {
+  const slug = t => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+  const heads = [...document.querySelectorAll(".wrap h2, .wrap h3")];
+  if (!heads.length) return;
+  const db = await claude.use("db");
+  if (!db) return;
+  let user = null; try { user = await claude.use("user"); } catch (e) {}
+  const col = db.collection("notes");
+  let bySection = new Map(), canWrite = true;
+  const esc = t => { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; };
+
+  for (const h of heads) {
+    const id = slug(h.textContent);
+    const btn = document.createElement("button");
+    btn.className = "notebtn"; btn.type = "button"; btn.textContent = "+ note";
+    btn.addEventListener("click", () => openForm(id));
+    h.appendChild(btn);
+    const box = document.createElement("div");
+    box.className = "notes"; box.dataset.for = id;
+    h.insertAdjacentElement("afterend", box);
+  }
+
+  function render() {
+    for (const box of document.querySelectorAll(".notes")) {
+      const list = (bySection.get(box.dataset.for) || []).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+      box.innerHTML = list.map(n => '<div class="note"><div class="meta"><span>'
+        + esc(n.authorName || "note") + '</span><span>'
+        + (n.ts ? new Date(n.ts).toLocaleDateString() : "") + '</span>'
+        + (canWrite ? '<button data-del="' + esc(n.id) + '">delete</button>' : "")
+        + '</div><div class="body">' + esc(n.text || "") + '</div></div>').join("");
+      box.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", async () => {
+        try { await col.doc(b.dataset.del).delete(); }
+        catch (e) { if (e && (e.code === "permission_denied" || e.code === "not_granted")) readOnly(); }
+      }));
+    }
+  }
+  function readOnly() {
+    canWrite = false;
+    document.querySelectorAll(".notebtn,.noteform").forEach(n => n.remove());
+    render();
+  }
+  function openForm(id) {
+    const box = document.querySelector('.notes[data-for="' + id + '"]');
+    if (!box || (box.nextElementSibling && box.nextElementSibling.classList.contains("noteform"))) return;
+    const f = document.createElement("form");
+    f.className = "noteform";
+    f.innerHTML = '<textarea placeholder="Note on this section..." aria-label="note text"></textarea>'
+      + '<div class="row"><button type="submit">Save</button>'
+      + '<button type="button" class="ghost">Cancel</button><span class="notestatus"></span></div>';
+    box.insertAdjacentElement("afterend", f);
+    const ta = f.querySelector("textarea"), st = f.querySelector(".notestatus");
+    ta.focus();
+    f.querySelector(".ghost").addEventListener("click", () => f.remove());
+    f.addEventListener("submit", async ev => {
+      ev.preventDefault();
+      const text = ta.value.trim(); if (!text) return;
+      st.textContent = "saving...";
+      let authorName = "";
+      try { const me = user && (await user.me()); authorName = (me && me.name) || ""; } catch (e) {}
+      try { await col.add({ section: id, text: text, authorName: authorName, ts: Date.now() }); f.remove(); }
+      catch (e) {
+        if (e && (e.code === "permission_denied" || e.code === "not_granted")) readOnly();
+        else st.textContent = "could not save - " + ((e && e.code) || "error");
+      }
+    });
+  }
+  col.onSnapshot(snap => {
+    bySection = new Map();
+    snap.docs.forEach(d => {
+      const v = d.data() || {};
+      const arr = bySection.get(v.section) || [];
+      arr.push(Object.assign({}, v, { id: d.id }));
+      bySection.set(v.section, arr);
+    });
+    render();
+  }, err => { if (err && err.code === "revoked") readOnly(); });
+})();
+</script>
+
+'''
+
+
+def bccmp_section():
+    c=fig["_bccmp"]
+    def cell(v, other):
+        if v is None: return '<td class="n" style="color:var(--muted)">not applied</td>'
+        cls=" good" if other is None else ""
+        return f'<td class="n{cls}">{v}</td>'
+    rows="".join(
+      f'<tr><td><code>{r["metric"]}</code></td>{cell(r["bc1"],r["bc2"])}{cell(r["bc2"],r["bc1"])}</tr>'
+      for r in c["rows"])
+    return f'''
+<h2>BindCraft 1 vs BindCraft 2, on the same MD1 site</h2>
+<p class="sub">BindCraft 2 arrived mid-campaign. It is a rewrite rather than a version bump, and two of its
+differences change what a result even means &mdash; both visible on this one target.</p>
+
+<div class="panel">
+  <h4 style="margin-top:0">The target itself is different</h4>
+  <div class="hitgrid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+    <figure class="hit"><img src="{BCIMG["bc1"]}" alt="BC1 MD1 target: MD1 plus MD2 scaffold"/>
+      <figcaption><b>BC1</b> &mdash; <code>md1_block_af3</code><br>{c["bc1_target_res"]} residues:
+      <span class="k1">MD1</span> plus the <span class="k2">MD2</span> scaffold</figcaption></figure>
+    <figure class="hit"><img src="{BCIMG["bc2"]}" alt="BC2 MD1 target: MD1 alone"/>
+      <figcaption><b>BC2</b> &mdash; <code>PARP14_MD1</code><br>{c["bc2_target_res"]} residues: MD1 alone,
+      so MD2 can be weighted as an off-target</figcaption></figure>
+  </div>
+  <p class="cap">Same coordinate frame, same camera, same {c["hotspots"]} hotspots (violet). Selectivity
+  requires the domains be separable, so BC2's target is MD1 on its own &mdash; the orange mass simply is not
+  there.</p>
+  <div class="flag">
+    <span class="lab">This is not cosmetic</span>
+    Of BC1's {c["bc1_relaxed"]} relaxed MD1 trajectories, <b>{c["bc1_md2_contact"]} contacted MD2 as well as
+    MD1</b> and only {c["bc1_md1_only"]} touched MD1 alone. The majority of BC1's MD1 binders were gripping
+    surface that <b>does not exist</b> in BC2's target &mdash; and that would not exist on an isolated
+    macrodomain in an experiment either. BC2 cannot make that mistake here, and can additionally penalise MD2
+    contact outright.
+  </div>
+</div>
+
+<h3 style="margin-top:2.2rem">And the acceptance bar is a different bar</h3>
+<div class="panel" style="margin-top:.8rem">
+  <div class="tblwrap">
+  <table>
+  <thead><tr><th>Filter</th><th>BindCraft 1</th><th>BindCraft 2</th></tr></thead>
+  <tbody>{rows}</tbody>
+  </table>
+  </div>
+  <p class="cap">BC1 thresholds from <code>default_filters.json</code>; BC2 thresholds read off its own
+  campaign banner. Two names were reconciled: BC1's <code>n_InterfaceResidues</code> and
+  <code>Binder_pLDDT</code> are BC2's <code>Interface_Residues</code> and <code>Unbound_Binder_pLDDT</code>.</p>
+  <div class="flag">
+    <span class="lab">Read BC2's numbers with this in view</span>
+    <b>Every Rosetta biophysical gate is gone</b> &mdash; buried unsatisfied H-bonds, shape complementarity,
+    dG, dSASA, interface H-bond count, surface hydrophobicity. BC2 keeps no PyRosetta at all. Those are
+    precisely the gates that rejected every design this project produced: MD1's original 10, both clamp
+    states, MD2's 16. BC2 does tighten <code>i_pTM</code> from 0.5 to 0.7, but it is judging confidence and
+    geometry, not interface chemistry.
+    <br><br>
+    So a higher accepted count under BC2 <b>would not by itself mean better binders</b> &mdash; it could mean
+    the gate that failed them is no longer being applied. The comparison is only honest if BC2's accepted
+    designs are re-scored against the BC1 filters afterwards, which is straightforward to do and worth doing
+    before anything is ordered.
+  </div>
+</div>
+'''
+
 def hits_section():
     import re as _re
     order=["l80_s632138","l130_s735229","l128_s514541","l122_s135691","l104_s444809"]
@@ -323,7 +604,7 @@ for k in ORDER:
 def trow(label,f,cls=""):
     return "<tr><td>"+label+"</td>"+"".join(f'<td class="n {cls if f(TARGETS[k]) in ("0","—") and cls else ""}">{f(TARGETS[k])}</td>' for k in ORDER)+"</tr>"
 
-html=f"""<title>Three Misses And A Fix</title>
+html=f"""<title>BindCraft Campaign - TMUX BC</title>
 <style>
 :root {{
   --paper:#f5f7fa; --panel:#ffffff; --ink:#111418; --ink2:#4a5463; --muted:#8a93a3;
@@ -386,6 +667,7 @@ dd{{margin:0;font-size:.86rem}}
 .svg-lab{{font-size:12.5px;fill:var(--ink)}} .svg-sub{{font-size:10.5px;fill:var(--muted)}}
 .svg-num{{font-size:12.5px;fill:var(--ink);font-variant-numeric:tabular-nums}}
 .svg-tick{{font-size:10.5px;fill:var(--muted);font-variant-numeric:tabular-nums}}
+.svg-inbar2{{font-size:10px;fill:#2b2b2b;font-variant-numeric:tabular-nums}}
 .svg-inbar{{font-size:10.5px;fill:#fff;font-variant-numeric:tabular-nums;font-weight:600}}
 .cap{{font-size:.82rem;color:var(--ink2);margin:.7rem 0 0}}
 .legend{{display:flex;flex-wrap:wrap;gap:1.1rem;margin:.2rem 0 1rem;font-size:.82rem;color:var(--ink2)}}
@@ -425,13 +707,39 @@ th{{text-align:left;font-size:.64rem;letter-spacing:.09em;text-transform:upperca
 td{{padding:.62rem .8rem .62rem 0;border-bottom:1px solid var(--line);vertical-align:baseline}}
 td.n{{font-family:ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}}
 .zero{{color:var(--flag);font-weight:600}}
+
+/* --- annotation layer --- */
+.notebtn{{font:inherit;font-family:ui-monospace,Menlo,monospace;font-size:.64rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--line);
+  border-radius:3px;padding:.2em .5em;margin-left:.7em;cursor:pointer;vertical-align:middle;
+  opacity:.45;transition:opacity .15s,color .15s}}
+.notebtn:hover,.notebtn:focus-visible{{opacity:1;color:var(--win);border-color:var(--win)}}
+.notes{{margin:.7rem 0 0;display:flex;flex-direction:column;gap:.5rem}}
+.note{{background:var(--winbg);border-left:3px solid var(--win);border-radius:4px;
+  padding:.6rem .8rem;font-size:.9rem;line-height:1.5}}
+.note .meta{{font-family:ui-monospace,Menlo,monospace;font-size:.64rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--win);display:flex;gap:.6em;align-items:center;margin-bottom:.3rem}}
+.note .meta button{{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;
+  font-family:inherit;font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;padding:0}}
+.note .meta button:hover{{color:var(--flag)}}
+.note .body{{white-space:pre-wrap}}
+.noteform{{display:flex;flex-direction:column;gap:.5rem;margin-top:.6rem}}
+.noteform textarea{{font:inherit;font-size:.9rem;padding:.6rem .7rem;border:1px solid var(--line);
+  border-radius:4px;background:var(--panel);color:var(--ink);resize:vertical;min-height:4.5em;width:100%}}
+.noteform textarea:focus{{outline:2px solid var(--win);outline-offset:1px}}
+.noteform .row{{display:flex;gap:.5rem;align-items:center}}
+.noteform button{{font-family:ui-monospace,Menlo,monospace;font-size:.68rem;letter-spacing:.08em;
+  text-transform:uppercase;padding:.4em .9em;border-radius:3px;cursor:pointer;border:1px solid var(--win);
+  background:var(--win);color:#fff}}
+.noteform button.ghost{{background:none;color:var(--muted);border-color:var(--line)}}
+.notestatus{{font-size:.78rem;color:var(--muted)}}
 footer{{margin-top:3.4rem;padding-top:1.2rem;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted)}}
 @media (max-width:560px){{.spec{{grid-template-columns:1fr}}}}
 </style>
 
 <div class="wrap">
 <p class="eyebrow">PARP14 · BindCraft diagnostic</p>
-<h1>Three misses and a fix</h1>
+<h1>BindCraft campaign &mdash; TMUX BC</h1>
 <p class="dek">Three PARP14 binder campaigns spent ~33 GPU-days and produced <b>zero</b> accepted designs.
 Tracing every attempt from hallucination to final filter found one gate responsible for almost all of it —
 and changing a single setting turned the same target into <b>9 accepted designs in 17 hours</b>.
@@ -597,63 +905,85 @@ trajectory coordinates instead of asking it to fold and dock from sequence alone
 
 {hits_section()}
 <h2>The queue so far</h2>
-<p class="sub">All nine remaining targets are running with the flag, one at a time on a single GPU, each
-stopping at 8 accepted designs or 50 relaxed trajectories. Two have results.</p>
+<p class="sub">All remaining targets run with the flag, one at a time on a single GPU, each stopping at
+8 accepted designs or a trajectory cap. Two clamp states are done.</p>
 <div class="tblwrap">
 <table>
 <thead><tr><th>Target</th><th>Relaxed</th><th>Scored</th><th>Accepted</th><th>Status</th></tr></thead>
 <tbody>
 <tr><td><code>clamp_md1md2_state3</code></td><td class="n">50</td><td class="n">197</td><td class="n good">5</td><td>complete — hit the 50-trajectory cap</td></tr>
-<tr><td><code>clamp_md1md2_state1</code></td><td class="n">9</td><td class="n zero">0</td><td class="n zero">0</td><td>running</td></tr>
-<tr><td colspan="5" style="color:var(--muted)">7 more queued: clamp_md1md2_state5, clamp_md2md3_state3/5, md3_block ×2, md2_block ×2</td></tr>
+<tr><td><code>clamp_md1md2_state1</code></td><td class="n">28</td><td class="n">49</td><td class="n zero">0</td><td>stopped at a 25-trajectory cap</td></tr>
+<tr><td><code>md3_block_af3</code></td><td class="n">50</td><td class="n zero">0</td><td class="n zero">0</td><td>complete — nothing reached Rosetta scoring</td></tr>
+<tr><td><code>md2_block_af3</code></td><td class="n">5</td><td class="n">0</td><td class="n">0</td><td>running — the prediction test</td></tr>
+<tr><td colspan="5" style="color:var(--muted)">5 more queued: md3_block_sim, md2_block_sim, clamp_md2md3_state3/5, clamp_md1md2_state5</td></tr>
 </tbody>
 </table>
 </div>
 
-<h3 style="margin-top:2.2rem">State 3: the gate moved to interface chemistry</h3>
-<div class="panel" style="margin-top:.8rem">
-  {gates_svg()}
-  <p class="cap">Share of the 197 scored designs failing each Rosetta gate. Energetics are not the problem —
-  <b>dG and interface H-bond count fail 0%</b> (medians −58.8 and 10.5). The limiters are
-  <b>buried unsatisfied H-bonds (68% fail, median 5.0 against a limit of 4)</b> and shape complementarity
-  (68%, median 0.58 against 0.60). Both miss by a hair.</p>
-  <div class="flag">
-    <span class="lab">The same wall, one stage later</span>
-    Unsatisfied polar burial is exactly what killed the original <code>md1_block_af3</code> campaign. Beating the
-    i_pAE gate moved designs far enough down the funnel for it to reappear. A clamp has more polar surface to
-    satisfy than a pocket plug, so a systematically higher unsat count may be intrinsic to the concept rather
-    than a fixable defect — 5 designs still cleared it.
+<h3 style="margin-top:2.2rem">Clamp designability tracks the conformational state</h3>
+<p class="sub" style="margin-top:.4rem">Both clamp states bridge the same two domains with the same pipeline
+and the same filters. The only difference is which TICA basin the target pose came from — state 3 the dominant
+~80% one, state 1 a ~6% minor one.</p>
+<div class="panel">
+  <div class="legend">
+    <span><i class="sw" style="background:var(--md1)"></i>state 3 — 197 scored, 5 accepted</span>
+    <span><i class="sw" style="background:var(--md2)"></i>state 1 — 49 scored, 0 accepted</span>
   </div>
+  {clampcmp_svg()}
+  <p class="cap">Share of scored designs failing each gate, with medians. <b>i_pAE fails 0% in both</b> — the
+  fix works equally well on either state. So does the energetics: dG fails 0%, and state 1's median dG of
+  <b>−95.4</b> is markedly better than state 3's −58.8.</p>
+  <div class="flag">
+    <span class="lab">Correction to an earlier reading of this run</span>
+    While state 1 was still early I described it as a case where <b>predict_initial_guess cannot rescue a bad
+    starting interface</b>, based on its trajectory-stage i_pAE of 0.540. That was wrong. It was simply slow to
+    start — scoring began around trajectory 15, and of its 49 scored designs <b>none fail i_pAE</b>. The flag
+    works fine here; what differs is interface packing.
+  </div>
+  <p class="cap" style="margin-top:1rem">The real gap is polar burial: state 1 buries a median of <b>7.5</b>
+  unsatisfied H-bonds against a limit of 4, versus state 3's 5.0. Shape complementarity is identical (67% fail,
+  median 0.58 in both), so it is specifically the unsatisfied-polar count that separates them —
+  <b>10 of state 3's designs cleared every gate; none of state 1's did</b>, and only 10 came within a single gate.
+  A minor-basin inter-domain arrangement appears to be a genuinely poorer surface to bridge, and that is not
+  something a validation-stage flag can address.</p>
 </div>
 
-<h3 style="margin-top:2.2rem">State 1: the flag cannot rescue a bad starting interface</h3>
+<h3 style="margin-top:2.2rem">MD3: the fix bought nothing at all</h3>
 <div class="panel" style="margin-top:.8rem">
   <div class="tblwrap">
   <table>
-  <thead><tr><th>Median at trajectory stage</th><th>state 3</th><th>state 1</th></tr></thead>
+  <thead><tr><th></th><th>md1_block (Arm A)</th><th>clamp state3</th><th>md3_block</th></tr></thead>
   <tbody>
-  <tr><td>i_pAE (threshold 0.35)</td><td class="n good">0.345</td><td class="n zero">0.540</td></tr>
-  <tr><td>i_pTM</td><td class="n">0.705</td><td class="n">0.790</td></tr>
-  <tr><td>pLDDT</td><td class="n">0.810</td><td class="n">0.800</td></tr>
-  <tr><td>Scored designs</td><td class="n">197</td><td class="n zero">0</td></tr>
+  <tr><td>Trajectory-stage i_pAE (median)</td><td class="n">0.185</td><td class="n">0.345</td><td class="n">0.250</td></tr>
+  <tr><td>Trajectories passing all 3 gates</td><td class="n">83%</td><td class="n">46%</td><td class="n">52%</td></tr>
+  <tr><td>MPNN sequences generated</td><td class="n">240</td><td class="n">1,000</td><td class="n">1,000</td></tr>
+  <tr><td>Rejected by i_pAE</td><td class="n">58%</td><td class="n">—</td><td class="n zero">100%</td></tr>
+  <tr><td>Reached Rosetta scoring</td><td class="n good">51</td><td class="n good">197</td><td class="n zero">0</td></tr>
+  <tr><td><b>Accepted</b></td><td class="n good">9</td><td class="n good">5</td><td class="n zero">0</td></tr>
   </tbody>
   </table>
   </div>
-  <p class="cap">State 1's trajectories fold just as well (pLDDT 0.80) but start with a markedly worse interface
-  — i_pAE 0.540 against state 3's 0.345. <code>predict_initial_guess</code> helps AF2 re-find a pose the sequence
-  already supports; it cannot manufacture an interface that was never good.</p>
+  <p class="cap">MD3's backbones were healthy — 26 of 50 trajectories passed all three gates at the trajectory
+  stage, with a median i_pAE of 0.250, <b>better</b> than clamp state 3's 0.345 which went on to yield five
+  accepted designs. The pocket was being hit. Then <b>every one of its 1,000 MPNN sequences failed
+  re-prediction</b>.</p>
   <div class="flag">
-    <span class="lab">Consistent with the TICA clustering</span>
-    State 3 was the <b>dominant basin (~80% of the population)</b>; state 1 a minor one (~6%). If clamp
-    designability tracks state population, that is worth knowing before spending GPU time on the remaining
-    states — but 9 trajectories is far too few to call, and the 50-trajectory cap bounds the cost of finding out.
+    <span class="lab">The pre-fix signature, returning in full</span>
+    100% i_pAE rejection is exactly what the three original campaigns looked like before
+    <code>predict_initial_guess</code>. On MD1 the flag moved the pass rate from 0.2% to 30%; on the MD1–MD2
+    clamp it produced 197 scored designs where the baseline produced none. On MD3 it bought <b>nothing</b>.
+    Whatever the flag does, it cannot compensate for this surface.
   </div>
 </div>
 
+{pockets_section()}
+{bccmp_section()}
 <h2>What is still unknown</h2>
-<p class="sub">Whether the fix holds across the MD2 and MD3 pockets, and whether clamp quality really does track
-TICA state population. Seven targets remain. The two MD2 blockers need unified memory — their 586-residue
-construct exceeds a 46 GB card — so they run last and slowest.</p>
+<p class="sub">Whether apolar fraction really predicts designability, or just describes what already happened.
+<code>md2_block_af3</code> is the test — at 38.1% it sits between the successes and the failures, so an
+intermediate result would make the measure usable as a pre-screen. It runs on unified memory (586-residue
+construct on a 46 GB card) and so needs ~4–5 days rather than MD3's 2.5. After it: the sim-conformer blockers,
+the two MD2–MD3 clamps, and clamp_md1md2_state5.</p>
 
 <footer>
 The three baseline runs are stopped; the predict_initial_guess queue is in progress. Built from <code>Trajectory/</code> PDB coordinates,
@@ -663,6 +993,9 @@ the union of that domain's hotspot residues. MPNN sequence counts are relaxed tr
 </footer>
 </div>
 """
+
+html += NOTES_JS
+
 out=os.path.join(D,"parp14_geometry_report.html")
 open(out,"w").write(html)
 print("wrote",out,os.path.getsize(out)//1024,"KB")

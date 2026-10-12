@@ -1,0 +1,41 @@
+{
+  "campaign_name": "parp14_md2_selective",
+  "project_folder": "results/parp14_md2_selective",
+  "modality": "binder",
+  "binder_lengths": [
+    70,
+    130
+  ],
+  "number_of_final_designs": 8,
+  "max_trajectories": 60,
+  "forced_targeting": true,
+  "min_hotspot_contact_final": 0.5,
+  "max_detarget_iptm": 0.4,
+  "max_detarget_interface_residues_final": 3,
+  "detarget_check_interval": 1,
+  "max_detarget_rounds": 10,
+  "aa_bias": {
+    "C": 0
+  },
+  "targets": [
+    {
+      "name": "PARP14_MD2",
+      "target_path": "/home/sbali/BindCraft2/parp14_targets/PARP14_MD2.pdb",
+      "chains": "A",
+      "weight": 1.0,
+      "hotspots": "A232,A235,A245,A247,A248,A249,A251,A253,A254,A255,A256,A257,A342,A346,A347,A348,A349,A351,A352,A386,A387"
+    },
+    {
+      "name": "PARP14_MD1",
+      "target_path": "/home/sbali/BindCraft2/parp14_targets/PARP14_MD1.pdb",
+      "chains": "A",
+      "weight": -0.5
+    },
+    {
+      "name": "PARP14_MD3",
+      "target_path": "/home/sbali/BindCraft2/parp14_targets/PARP14_MD3.pdb",
+      "chains": "A",
+      "weight": -0.5
+    }
+  ]
+}
