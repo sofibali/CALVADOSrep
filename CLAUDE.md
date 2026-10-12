@@ -179,6 +179,30 @@ Two-phase pipeline for studying PARP14 (1801 residues) domain deletion variants:
 - **RNA parameters must be passed explicitly.** `prepare_slab.py:94` `RNA_OPTS` (kb 1400/2200, ka 4.20, nb cutoff 2.0) differ from `calvados/data/default_component.yaml` (8033/8033, 7.24, 0.6). Falling back to the defaults silently substitutes a much stiffer polymer.
 - Second local fix to the upstream package: `map_custom_restraints` printed every restraint unguarded (~9k lines / 600 kB per build, reprinted every leg restart). Removed; backup at `calvados/sim.py.bak_cresprint`.
 
+### Trajectories: never delete one without leaving a record
+
+`.dcd` files are the only irreproducible artifact in this project. A config can
+be re-run, a figure re-plotted; a trajectory cannot be recovered, and none of
+them are in git. **On 2026-08-28 the `.dcd` files were removed from `md/`,
+`mka/`, `md3art/` and 275 fragment replicates — 350 directories in one day —
+with no script, no archive and no commit recording it.** Those three primary
+sets keep their figures and cached `.npz`, so their conclusions stand, but they
+cannot be re-analysed.
+
+Before removing any trajectory:
+
+1. Run `python examples/PARP14_MDP/build_structure_manifest.py` and commit
+   `analysis/structure_manifest.csv`. That row is the tombstone — frames,
+   config hash, paths, date — and it survives in git when the file does not.
+2. Name the directories and the reason in the commit message.
+3. Prefer `tar` plus a `manifest.txt` beside it (as `archive_tica_nonca25/`
+   does) over outright deletion.
+4. Update the tier table in `examples/PARP14_MDP/docs/INVENTORY.md`.
+
+`analysis/structure_manifest.csv` is the authority on what exists — 1,759 run
+directories with a three-way `status` (`has_traj` / `traj_removed` /
+`prepared_only`). `INVENTORY.md` is a hand-written survey and goes stale.
+
 **PARP14 Domain Architecture (11 grouped units for combinatorial library):**
 
 | Domain | Residues | Function |
