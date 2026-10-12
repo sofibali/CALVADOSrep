@@ -1,7 +1,12 @@
 import json, base64, os
 
-D = "/tmp/claude-64170/-home-sbali-BindCraft/adecb958-709c-481a-8e03-db4ccc10a3b9/scratchpad"
-fig = json.load(open(os.path.join(D, "figdata.json")))
+import os as _os
+# repo-relative: the originals lived in a session scratchpad that was cleared.
+# assets are rebuilt by analysis/make_figures.py + crop_figures.py,
+# figdata.json by analysis/make_figdata.py.
+_HERE = _os.path.dirname(_os.path.abspath(__file__))
+D = _os.path.join(_HERE, "assets")
+fig = json.load(open(os.path.join(_HERE, "figdata.json")))
 
 def b64(p):
     return "data:image/png;base64," + base64.b64encode(open(p, "rb").read()).decode()
@@ -16,7 +21,7 @@ HITIMG["clamp"]=b64(os.path.join(D,"crop_clamp.png"))
 HITIMG["variants"]=b64(os.path.join(D,"crop_variants.png"))
 POCKIMG={k:b64(os.path.join(D,f"crop_pocket_{k}.png")) for k in ("md1_block_af3","md2_block_af3","md3_block_af3")}
 BCIMG={k:b64(os.path.join(D,f"crop_bc_target_{k}.png")) for k in ("bc1","bc2")}
-SEQG=json.load(open(os.path.join(D,"hits_seqs.json")))
+SEQG=json.load(open(os.path.join(_HERE,"hits_seqs.json")))
 import pandas as _pd
 _ACC=_pd.read_csv("/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/designs/sweep_af3_guess/final_design_stats.csv")
 _CACC=_pd.read_csv("/home/sbali/CALVADOS/examples/PARP14_MDP/bindcraft_md/designs/guess_clamp_md1md2_state3/final_design_stats.csv")
@@ -996,6 +1001,6 @@ the union of that domain's hotspot residues. MPNN sequence counts are relaxed tr
 
 html += NOTES_JS
 
-out=os.path.join(D,"parp14_geometry_report.html")
+out=os.path.join(_HERE,"parp14_geometry_report.html")
 open(out,"w").write(html)
 print("wrote",out,os.path.getsize(out)//1024,"KB")
