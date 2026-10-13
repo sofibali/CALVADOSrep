@@ -17,18 +17,25 @@ Every system is compacted to a ~6–7 nm slab before production, then released.
 | construct | FL span | protein only | +RNA | phase |
 |---|---|---|---|---|
 | `fl` | 1–1801 | 167 ± 23 nm | 158 ± 23 nm | dispersed |
-| `kh1_art_full` | 315–1801 | 217 nm | — | dispersed |
+| `kh1_art_full` | 315–1801 | 197 ± 18 nm | 175 ± 33 nm | dispersed |
 | `core_full_go` | 738–1801 | 197 ± 13 nm | 210 ± 26 nm | dispersed |
 | **`md_full`** | **790–1388** | **10 ± 8 nm** | **13 ± 0 nm** | **condensed** |
 
-(final slab width after 2 µs; n=3 except `kh1_art_full`, see *Caveats*)
+(final slab width after 2 µs, n=3 per cell; **all 24 runs analysed**)
 
 `md_full` holds its slab (6, 6, 19 nm protein-only; 13, 13, 13 nm +RNA) with
 **c_sat = 0.0 mM — below detection**, i.e. essentially all protein in the dense
 phase. Every construct containing ART disperses to 130–230 nm.
 
-**RNA does not change whether anything condenses.** `fl` −9 nm and
-`core_full_go` +13 nm, both < 1 pooled SD and in *opposite* directions.
+**RNA does not change whether anything condenses.** Every ±RNA difference is
+under one pooled SD, and they do not share a sign:
+
+| construct | Δ slab width with RNA | pooled SD |
+|---|---|---|
+| `fl` | −9 nm | 0.38 SD |
+| `kh1_art_full` | −22 nm | 0.83 SD |
+| `core_full_go` | +13 nm | 0.62 SD |
+| `md_full` | +3 nm | 0.50 SD |
 
 > **Run 1's "RNA retards dispersal 1.67×, only when ART is present" does not
 > reproduce.** That was one unreplicated cell, at uncontrolled concentration,
@@ -148,11 +155,6 @@ as a **competitor for MD1**, not as a general crosslinker.
 
 ## Caveats
 
-* **`kh1_art_full` c_sat is complete for 1 of 6 runs.** The other five
-  `analyze_slab.py` jobs were still running at the time of writing (largest
-  system in the panel). Its *dispersed* assignment is nonetheless supported by
-  that run (217 nm) and by the frozen-contact signature in all six. The slab
-  widths in Section 1 for this construct are therefore n=1.
 * **Dispersal is measured as final slab width**, not a rate. Run 1's 1.67×
   claim was about a rate; a strictly like-for-like test would compare
   time-resolved dispersal profiles.

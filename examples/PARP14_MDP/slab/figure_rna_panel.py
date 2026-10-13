@@ -54,7 +54,7 @@ def fig1_condensation(cond):
         ax.bar(xs, ys, w, yerr=es, capsize=4, color=ARMC[arm], alpha=.55,
                label=('+RNA' if arm == 'rna' else 'protein only'))
     ax.axhline(7, color='k', ls=':', lw=1)
-    ax.text(len(ORDER) - .45, 9, 'equilibrated slab (~7 nm)', fontsize=7.5, ha='right')
+    ax.text(-0.42, 13, 'equilibrated slab (~7 nm)', fontsize=7.5, ha='left', color='#52514e')
     ax.set_xticks(range(len(ORDER)))
     ax.set_xticklabels([LABEL[c] for c in ORDER], fontsize=8.5)
     ax.set_ylabel('slab width after 2 µs (nm)')
