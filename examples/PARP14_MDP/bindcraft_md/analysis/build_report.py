@@ -886,13 +886,20 @@ trajectory coordinates instead of asking it to fold and dock from sequence alone
   <thead><tr><th></th><th>baseline</th><th>with guess</th></tr></thead>
   <tbody>
   <tr><td>Runtime</td><td class="n">14 days</td><td class="n">17 hours</td></tr>
-  <tr><td>Trajectory attempts</td><td class="n">617</td><td class="n">21</td></tr>
+  <tr><td>Trajectory attempts</td><td class="n">617</td><td class="n">{fig['_armA']['attempts']}</td></tr>
+  <tr><td>Trajectory yield (relaxed / attempts)</td><td class="n">44%</td><td class="n">44%</td></tr>
   <tr><td>Designs reaching Rosetta</td><td class="n">10</td><td class="n">51</td></tr>
   <tr><td><b>Accepted designs</b></td><td class="n zero">0</td><td class="n good">9</td></tr>
   <tr><td>Distinct source trajectories</td><td class="n">1 of 270</td><td class="n good">5 of 12</td></tr>
   </tbody>
   </table>
   </div>
+  <p class="cap"><b>Attempt counts include the 4-stage early aborts</b> (logits / softmax / one-hot),
+  which never write a PDB and appear only in <code>failure_csv.csv</code>; counting the
+  <code>Trajectory/</code> folders alone understates attempts by about a quarter. An earlier
+  version of this table read 21 for the guess arm instead of {fig['_armA']['attempts']}.
+  Note that the trajectory yield is <b>identical</b> in the two arms: <code>predict_initial_guess</code>
+  changed nothing about hallucination, only what survived downstream of it.</p>
   <div class="win">
     <span class="lab">Why these are real</span>
     The Rosetta filters were never touched — only the AF2 gate changed. The accepted designs clear the exact

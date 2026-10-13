@@ -78,8 +78,20 @@ for run, lab in [("guess_clamp_md1md2_state3","state3"),("guess_clamp_md1md2_sta
         bad = (d[c] < th) if sp["higher"] else (d[c] > th)
         g[c.replace("Average_","")] = {"thr":th,"pct":round(100*bad.mean(),1),
                                        "med":round(float(d[c].median()),2)}
-    nf = sum(((d[c] < filt[c]["threshold"]) if filt[c]["higher"] else (d[c] > filt[c]["threshold"])).astype(int) for c in HARD)
-    clampcmp[lab] = {"scored":len(d),"gates":g,"pass_all":int((nf==0).sum()),"fail1":int((nf==1).sum())}
+    # Count against EVERY numeric gate, including the per-model 1_-5_ keys. Using
+    # Average_* alone overcounts passing designs (state3 read 10 vs 5 in Accepted/);
+    # with all of them the "fails 0 gates" count matches Accepted/ exactly.
+    import re as _re
+    bym = {}
+    for c, sp in filt.items():
+        if not isinstance(sp, dict) or sp.get("threshold") is None: continue
+        if c not in d.columns or not pd.api.types.is_numeric_dtype(d[c]): continue
+        bad = ((d[c] < sp["threshold"]) if sp["higher"] else (d[c] > sp["threshold"])).fillna(False)
+        m = _re.sub(r"^(Average|[1-5])_", "", c)
+        bym[m] = bym.get(m, pd.Series(False, index=d.index)) | bad
+    nf = sum(b.astype(int) for b in bym.values())
+    clampcmp[lab] = {"scored":len(d),"gates":g,"pass_all":int((nf==0).sum()),
+                     "fail1":int((nf==1).sum()),"n_gates":len(bym)}
 fig["_clampcmp"] = clampcmp
 
 # ---------------------------------------------------------------- _bccmp
@@ -99,6 +111,22 @@ rows = [{"metric":k,
 geo = json.load(open(os.path.join(HERE, "geometry_results.json")))
 fig["_bccmp"] = {"rows":rows,"bc1_target_res":404,"bc2_target_res":215,"hotspots":16,
                  "bc1_md2_contact":170,"bc1_relaxed":270,"bc1_md1_only":100}
+
+# ---------------------------------------------------------------- _armA
+# Trajectory attempts must include the 4-stage early aborts (logits/softmax/one-hot).
+# Those never write a PDB and live only in failure_csv.csv, so counting Trajectory/*/
+# understates attempts by ~25%. Arm A read 21 that way; the true figure is 27.
+EARLY = ["Trajectory_logits_pLDDT","Trajectory_softmax_pLDDT","Trajectory_one-hot_pLDDT"]
+for run, key in [("sweep_af3_guess","_armA")]:
+    c  = counts(run)
+    fr = pd.read_csv(D("designs", run, "failure_csv.csv")).iloc[0]
+    gi = lambda k: int(fr.get(k, 0) or 0)
+    a  = fig.get(key, {})
+    a["early_abort"] = sum(gi(k) for k in EARLY)
+    a["attempts"]    = a["early_abort"] + c["clash"] + c["lowconf"] + c["relaxed"]
+    a.update({k: c[k] for k in ("relaxed","clash","lowconf","scored","accepted")})
+    a["seqs"] = c["relaxed"] * 20
+    fig[key] = a
 
 # ---------------------------------------------------------------- _queue / _armA
 q = {"state3":{**counts("guess_clamp_md1md2_state3"),"status":"complete (50-traj cap)","days":3.2},

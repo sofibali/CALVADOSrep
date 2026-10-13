@@ -1,5 +1,7 @@
 # PARP14 Macrodomain BindCraft Campaign
 
+> **Current state, and how to resume: [STATE.md](STATE.md).**
+
 De novo binder design (BindCraft) against the PARP14 macrodomain module (MD1–MD3),
 informed by the CALVADOS CG-MD simulations in `examples/PARP14_MDP/`.
 
