@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-AN = os.path.join(HERE, 'analysis')
+AN = os.path.join(HERE, 'rnapanel', 'analysis')
 FIG = os.path.join(HERE, 'figures')
 os.makedirs(FIG, exist_ok=True)
 
@@ -104,7 +104,7 @@ def fig3_rna_domains(rna):
         s = r[r.construct == c]
         if s.empty:
             ax.axis('off'); continue
-        g = s.groupby('domain').rna_contacts_per_residue.agg(['mean', 'std'])
+        g = s.groupby('domain').rna_contacts_per_residue_per_frame.agg(['mean', 'std'])
         g = g.reindex([d for d in DOM_ORDER if d in g.index])
         cols = ['#C44E52' if d == 'MD1' else ('#DD8452' if d in ('KH7a', 'WWE') else '#8C8C8C')
                 for d in g.index]
@@ -128,7 +128,9 @@ def fig4_mdfull_map(pairs):
     mats = {}
     for arm in ['homotypic', 'rna']:
         M = np.zeros((3, 3))
-        g = s[s.arm == arm].groupby(['domain_i', 'domain_j']).norm_per_residue_pair.mean()
+        g = (s[s.arm == arm]
+             .groupby(['domain_i', 'domain_j'])
+             .interchain_contacts_per_residuepair_per_frame.mean())
         for i, a in enumerate(doms):
             for j, b in enumerate(doms):
                 key = (a, b) if (a, b) in g.index else (b, a)
@@ -162,10 +164,10 @@ def fig4_mdfull_map(pairs):
 
 
 def main():
-    cond = pd.read_csv(os.path.join(AN, 'condensation_summary.csv'))
-    rna = pd.read_csv(os.path.join(AN, 'rna_contacts_by_domain.csv'))
-    pairs = pd.read_csv(os.path.join(AN, 'interchain_domain_contacts.csv'))
-    ex = pd.read_csv(os.path.join(AN, 'contact_exchange.csv'))
+    cond = pd.read_csv(os.path.join(AN, 'rnapanel_condensation_summary.csv'))
+    rna = pd.read_csv(os.path.join(AN, 'rnapanel_rna_contacts_by_domain.csv'))
+    pairs = pd.read_csv(os.path.join(AN, 'rnapanel_interchain_domain_contacts.csv'))
+    ex = pd.read_csv(os.path.join(AN, 'rnapanel_contact_exchange.csv'))
     fig1_condensation(cond)
     fig2_exchange(ex)
     fig3_rna_domains(rna)

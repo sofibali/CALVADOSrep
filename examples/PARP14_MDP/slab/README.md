@@ -55,6 +55,26 @@ Status as of 2026-09-18:
 
 ---
 
+## Run 2 — the ±RNA panel (`rnapanel/`)
+
+Everything below this section describes **run 1**: the broad sweep, at
+concentrations that were not held constant, built before the restraint
+optimisation. It is kept because it is what the cost and scheduling numbers
+were measured on.
+
+**For results, go to [`rnapanel/RESULTS.md`](rnapanel/RESULTS.md).** Run 2 is
+the narrow replicated re-run that supersedes it: 4 constructs × ±polyU40 × 3
+paired seeds, all at 100 mM residues, with the optimised per-domain trims and
+the KH7a–KHb bridge. All 24 runs are complete and analysed.
+See [`rnapanel/README.md`](rnapanel/README.md) for the design.
+
+| | run 1 | run 2 (`rnapanel/`) |
+|---|---|---|
+| restraints | untrimmed, no KH bridge | optimised trims + 141-pair bridge |
+| concentration | 99–863 mM, varies per construct | 100 mM throughout |
+| replicates | n=1 | n=3, seeds paired across ±RNA |
+| runs | 14 | 24 (+18 parked) |
+
 ## What this is
 
 Multi-chain **direct-coexistence (slab)** simulations. Every PARP14 simulation
@@ -457,7 +477,7 @@ GPU=1 ALLOW_FRESH=1 LEG_STEPS=10000000 \
 `run_slab_opportunistic.sh` now takes an optional wait-PID as its second
 argument, like `run_slab_queue.sh` does.
 
-### Parked constructs### Parked constructs
+### Parked constructs
 
 `kh1_wwe_full`, `mka_full`, `mka_wwe_full`, `md3_wwe_full` and `md2_md3` are
 **parked**: fully prepared and validated, but out of the queue. Both launchers

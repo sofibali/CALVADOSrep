@@ -28,7 +28,7 @@ Last reviewed: **2026-09-16**.
 | [6](questions/Q6_lysine_contacts.md) | Which lysine pairs can form a DSS crosslink? | ✅ answered (fl) | 135/150 reachable; SASD removed 15 buried pairs the distance test called confident. |
 | [7](questions/Q7_surface_faces.md) | Which residues are exposed, and on which face? | ✅ answered | ART and MD3 present back faces; rim depleted 24/24. **KH7a sits on MD1's catalytic face** — shown by two ±KH7a matched pairs. |
 | [8](questions/Q8_binder_design.md) | Can we block or clamp the macrodomains? | 🔄 ongoing | Yes, with `predict_initial_guess`: 14 days/0 accepted → 17 h/9 accepted. Validated by guess-off Binder_RMSD + Rosetta gates. |
-| [9](questions/Q9_self_association_puncta.md) | Which constructs form puncta with RNA / ADPr? | 🔜 prepared | Slab sims built and validated; needs GPU + the sort-seq data. |
+| [9](questions/Q9_self_association_puncta.md) | Which constructs form puncta with RNA / ADPr? | ✅ answered (sim side) | Only **MD1–MD3** condenses, and it is a true liquid; **everything with ART disperses**. RNA does not drive it — it binds MD1 and competes MD1 out of the network. ADPr leg untested; sort-seq data pending. |
 | [10](questions/Q10_crosslink_discrimination.md) | Which constructs should we crosslink to map eraser/reader/writer exposure? | ✅ answered | Yes. 9 discriminating domain pairs; XL count predicts exposure (r −0.69 to −0.91, size-independent). Panel: kh1_art_full + core + fl. |
 
 ---
@@ -75,8 +75,13 @@ interface to stabilise, the binder campaign has to *enforce* a new one ([[Q8]]).
 4. **[Q1] Note the trim rationale in the code.** The reasoning (trim depth is
    within noise → prefer shortest boundaries + Go restraints for the KHs) is now
    recorded in Q1 but not in `prepare_fl_optimized.py`.
-5. **[Q9] Benchmark the GPU, then launch.** Cost estimates rest on an assumed
-   50× speedup that has never been measured.
+5. **[Q9] Run the −WWE−ART tier.** Every construct that disperses contains ART
+   and the only one that condenses does not, so the obvious next test is whether
+   **ART specifically** is what blocks condensation. 18 runs (`fl_khb`,
+   `kh1_khb`, `core_khb`) are prepared, validated and parked in `slab/rnapanel/`;
+   ~2–4 days on three free GPUs. The ADPr-substrate leg remains unsimulable as
+   configured (no ADP-ribose bead; `PTMProtein` is incompatible with
+   `restraint: True`).
 
 ---
 
@@ -110,6 +115,25 @@ Things that have already caused a wrong result once.
   to sit above an artefact band that had been observed rather than predicted —
   which silently discarded 245 informative pairs. The defensible value (9) falls
   out of chain geometry: `ceil(cutoff / bond_length) + 1`.
+- **A slab run that disperses leaves frozen contacts behind.** `slab_eq`
+  compacts every chain together before production, and extended multi-domain
+  chains threaded through one another at that point *cannot* separate, because
+  the restrained domains are rigid. In run-2 `fl`, those leftovers were 85% of
+  all inter-chain contact, flat from frame 0 to frame 1999 while everything else
+  decayed 10×, and would have been reported as a strong MD2–ART interaction.
+  Always run `slab/analyze_contact_exchange.py` first: contact retention after
+  ~10 ns near 1 means the map is an initial condition, not an interaction.
+- **Structural zeros are not measurements.** The homotypic arm of a ±RNA panel
+  contains no RNA, so its "0 RNA contacts" rows are structural. Averaging them
+  in with the +RNA arm halves every per-residue number and inflates its SD to
+  ~100% of the mean — which looked like genuine seed-to-seed noise until the
+  per-seed values turned out to be tight. `analyze_rna_contacts.py` now emits no
+  RNA rows for runs without RNA.
+- **CALVADOS custom restraints do not broadcast across chain copies.** The file
+  format is `name copy bead | name copy bead | r k` and each line resolves to
+  exactly one bead pair. Every monomer run had `nmol=1` so `copy 1` was always
+  right; in a 47-chain slab it restrains one chain. Emit `npairs × nmol` lines
+  and check the count in the build log.
 - **`latest` symlinks can point at empty directories** — seen under
   `figures/04_md_distances/` and `figures/07_lysine_contacts/`. Check the dated
   dir before concluding a figure is missing.

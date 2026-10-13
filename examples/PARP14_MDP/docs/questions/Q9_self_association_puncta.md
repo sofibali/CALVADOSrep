@@ -1,7 +1,50 @@
 # Q9 — Which constructs self-associate into puncta with RNA and ADP-ribosylated substrate?
 
-**Status:** OPEN — **all 10 active slab runs complete (2026-09-24): none show liquid-liquid phase separation.** Experimental
-data ~months out (cell lines in construction as of Sept 2026).
+**Status:** PARTLY ANSWERED (simulation side) — **run 2 complete, 2026-10-12.**
+Exactly one construct self-associates: the **MD1–MD3 macrodomain module**, and
+it is a genuine liquid. Every construct containing **ART** disperses. **RNA does
+not change whether anything condenses**; it changes *where it binds* and *how
+fast the condensate re-partners*. Experimental data still ~months out (cell
+lines in construction as of Sept 2026).
+
+## Answer (simulation side)
+
+Run 2: 4 constructs × ±polyU40 × 3 paired seeds, 2 µs each, all at **100 mM
+residues**, with optimised restraints. Full write-up and tables:
+[`../../slab/rnapanel/RESULTS.md`](../../slab/rnapanel/RESULTS.md).
+
+1. **Only MD1–MD3 condenses** — slab holds at 10 ± 8 nm (protein only) /
+   13 ± 0 nm (+RNA), c_sat below detection. `fl`, `kh1_art_full` and
+   `core_full_go` all disperse to 160–210 nm. The split is exactly ±ART.
+
+2. **It is a liquid, not a jam.** Inter-chain contact retention after ~10 ns is
+   0.07 for `md_full` versus 0.42–0.75 for the dispersed constructs. That
+   control also showed the dispersed constructs' contact maps to be leftover
+   interpenetration from the compaction step, not interaction — so those maps
+   are not interpretable.
+
+3. **RNA does not drive condensation here.** Every ±RNA difference in slab width
+   is under one pooled SD and they do not share a sign (−9, −22, +13, +3 nm).
+   Run 1's "RNA retards dispersal 1.67×, only with ART" **does not reproduce**
+   under replication and matched concentration.
+
+4. **RNA binds MD1 and competes it away.** MD1 is the top RNA-contacting domain
+   in all four constructs (1.9–2.4× the next, identical rank order in all 12
+   +RNA runs). Inside the condensate, adding RNA lowers *every* MD1
+   protein–protein pair while MD2–MD3 gains and becomes dominant. RNA acts as a
+   **competitor for MD1, not a crosslinker** — the opposite of the multivalency
+   hypothesis below.
+
+5. **RNA doubles contact retention** (0.074 → 0.152): same condensation, slower
+   dynamics.
+
+> **What this does and does not settle.** It addresses the *homotypic* and
+> *RNA* legs. The **ADPr-substrate leg is untested** — CALVADOS has no
+> ADP-ribose bead and `PTMProtein` is incompatible with `restraint: True`, so
+> the reader-valence arm of the hypothesis cannot be simulated as configured.
+> The −WWE−ART tier (18 runs) is prepared and parked; it would isolate whether
+> **ART specifically** is what blocks condensation, which point 1 makes the
+> obvious next test.
 
 ---
 

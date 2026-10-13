@@ -16,6 +16,9 @@
 # The -WWE-ART tier is parked (.parked markers); remove those to include it.
 set -u
 SLAB=$(cd "$(dirname "$0")" && pwd)
+# Same env as every other launcher here: envs/calvados is the one whose OpenMM
+# has a CUDA platform (see run_slab_queue.sh for why envs/CALVADOS does not).
+CAL_ENV=/home/sbali/miniconda3/envs/calvados
 
 echo "=== pass 1: seeding (equilibration + first checkpoints) ==="
 GPU=2 LEG_STEPS=200000 "$SLAB/run_slab_queue.sh" rnapanel
@@ -30,7 +33,7 @@ while true; do
   for d in "$SLAB"/rnapanel/*/; do
     [ -f "$d/slab_meta.yaml" ] || continue
     [ -f "$d/.parked" ] && continue
-    read -r done target _ < <("/home/sbali/miniconda3/envs/calvados/bin/python" \
+    read -r done target _ < <("$CAL_ENV/bin/python" \
         "$SLAB/slab_steps.py" status "$d" 2>/dev/null) || continue
     [ "${done:-0}" -lt "${target:-1}" ] && left=$((left+1))
   done

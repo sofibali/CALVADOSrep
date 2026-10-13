@@ -28,6 +28,10 @@ Measured at dt = 10 frames (~10 ns) and dt = end of run.
 
 USAGE
     python analyze_contact_exchange.py --all --workers 12
+
+Writes `rnapanel/analysis/rnapanel_contact_exchange.csv`, carrying `dt_ns` and
+`contact_cutoff_nm` so the retention number is traceable to how it was measured.
+A frame is 1 ns here (wfreq 1e5 steps x 0.01 ps).
 """
 import argparse
 import glob
@@ -39,6 +43,7 @@ import yaml
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PANEL = os.path.join(HERE, 'rnapanel')
+OUT_DEFAULT = os.path.join(PANEL, 'analysis')
 
 
 def exchange(run_dir, cutoff=1.0, dt=10):
@@ -74,11 +79,14 @@ def exchange(run_dir, cutoff=1.0, dt=10):
     if not s1:
         return None
     s2, s3 = pairs(min(mid + dt, n - 1)), pairs(n - 1)
+    # wfreq is 1e5 steps at 0.01 ps => 1 frame = 1 ns.
     return dict(run=os.path.basename(run_dir), construct=meta['construct'],
                 arm=meta['arm'], seed=meta['seed'],
                 n_interchain_pairs=len(s1),
                 retention_10ns=len(s1 & s2) / len(s1),
-                retention_end=len(s1 & s3) / len(s1))
+                retention_end=len(s1 & s3) / len(s1),
+                dt_frames=dt, dt_ns=dt, frames_in_run=n,
+                contact_cutoff_nm=cutoff)
 
 
 def main():
@@ -87,7 +95,7 @@ def main():
     ap.add_argument('run_dir', nargs='?')
     ap.add_argument('--all', action='store_true')
     ap.add_argument('--workers', type=int, default=8)
-    ap.add_argument('--out', default=os.path.join(HERE, 'analysis'))
+    ap.add_argument('--out', default=OUT_DEFAULT)
     a = ap.parse_args()
 
     runs = ([d for d in sorted(glob.glob(os.path.join(PANEL, '*')))
@@ -110,7 +118,7 @@ def main():
                 print(f"  {r['run']:<42} retain10ns={r['retention_10ns']:.3f}", flush=True)
     if rows:
         os.makedirs(a.out, exist_ok=True)
-        p = os.path.join(a.out, 'contact_exchange.csv')
+        p = os.path.join(a.out, 'rnapanel_contact_exchange.csv')
         pd.DataFrame(rows).sort_values(['construct', 'arm', 'seed']).to_csv(p, index=False)
         print(f'\nwrote {p}')
 

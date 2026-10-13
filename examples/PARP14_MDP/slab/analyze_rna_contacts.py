@@ -34,6 +34,15 @@ every contact across an x/y boundary.
 USAGE
     python analyze_rna_contacts.py --all --workers 12
     python analyze_rna_contacts.py rnapanel/md_full__rna__seed23456
+
+Writes into `rnapanel/analysis/`, one directory next to the runs it describes:
+
+    rnapanel_condensation_summary.csv        slab width + c_sat, one row per run
+    rnapanel_rna_contacts_by_domain.csv      +RNA runs ONLY (see below)
+    rnapanel_interchain_domain_contacts.csv  one row per domain pair per run
+
+Every table carries `contact_cutoff_nm` and `frames_used`, so a number can
+always be traced back to how it was measured.
 """
 import argparse
 import glob
@@ -51,6 +60,7 @@ warnings.filterwarnings('ignore')
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)                      # examples/PARP14_MDP
 PANEL = os.path.join(HERE, 'rnapanel')
+OUT_DEFAULT = os.path.join(PANEL, 'analysis')
 
 # FL domain units, UniProt Q460N5 numbering (CLAUDE.md).
 DOMAIN_UNITS = [
@@ -171,13 +181,19 @@ def analyse(run_dir, cutoff=1.0, nframes=80, discard=0.5):
 
     rna_rows, pair_rows = [], []
     n_rna_nt = meta.get('n_rna', 0) * 40
+    # Homotypic runs contain no RNA, so a "0 contacts" row there is a STRUCTURAL
+    # zero, not a measurement. Emitting them invites averaging the two arms
+    # together, which halves every per-residue number and inflates its SD to
+    # ~100% of the mean. No RNA -> no rows.
     for k, (dname, ls, le) in enumerate(doms):
+        if n_rna_nt == 0:
+            break
         rna_rows.append(dict(
             run=os.path.basename(run_dir), construct=construct, arm=arm, seed=seed,
             domain=dname, dom_residues=int(dom_sizes[k]),
-            rna_contacts_per_frame=rna_hits[k] / max(nf, 1),
-            rna_contacts_per_residue=rna_hits[k] / max(nf, 1) / (dom_sizes[k] * nchain),
-            n_rna_nt=n_rna_nt))
+            rna_contacts_per_frame_allchains=rna_hits[k] / max(nf, 1),
+            rna_contacts_per_residue_per_frame=rna_hits[k] / max(nf, 1) / (dom_sizes[k] * nchain),
+            n_rna_nt=n_rna_nt, contact_cutoff_nm=cutoff, frames_used=nf))
     for i, (di, _, _) in enumerate(doms):
         for j, (dj, _, _) in enumerate(doms):
             if j < i:
@@ -187,8 +203,11 @@ def analyse(run_dir, cutoff=1.0, nframes=80, discard=0.5):
                 v /= 2.0           # self-pairs double counted by the symmetric add
             pair_rows.append(dict(
                 run=os.path.basename(run_dir), construct=construct, arm=arm, seed=seed,
-                domain_i=di, domain_j=dj, interchain_contacts_per_frame=v,
-                norm_per_residue_pair=v / (dom_sizes[i] * dom_sizes[j] * nchain)))
+                domain_i=di, domain_j=dj,
+                interchain_contacts_per_frame=v,
+                interchain_contacts_per_residuepair_per_frame=(
+                    v / (dom_sizes[i] * dom_sizes[j] * nchain)),
+                contact_cutoff_nm=cutoff, frames_used=nf))
 
     cond = dict(run=os.path.basename(run_dir), construct=construct, arm=arm,
                 seed=seed, nchain=nchain, nres=nres, n_rna=meta.get('n_rna', 0),
@@ -204,7 +223,7 @@ def main():
     ap.add_argument('--cutoff', type=float, default=1.0)
     ap.add_argument('--frames', type=int, default=80)
     ap.add_argument('--workers', type=int, default=8)
-    ap.add_argument('--out', default=os.path.join(HERE, 'analysis'))
+    ap.add_argument('--out', default=OUT_DEFAULT)
     a = ap.parse_args()
 
     if a.all:
@@ -237,10 +256,14 @@ def main():
 
     if not cond:
         print('nothing analysed'); return
-    pd.concat(rna).to_csv(os.path.join(a.out, 'rna_contacts_by_domain.csv'), index=False)
-    pd.concat(pairs).to_csv(os.path.join(a.out, 'interchain_domain_contacts.csv'), index=False)
+    rna = [d for d in rna if len(d)]
+    if rna:
+        pd.concat(rna).sort_values(['construct', 'seed', 'domain']).to_csv(
+            os.path.join(a.out, 'rnapanel_rna_contacts_by_domain.csv'), index=False)
+    pd.concat(pairs).sort_values(['construct', 'arm', 'seed']).to_csv(
+        os.path.join(a.out, 'rnapanel_interchain_domain_contacts.csv'), index=False)
     pd.DataFrame(cond).sort_values(['construct', 'arm', 'seed']).to_csv(
-        os.path.join(a.out, 'condensation_summary.csv'), index=False)
+        os.path.join(a.out, 'rnapanel_condensation_summary.csv'), index=False)
     print(f'\nwrote 3 tables to {a.out}')
 
 
