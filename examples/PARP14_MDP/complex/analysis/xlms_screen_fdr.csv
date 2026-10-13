@@ -1,0 +1,9 @@
+sample,replicate,scope,n_psm,TT,TD,DD,fdr,td_per_tt,dd_per_tt,decoys_in_top20
+SB31,081326_SB31_ZL_1_pairs_acid_K.xls,replicate,403,102,195,106,0.8725,1.912,1.039,14
+SB31,081326_SB31_ZL_2_pairs_acid_K.xls,replicate,430,132,209,89,0.9091,1.583,0.674,11
+SB31,081326_SB31_ZL_3_pairs_acid_K.xls,replicate,408,121,184,103,0.6694,1.521,0.851,13
+SB31,pooled,pooled,1241,355,588,298,0.8169,1.656,0.839,12
+P14-7 (+ADPr),081326_P14_ADPr_ZL_1_pairs_acid_K.xls,replicate,137,37,64,36,0.7568,1.73,0.973,15
+P14-7 (+ADPr),081326_P14_ADPr_ZL_2_pairs_acid_K.xls,replicate,139,35,73,31,1.2,2.086,0.886,14
+P14-7 (+ADPr),081326_P14_ADPr_ZL_3_pairs_acid_K.xls,replicate,144,41,68,35,0.8049,1.659,0.854,14
+P14-7 (+ADPr),pooled,pooled,420,113,205,102,0.9115,1.814,0.903,12
