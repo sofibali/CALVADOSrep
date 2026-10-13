@@ -217,6 +217,13 @@ __marimo__/
 
 # Claude Code
 .claude/
+# ...but the REPO-ROOT project skills are shared work: they encode traps that
+# cost real wrong answers, so they belong with the code rather than in one
+# person's ~/.claude. Settings stay ignored, and these rules are root-anchored
+# (leading /) so nested .claude/ dirs elsewhere in the tree stay fully ignored.
+!/.claude/
+/.claude/*
+!/.claude/skills/
 .claude-context
 
 # ============================================================

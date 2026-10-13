@@ -4,8 +4,13 @@
 residues**, 2 µs each, with the Phase 2.5 optimised restraints and the
 141-pair KH7a–KHb bridge expanded across every chain copy.
 
-Tables in `../analysis/`, figures in `../figures/rnapanel_*` (regenerate with
-`python ../figure_rna_panel.py`). The four PNGs below are force-added despite
+Tables in [`analysis/`](analysis/) — `rnapanel_condensation_summary.csv`,
+`rnapanel_contact_exchange.csv`, `rnapanel_rna_contacts_by_domain.csv`
+(+RNA runs only), `rnapanel_interchain_domain_contacts.csv`; each carries
+`contact_cutoff_nm` and `frames_used`. Figures in `../figures/rnapanel_*`
+(regenerate: `python ../figure_rna_panel.py`; tables:
+`python ../analyze_rna_contacts.py --all` then
+`python ../analyze_contact_exchange.py --all`). The four PNGs below are force-added despite
 the repo's `figures/` ignore rule, so this summary renders on GitHub.
 
 ---
